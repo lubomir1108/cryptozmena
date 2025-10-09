@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Portfolio Tracker</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #e6edf3;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { color: #00ff99; }
+    input, button, select {
+      margin: 5px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+    }
+    button {
+      background-color: #00ff99;
+      color: #0d1117;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 600px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #30363d;
+    }
+    tr:hover { background-color: #161b22; }
+  </style>
+</head>
+<body>
+  <h1>💎 Crypto Portfolio Tracker</h1>
+  
+  <div>
+    <select id="coin">
+      <option value="bitcoin">Bitcoin (BTC)</option>
+      <option value="ethereum">Ethereum (ETH)</option>
+      <option value="cardano">Cardano (ADA)</option>
+      <option value="solana">Solana (SOL)</option>
+      <option value="dogecoin">Dogecoin (DOGE)</option>
+    </select>
+    <input type="number" id="amount" placeholder="Množstvo" step="0.0001">
+    <input type="number" id="buyPrice" placeholder="Cena nákupu (€)" step="0.01">
+    <button onclick="addCoin()">Pridať</button>
+  </div>
+
+  <table id="portfolioTable">
+    <thead>
+      <tr>
+        <th>Coin</th>
+        <th>Množstvo</th>
+        <th>Aktuálna cena</th>
+        <th>Hodnota</th>
+        <th>Zisk/Strata</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2 id="totalValue">Celková hodnota: €0.00</h2>
+
+  <script>
+    const apiURL = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,cardano,solana,dogecoin&vs_currencies=eur";
+    let portfolio = JSON.parse(localStorage.getItem("portfolio")) || [];
+
+    async function getPrices() {
+      const res = await fetch(apiURL);
+      return await res.json();
+    }
+
+    async function renderPortfolio() {
+      const prices = await getPrices();
+      const tableBody = document.querySelector("#portfolioTable tbody");
+      tableBody.innerHTML = "";
+      let total = 0;
+
+      portfolio.forEach((item, index) => {
+        const price = prices[item.coin].eur;
+        const value = price * item.amount;
+        const profit = value - (item.amount * item.buyPrice);
+        total += value;
+
+        const row = `
+          <tr>
+            <td>${item.coin.toUpperCase()}</td>
+            <td>${item.amount}</td>
+            <td>€${price.toFixed(2)}</td>
+            <td>€${value.toFixed(2)}</td>
+            <td style="color:${profit >= 0 ? '#00ff99' : '#ff4d4d'}">
+              ${profit >= 0 ? '+' : ''}€${profit.toFixed(2)}
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+
+      document.getElementById("totalValue").innerText = `Celková hodnota: €${total.toFixed(2)}`;
+      localStorage.setItem("portfolio", JSON.stringify(portfolio));
+    }
+
+    function addCoin() {
+      const coin = document.getElementById("coin").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      const buyPrice = parseFloat(document.getElementById("buyPrice").value);
+
+      if (!amount || !buyPrice) {
+        alert("Vyplň všetky polia!");
+        return;
+      }
+
+      portfolio.push({ coin, amount, buyPrice });
+      renderPortfolio();
+    }
+
+    renderPortfolio();
+  </script>
+</body>
+</html1
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Portfolio Tracker</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #e6edf3;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { color: #00ff99; }
+    input, button, select {
+      margin: 5px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+    }
+    button {
+      background-color: #00ff99;
+      color: #0d1117;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 600px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #30363d;
+    }
+    tr:hover { background-color: #161b22; }
+  </style>
+</head>
+<body>
+  <h1>💎 Crypto Portfolio Tracker</h1>
+  
+  <div>
+    <select id="coin">
+      <option value="bitcoin">Bitcoin (BTC)</option>
+      <option value="ethereum">Ethereum (ETH)</option>
+      <option value="cardano">Cardano (ADA)</option>
+      <option value="solana">Solana (SOL)</option>
+      <option value="dogecoin">Dogecoin (DOGE)</option>
+    </select>
+    <input type="number" id="amount" placeholder="Množstvo" step="0.0001">
+    <input type="number" id="buyPrice" placeholder="Cena nákupu (€)" step="0.01">
+    <button onclick="addCoin()">Pridať</button>
+  </div>
+
+  <table id="portfolioTable">
+    <thead>
+      <tr>
+        <th>Coin</th>
+        <th>Množstvo</th>
+        <th>Aktuálna cena</th>
+        <th>Hodnota</th>
+        <th>Zisk/Strata</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2 id="totalValue">Celková hodnota: €0.00</h2>
+
+  <script>
+    const apiURL = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,cardano,solana,dogecoin&vs_currencies=eur";
+    let portfolio = JSON.parse(localStorage.getItem("portfolio")) || [];
+
+    async function getPrices() {
+      const res = await fetch(apiURL);
+      return await res.json();
+    }
+
+    async function renderPortfolio() {
+      const prices = await getPrices();
+      const tableBody = document.querySelector("#portfolioTable tbody");
+      tableBody.innerHTML = "";
+      let total = 0;
+
+      portfolio.forEach((item, index) => {
+        const price = prices[item.coin].eur;
+        const value = price * item.amount;
+        const profit = value - (item.amount * item.buyPrice);
+        total += value;
+
+        const row = `
+          <tr>
+            <td>${item.coin.toUpperCase()}</td>
+            <td>${item.amount}</td>
+            <td>€${price.toFixed(2)}</td>
+            <td>€${value.toFixed(2)}</td>
+            <td style="color:${profit >= 0 ? '#00ff99' : '#ff4d4d'}">
+              ${profit >= 0 ? '+' : ''}€${profit.toFixed(2)}
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+
+      document.getElementById("totalValue").innerText = `Celková hodnota: €${total.toFixed(2)}`;
+      localStorage.setItem("portfolio", JSON.stringify(portfolio));
+    }
+
+    function addCoin() {
+      const coin = document.getElementById("coin").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      const buyPrice = parseFloat(document.getElementById("buyPrice").value);
+
+      if (!amount || !buyPrice) {
+        alert("Vyplň všetky polia!");
+        return;
+      }
+
+      portfolio.push({ coin, amount, buyPrice });
+      renderPortfolio();
+    }
+
+    renderPortfolio();
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Portfolio Tracker</title>
+  <style>
+    body {
+      background-color: #0d1117;
+      color: #e6edf3;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { color: #00ff99; }
+    input, button, select {
+      margin: 5px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1em;
+    }
+    button {
+      background-color: #00ff99;
+      color: #0d1117;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+      max-width: 600px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #30363d;
+    }
+    tr:hover { background-color: #161b22; }
+  </style>
+</head>
+<body>
+  <h1>💎 Crypto Portfolio Tracker</h1>
+  
+  <div>
+    <select id="coin">
+      <option value="bitcoin">Bitcoin (BTC)</option>
+      <option value="ethereum">Ethereum (ETH)</option>
+      <option value="cardano">Cardano (ADA)</option>
+      <option value="solana">Solana (SOL)</option>
+      <option value="dogecoin">Dogecoin (DOGE)</option>
+    </select>
+    <input type="number" id="amount" placeholder="Množstvo" step="0.0001">
+    <input type="number" id="buyPrice" placeholder="Cena nákupu (€)" step="0.01">
+    <button onclick="addCoin()">Pridať</button>
+  </div>
+
+  <table id="portfolioTable">
+    <thead>
+      <tr>
+        <th>Coin</th>
+        <th>Množstvo</th>
+        <th>Aktuálna cena</th>
+        <th>Hodnota</th>
+        <th>Zisk/Strata</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2 id="totalValue">Celková hodnota: €0.00</h2>
+
+  <script>
+    const apiURL = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,cardano,solana,dogecoin&vs_currencies=eur";
+    let portfolio = JSON.parse(localStorage.getItem("portfolio")) || [];
+
+    async function getPrices() {
+      const res = await fetch(apiURL);
+      return await res.json();
+    }
+
+    async function renderPortfolio() {
+      const prices = await getPrices();
+      const tableBody = document.querySelector("#portfolioTable tbody");
+      tableBody.innerHTML = "";
+      let total = 0;
+
+      portfolio.forEach((item, index) => {
+        const price = prices[item.coin].eur;
+        const value = price * item.amount;
+        const profit = value - (item.amount * item.buyPrice);
+        total += value;
+
+        const row = `
+          <tr>
+            <td>${item.coin.toUpperCase()}</td>
+            <td>${item.amount}</td>
+            <td>€${price.toFixed(2)}</td>
+            <td>€${value.toFixed(2)}</td>
+            <td style="color:${profit >= 0 ? '#00ff99' : '#ff4d4d'}">
+              ${profit >= 0 ? '+' : ''}€${profit.toFixed(2)}
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+
+      document.getElementById("totalValue").innerText = `Celková hodnota: €${total.toFixed(2)}`;
+      localStorage.setItem("portfolio", JSON.stringify(portfolio));
+    }
+
+    function addCoin() {
+      const coin = document.getElementById("coin").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      const buyPrice = parseFloat(document.getElementById("buyPrice").value);
+
+      if (!amount || !buyPrice) {
+        alert("Vyplň všetky polia!");
+        return;
+      }
+
+      portfolio.push({ coin, amount, buyPrice });
+      renderPortfolio();
+    }
+
+    renderPortfolio();
+  </script>
+</body>
+</html>
+
