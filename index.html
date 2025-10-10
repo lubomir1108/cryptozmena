@@ -46,12 +46,11 @@ footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
   </main>
 </div>
 
-<footer>© 2025 CryptoZmena — demo • Data from CoinMarketCap</footer>
+<footer>© 2025 CryptoZmena — demo • Data from CoinGecko</footer>
 </div>
 
 <script>
-const API_KEY = 'TU_VLOZ_SVOJ_API_KEY'; // <- vlož svoj CoinMarketCap API kľúč
-const assets = ['BTC','ETH','DOGE'];
+const assets = ['bitcoin','ethereum','dogecoin'];
 
 function $(sel){return document.querySelector(sel);}
 function setText(id, txt){const el=$(id); if(el) el.textContent=txt}
@@ -59,26 +58,20 @@ function setText(id, txt){const el=$(id); if(el) el.textContent=txt}
 async function fetchData(){
   try{
     $('#assets').innerHTML = '';
-    const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${assets.join(',')}`;
-    const resp = await fetch(url,{
-      headers:{
-        'X-CMC_PRO_API_KEY': API_KEY,
-        'Accept': 'application/json'
-      }
-    });
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${assets.join(',')}&vs_currencies=usd&include_24hr_change=true`;
+    const resp = await fetch(url);
     const data = await resp.json();
     const now = new Date();
     setText('#updated', now.toLocaleString());
 
-    assets.forEach(sym=>{
-      const info = data.data[sym];
-      const price = info.quote.USD.price.toFixed(2);
-      const change = info.quote.USD.percent_change_24h.toFixed(2);
+    assets.forEach(id=>{
+      const price = data[id].usd.toFixed(2);
+      const change = data[id].usd_24h_change.toFixed(2);
       const div = document.createElement('div');
       div.className = 'asset';
       div.innerHTML = `
         <div style="min-width:90px">
-          <div style="font-weight:700">${sym}</div>
+          <div style="font-weight:700">${id.charAt(0).toUpperCase() + id.slice(1)}</div>
           <div class="muted" style="font-size:13px">$${price}</div>
         </div>
         <div class="meta">
