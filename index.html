@@ -1,96 +1,271 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>AI Crypto Radar — CryptoZmena</title>
-<style>
-:root{--bg:#071427;--card:#071827;--accent:#7c3aed;--muted:#9aa4b2;--round:12px}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#041021,#071427);color:#e6eef8;min-height:100vh;padding:28px}
-.wrap{max-width:1100px;margin:0 auto}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
-h1{margin:0;font-size:20px}
-.muted{color:var(--muted);font-size:13px}
-.grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px}
-.asset{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:10px}
-.asset .meta{min-width:160px}
-.price{font-weight:700}
-.change.pos{color:#7ef0c7}
-.change.neg{color:#ff8a8a}
-footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Crypto Radar — CryptoZmena</title>
+  <style>
+    :root{--bg:#071427;--card:#071827;--accent:#7c3aed;--muted:#9aa4b2;--glass:rgba(255,255,255,0.03);--round:12px}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#041021,#071427);color:#e6eef8;min-height:100vh;padding:28px}
+    .wrap{max-width:1100px;margin:0 auto}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+    h1{margin:0;font-size:20px}
+    .muted{color:var(--muted);font-size:13px}
+    .lang{display:flex;gap:8px}
+    .lang button{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
+    .lang button.active{border-color:var(--accent);color:white;box-shadow:0 6px 20px rgba(124,58,237,0.12)}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px}
+    .row{display:flex;gap:12px;align-items:center}
+    .asset{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:10px}
+    .asset .meta{min-width:160px}
+    .price{font-weight:700}
+    .change.pos{color:#7ef0c7}
+    .change.neg{color:#ff8a8a}
+    canvas{width:140px;height:40px}
+    .cta{display:flex;gap:8px;margin-top:10px}
+    .btn{padding:8px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;cursor:pointer}
+    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+    footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
+    @media(max-width:920px){.grid{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-<header>
-  <div class="brand">
-    <div class="logo">CZ</div>
-    <div>
-      <h1 id="ui-title">AI Crypto Radar</h1>
-      <div class="muted" id="ui-sub">Live ceny • AI komentár • Affiliate</div>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">CZ</div>
+        <div>
+          <h1 id="ui-title">AI Crypto Radar</h1>
+          <div class="muted" id="ui-sub">Live ceny • AI komentár • Affiliate</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="lang">
+          <button id="btn-sk">SK</button>
+          <button id="btn-en">EN</button>
+        </div>
+        <a class="btn ghost" id="repoLink" href="https://github.com/lubomir1108/cryptozmena" target="_blank">Repo</a>
+        <a class="btn" id="support" href="https://www.buymeacoffee.com/yourname" target="_blank">Support</a>
+      </div>
+    </header>
+
+    <div class="grid">
+      <main>
+        <div class="card" id="mainCard">
+          <h2 id="heading">Top cryptos</h2>
+          <div class="muted" id="subHeading">Aktualizované: <span id="updated">–</span></div>
+
+          <div id="assets" style="margin-top:12px">
+            <!-- asset rows appended here -->
+          </div>
+
+          <div style="margin-top:12px" class="muted" id="aiInfo">AI komentár: <span id="aiText">–</span></div>
+
+          <div style="margin-top:12px" class="cta">
+            <button class="btn" id="refreshBtn">Refresh</button>
+            <button class="btn ghost" id="openDemo">Open demo</button>
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <div class="card">
+            <h3 id="why">Prečo AI Crypto Radar?</h3>
+            <p class="muted" id="whyText">Rýchly prehľad cien, automaticky generované stručné komentáre a CTA pre affiliate.</p>
+          </div>
+        </div>
+      </main>
+
+      <aside>
+        <div class="card">
+          <h3 id="affTitle">Kúp / Získaj</h3>
+          <p class="muted" id="affSub">Podpora partnerov (affiliate)</p>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <a class="btn" id="aff1" href="https://www.binance.com" target="_blank">Buy on Binance</a>
+            <a class="btn ghost" id="aff2" href="https://www.coinbase.com" target="_blank">Buy on Coinbase</a>
+            <a class="btn ghost" id="aff3" href="https://www.okx.com" target="_blank">Buy on OKX</a>
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="muted">Donate</div>
+            <a class="btn" id="bmc" href="https://www.buymeacoffee.com/yourname" target="_blank">Buy me a coffee</a>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="card">
+          <h4 id="langInfo">Jazyk</h4>
+          <div class="muted" id="langDesc">Prepni SK/EN</div>
+        </div>
+      </aside>
     </div>
+
+    <footer>© 2025 CryptoZmena — demo • Data from CoinGecko</footer>
   </div>
-</header>
-
-<div class="grid">
-  <main>
-    <div class="card" id="mainCard">
-      <h2 id="heading">Top kryptomeny</h2>
-      <div class="muted" id="subHeading">Aktualizované: <span id="updated">–</span></div>
-      <div id="assets" style="margin-top:12px"></div>
-    </div>
-  </main>
-</div>
-
-<footer>© 2025 CryptoZmena — demo • Data from CoinGecko</footer>
-</div>
 
 <script>
-const assets = ['bitcoin','ethereum','dogecoin'];
+/* ---------- Config & strings ---------- */
+const T = {
+  sk: {
+    title: "AI Crypto Radar",
+    sub: "Live ceny • AI komentár • Affiliate",
+    heading: "Top kryptomeny",
+    aiLabel: "AI komentár",
+    refresh: "Obnoviť",
+    openDemo: "Otvoriť demo",
+    why: "Prečo AI Crypto Radar?",
+    whyText: "Rýchly prehľad cien, automaticky generované stručné komentáre a CTA pre affiliate.",
+    affTitle: "Kúp / Získaj",
+    affSub: "Podpora partnerov (affiliate)",
+    langInfo: "Jazyk",
+    langDesc: "Prepni SK/EN",
+    buyBinance: "Kúp na Binance",
+    buyCoinbase: "Kúp na Coinbase",
+    buyOKX: "Kúp na OKX",
+    support: "Podporiť",
+    errorFetch: "Chyba pri získavaní dát."
+  },
+  en: {
+    title: "AI Crypto Radar",
+    sub: "Live prices • AI commentary • Affiliate",
+    heading: "Top cryptocurrencies",
+    aiLabel: "AI commentary",
+    refresh: "Refresh",
+    openDemo: "Open demo",
+    why: "Why AI Crypto Radar?",
+    whyText: "Quick price overview, auto-generated short commentary and affiliate CTAs.",
+    affTitle: "Buy / Get",
+    affSub: "Support partners (affiliate)",
+    langInfo: "Language",
+    langDesc: "Switch SK/EN",
+    buyBinance: "Buy on Binance",
+    buyCoinbase: "Buy on Coinbase",
+    buyOKX: "Buy on OKX",
+    support: "Support",
+    errorFetch: "Error fetching data."
+  }
+};
 
-function $(sel){return document.querySelector(sel);}
-function setText(id, txt){const el=$(id); if(el) el.textContent=txt}
+let LANG = localStorage.getItem('cz_lang') || 'sk';
+const assets = [
+  { id: 'bitcoin', sym: 'BTC' },
+  { id: 'ethereum', sym: 'ETH' },
+  { id: 'dogecoin', sym: 'DOGE' }
+];
 
+function $(sel){ return document.querySelector(sel); }
+function setText(sel, txt){ const el=$(sel); if(el) el.textContent = txt; }
+
+/* ---------- Language UI ---------- */
+function applyLang(){
+  const txt = T[LANG];
+  document.documentElement.lang = LANG;
+  setText('#ui-title', txt.title);
+  setText('#ui-sub', txt.sub);
+  setText('#heading', txt.heading);
+  setText('#aiInfo', txt.aiLabel + ': ');
+  setText('#why', txt.why);
+  setText('#whyText', txt.whyText);
+  setText('#affTitle', txt.affTitle);
+  setText('#affSub', txt.affSub);
+  setText('#langInfo', txt.langInfo);
+  setText('#langDesc', txt.langDesc);
+  $('#refreshBtn').textContent = txt.refresh;
+  $('#openDemo').textContent = txt.openDemo;
+  $('#aff1').textContent = txt.buyBinance;
+  $('#aff2').textContent = txt.buyCoinbase;
+  $('#aff3').textContent = txt.buyOKX;
+  $('#bmc').textContent = txt.support;
+  $('#btn-sk').classList.toggle('active', LANG==='sk');
+  $('#btn-en').classList.toggle('active', LANG==='en');
+}
+$('#btn-sk').addEventListener('click', ()=>{ LANG='sk'; localStorage.setItem('cz_lang','sk'); applyLang(); });
+$('#btn-en').addEventListener('click', ()=>{ LANG='en'; localStorage.setItem('cz_lang','en'); applyLang(); });
+
+/* ---------- Render helpers ---------- */
+function renderAsset(sym, price, change){
+  const div = document.createElement('div');
+  div.className = 'asset';
+  const changeClass = (change>=0)?'change pos':'change neg';
+  div.innerHTML = `
+    <div style="min-width:90px">
+      <div style="font-weight:700">${sym}</div>
+      <div class="muted" style="font-size:13px">${(price===null)?'–':'$'+Number(price).toLocaleString()}</div>
+    </div>
+    <div class="meta">
+      <div class="price">${(price===null)?'–':'$'+Number(price).toLocaleString()}</div>
+      <div class="${changeClass}" style="font-size:13px">${change>=0?'+':''}${(change===null)?'–':change.toFixed(2)+'%'}</div>
+    </div>
+  `;
+  return div;
+}
+
+/* ---------- AI comment (simple local heuristic) ---------- */
+function generateAIComment(prices){
+  // prices: [{sym, ch}, ...]
+  const changes = prices.map(p => ({sym:p.sym, ch: p.ch ?? 0}));
+  changes.sort((a,b)=>Math.abs(b.ch)-Math.abs(a.ch));
+  const top = changes[0] || {sym:'–', ch:0};
+  let textSK='', textEN='';
+  if(Math.abs(top.ch) < 0.5){
+    textSK = 'Trh je relatívne pokojný — žiadne veľké pohyby za posledných 24 h.';
+    textEN = 'The market is relatively calm — no major moves in the last 24h.';
+  } else {
+    if(top.ch > 0){
+      textSK = `${top.sym} rastie o ${top.ch.toFixed(2)}% za 24 h — možný pozitívny sentiment.`;
+      textEN = `${top.sym} is up ${top.ch.toFixed(2)}% in 24h — possible positive sentiment.`;
+    } else {
+      textSK = `${top.sym} klesá o ${Math.abs(top.ch).toFixed(2)}% za 24 h — trh môže byť volatilný.`;
+      textEN = `${top.sym} is down ${Math.abs(top.ch).toFixed(2)}% in 24h — market may be volatile.`;
+    }
+  }
+  return LANG==='sk' ? textSK : textEN;
+}
+
+/* ---------- Fetch data from CoinGecko (no API key) ---------- */
 async function fetchData(){
-  try{
+  try {
     $('#assets').innerHTML = '';
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${assets.join(',')}&vs_currencies=usd&include_24hr_change=true`;
+    $('#aiText').textContent = '…';
+    const ids = assets.map(a=>a.id).join(',');
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
     const resp = await fetch(url);
-    const data = await resp.json();
+    if(!resp.ok) throw new Error('Network response not ok');
+    const prices = await resp.json();
     const now = new Date();
     setText('#updated', now.toLocaleString());
 
-    assets.forEach(id=>{
-      const price = data[id].usd.toFixed(2);
-      const change = data[id].usd_24h_change.toFixed(2);
-      const div = document.createElement('div');
-      div.className = 'asset';
-      div.innerHTML = `
-        <div style="min-width:90px">
-          <div style="font-weight:700">${id.charAt(0).toUpperCase() + id.slice(1)}</div>
-          <div class="muted" style="font-size:13px">$${price}</div>
-        </div>
-        <div class="meta">
-          <div class="price">$${price}</div>
-          <div class="${change>=0?'change pos':'change neg'}" style="font-size:13px">${change>=0?'+':''}${change}%</div>
-        </div>
-      `;
-      $('#assets').appendChild(div);
-    });
-  }catch(e){
-    console.error(e);
-    setText('#updated','Chyba pri načítaní dát');
+    const listForAI = [];
+
+    for(const a of assets){
+      const info = prices[a.id] || {};
+      const price = info.usd ?? null;
+      const change = info.usd_24h_change ?? null;
+      $('#assets').appendChild(renderAsset(a.sym, price, change));
+      listForAI.push({sym:a.sym, ch: change});
+    }
+
+    // generate local AI comment
+    setText('#aiText', generateAIComment(listForAI));
+
+  } catch(e){
+    console.error('fetchData error', e);
+    setText('#aiText', T[LANG].errorFetch);
+    setText('#updated', 'Chyba pri načítaní dát');
   }
 }
 
-// initial fetch
+/* ---------- Init & events ---------- */
+applyLang();
+$('#refreshBtn').addEventListener('click', ()=>{ fetchData(); });
+$('#openDemo').addEventListener('click', ()=>{ alert(LANG==='sk' ? 'Demo: táto stránka iba simuluje.' : 'Demo: this page only simulates.'); });
+
+// initial fetch + interval
 fetchData();
-// refresh každé 2 min
-setInterval(fetchData,120000);
+setInterval(fetchData, 120000);
 </script>
 </body>
 </html>
