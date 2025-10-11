@@ -2,146 +2,118 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Letáky 2.0 — Aktuálne zľavy a akcie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Letáky Online - Aktuálne akcie</title>
   <style>
-    :root {
-      --bg: #0b132b;
-      --card: #1c2541;
-      --accent: #5bc0be;
-      --text: #eaeaea;
-      --muted: #9fa4af;
-      --round: 14px;
-    }
-    * { box-sizing: border-box; }
     body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f9f9f9;
       margin: 0;
-      font-family: 'Inter', system-ui, Arial;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
+      padding: 0;
+      color: #222;
     }
     header {
+      background: linear-gradient(90deg, #ff3b3b, #ff9900);
+      color: white;
       text-align: center;
-      padding: 24px 10px;
-      background: #1c2541;
-      border-bottom: 2px solid var(--accent);
+      padding: 1.5rem 1rem;
+      font-size: 1.8rem;
+      font-weight: bold;
+      letter-spacing: 1px;
     }
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-      color: var(--accent);
-    }
-    .container {
-      max-width: 1000px;
-      margin: 20px auto;
-      padding: 0 15px;
+    main {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
     }
     .store {
-      background: var(--card);
-      padding: 16px;
-      border-radius: var(--round);
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
       text-align: center;
-      box-shadow: 0 0 12px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
+      transition: transform 0.2s ease;
     }
     .store:hover {
-      transform: translateY(-4px);
+      transform: scale(1.03);
     }
     .store img {
       width: 100%;
-      border-radius: var(--round);
-      height: 160px;
-      object-fit: cover;
+      height: 150px;
+      object-fit: contain;
+      background: #fff;
+      padding: 10px;
     }
     .store h2 {
-      margin: 12px 0 6px;
-      font-size: 18px;
-      color: var(--accent);
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
     }
     .store a {
-      text-decoration: none;
-      color: white;
-      background: var(--accent);
-      padding: 8px 12px;
-      border-radius: 8px;
       display: inline-block;
-      margin-top: 8px;
+      margin: 10px 0 20px 0;
+      background: #ff3b3b;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .store a:hover {
+      background: #e03030;
     }
     footer {
+      background: #222;
+      color: white;
       text-align: center;
-      font-size: 13px;
-      color: var(--muted);
-      padding: 20px 0;
-      border-top: 1px solid rgba(255,255,255,0.1);
+      padding: 1rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>🛒 Letáky 2.0 — Aktuálne zľavy</h1>
-    <p>Pozrite si čerstvé akcie z vašich obľúbených obchodov</p>
-  </header>
+  <header>🛒 Letáky Online – Aktuálne zľavy a akcie</header>
 
-  <main class="container" id="stores">
-    <!-- obchody sa načítajú sem -->
+  <main>
+    <div class="store">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Kaufland-Logo.svg" alt="Kaufland" />
+      <h2>Kaufland</h2>
+      <a href="https://www.kaufland.sk/letak.html" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
+    </div>
+
+    <div class="store">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Lidl-Logo.svg" alt="Lidl" />
+      <h2>Lidl</h2>
+      <a href="https://www.lidl.sk/c/aktualny-letak/s10008502" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
+    </div>
+
+    <div class="store">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Tesco_Logo.svg" alt="Tesco" />
+      <h2>Tesco</h2>
+      <a href="https://tesco.sk/letak/" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
+    </div>
+
+    <div class="store">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Billa_logo.svg" alt="Billa" />
+      <h2>Billa</h2>
+      <a href="https://www.billa.sk/aktualny-letak" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
+    </div>
+
+    <div class="store">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/OBI_Logo.svg" alt="OBI" />
+      <h2>OBI</h2>
+      <a href="https://www.obi.sk/letak/" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
+    </div>
+
+    <div class="store">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/DM-drogerie_logo.svg" alt="dm drogerie" />
+      <h2>dm drogerie</h2>
+      <a href="https://www.dm.sk/akcne-produkty" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
+    </div>
   </main>
 
-  <footer>© 2025 Letáky 2.0 — Všetky odkazy smerujú na oficiálne stránky obchodov.</footer>
-
-  <script>
-    const stores = [
-      {
-        name: "Kaufland",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Kaufland_Logo.svg/512px-Kaufland_Logo.svg.png",
-        url: "https://www.kaufland.sk/letak.html"
-      },
-      {
-        name: "Lidl",
-        img: "https://upload.wikimedia.org/wikipedia/commons/1/1d/Lidl_logo.png",
-        url: "https://www.lidl.sk/letak"
-      },
-      {
-        name: "Tesco",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Tesco_Logo.svg/512px-Tesco_Logo.svg.png",
-        url: "https://tesco.sk/akcie-a-ponuky/aktualny-letak/"
-      },
-      {
-        name: "Billa",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Billa-Logo.svg/512px-Billa-Logo.svg.png",
-        url: "https://www.billa.sk/aktualny-letak"
-      },
-      {
-        name: "Pepco",
-        img: "https://upload.wikimedia.org/wikipedia/commons/1/1f/Pepco_Logo.svg",
-        url: "https://pepco.sk/letak/"
-      },
-      {
-        name: "OBI",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/OBI_Logo.svg/512px-OBI_Logo.svg.png",
-        url: "https://www.obi.sk/akcie-a-ponuky/aktualny-letak/"
-      },
-      {
-        name: "DM drogerie",
-        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Dm_logo.svg/512px-Dm_logo.svg.png",
-        url: "https://www.dm.sk/akcie/aktualny-letak"
-      }
-    ];
-
-    const container = document.getElementById('stores');
-    stores.forEach(s => {
-      const div = document.createElement('div');
-      div.className = 'store';
-      div.innerHTML = `
-        <img src="${s.img}" alt="${s.name} logo">
-        <h2>${s.name}</h2>
-        <a href="${s.url}" target="_blank">Zobraziť leták</a>
-      `;
-      container.appendChild(div);
-    });
-  </script>
+  <footer>© 2025 Letáky Online – Všetky odkazy vedú na oficiálne stránky obchodov</footer>
 </body>
 </html>
