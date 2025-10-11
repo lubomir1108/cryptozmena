@@ -2,123 +2,143 @@
 <html lang="sk">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Letáky Online – Kaufland, Lidl, Tesco, OBI a ďalšie</title>
-  <meta name="description" content="Aktuálne letáky všetkých obchodov na jednom mieste – Kaufland, Lidl, Tesco, Billa, OBI, Pepco a ďalšie.">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Letáky 2.0 — Aktuálne zľavy a akcie</title>
   <style>
+    :root {
+      --bg: #0b132b;
+      --card: #1c2541;
+      --accent: #5bc0be;
+      --text: #eaeaea;
+      --muted: #9fa4af;
+      --round: 14px;
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: "Segoe UI", sans-serif;
-      background: #f5f7fa;
       margin: 0;
-      color: #222;
+      font-family: 'Inter', system-ui, Arial;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
     }
     header {
-      background: linear-gradient(90deg, #ff416c, #ff4b2b);
-      color: white;
       text-align: center;
-      padding: 1.8rem;
+      padding: 24px 10px;
+      background: #1c2541;
+      border-bottom: 2px solid var(--accent);
     }
-    h1 { margin: 0; font-size: 2rem; }
-    main {
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+      color: var(--accent);
+    }
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 0 15px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      padding: 1rem;
-      max-width: 1200px;
-      margin: auto;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
     }
-    .shop {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      overflow: hidden;
+    .store {
+      background: var(--card);
+      padding: 16px;
+      border-radius: var(--round);
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
       transition: transform 0.2s;
-      text-align: center;
     }
-    .shop:hover { transform: scale(1.03); }
-    .shop img {
+    .store:hover {
+      transform: translateY(-4px);
+    }
+    .store img {
       width: 100%;
-      height: 150px;
-      object-fit: contain;
-      background: #fff;
+      border-radius: var(--round);
+      height: 160px;
+      object-fit: cover;
     }
-    .shop h3 { margin: 0.5rem 0; }
-    .btn {
-      display: inline-block;
-      margin-bottom: 1rem;
-      padding: 0.6rem 1.2rem;
-      background: #ff416c;
-      color: white;
-      border-radius: 6px;
+    .store h2 {
+      margin: 12px 0 6px;
+      font-size: 18px;
+      color: var(--accent);
+    }
+    .store a {
       text-decoration: none;
-      font-weight: 500;
-    }
-    .ad-block {
-      background: #fff;
-      border: 2px dashed #ccc;
-      border-radius: 10px;
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #666;
-      margin: 1rem auto;
-      max-width: 700px;
+      color: white;
+      background: var(--accent);
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 8px;
     }
     footer {
       text-align: center;
-      padding: 1rem;
-      background: #222;
-      color: #ccc;
-      font-size: 0.9rem;
+      font-size: 13px;
+      color: var(--muted);
+      padding: 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
   </style>
-  <!-- Google AdSense (vymeníš neskôr svoj kód) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000"
-     crossorigin="anonymous"></script>
 </head>
-
 <body>
   <header>
-    <h1>🛍️ Aktuálne letáky zo všetkých obchodov</h1>
-    <p>Kaufland • Lidl • Tesco • Billa • OBI • Pepco • Planeo • Teta a ďalšie</p>
+    <h1>🛒 Letáky 2.0 — Aktuálne zľavy</h1>
+    <p>Pozrite si čerstvé akcie z vašich obľúbených obchodov</p>
   </header>
 
-  <!-- Reklamný blok hore -->
-  <div class="ad-block">
-    <p>🔸 Reklama – tu sa zobrazí Google AdSense alebo banner partnera 🔸</p>
-  </div>
+  <main class="container" id="stores">
+    <!-- obchody sa načítajú sem -->
+  </main>
 
-  <main id="shops"></main>
-
-  <!-- Reklamný blok dole -->
-  <div class="ad-block">
-    <p>💰 Ušetri pri každom nákupe – využívaj cashback a zľavy!</p>
-  </div>
-
-  <footer>
-    © 2025 Letákový prehľad | Reklamy a odkazy môžu obsahovať affiliate linky
-  </footer>
+  <footer>© 2025 Letáky 2.0 — Všetky odkazy smerujú na oficiálne stránky obchodov.</footer>
 
   <script>
-    const shops = [
-      { name: "Kaufland", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Kaufland_Logo.svg/512px-Kaufland_Logo.svg.png", link: "https://www.kaufland.sk/letak.html" },
-      { name: "Lidl", logo: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Lidl-Logo.svg", link: "https://www.lidl.sk/letak" },
-      { name: "Tesco", logo: "https://upload.wikimedia.org/wikipedia/commons/1/12/Tesco_Logo.svg", link: "https://tesco.sk/akcie-a-zlavy/letaky/" },
-      { name: "Billa", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1b/Billa_logo.svg", link: "https://www.billa.sk/letaky" },
-      { name: "OBI", logo: "https://upload.wikimedia.org/wikipedia/commons/6/64/OBI_logo.svg", link: "https://www.obi.sk/letak" },
-      { name: "Pepco", logo: "https://upload.wikimedia.org/wikipedia/commons/6/6f/PEPCO_logo.svg", link: "https://pepco.sk/letak/" },
-      { name: "Planeo Elektro", logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Planeo_logo.svg", link: "https://www.planeo.sk/planeo-elektro/aktualny-letak.html" },
-      { name: "Teta Drogérie", logo: "https://upload.wikimedia.org/wikipedia/commons/0/00/Teta_logo.svg", link: "https://www.tetadrogerie.sk/aktualny-letak" }
+    const stores = [
+      {
+        name: "Kaufland",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Kaufland_Logo.svg/512px-Kaufland_Logo.svg.png",
+        url: "https://www.kaufland.sk/letak.html"
+      },
+      {
+        name: "Lidl",
+        img: "https://upload.wikimedia.org/wikipedia/commons/1/1d/Lidl_logo.png",
+        url: "https://www.lidl.sk/letak"
+      },
+      {
+        name: "Tesco",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Tesco_Logo.svg/512px-Tesco_Logo.svg.png",
+        url: "https://tesco.sk/akcie-a-ponuky/aktualny-letak/"
+      },
+      {
+        name: "Billa",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Billa-Logo.svg/512px-Billa-Logo.svg.png",
+        url: "https://www.billa.sk/aktualny-letak"
+      },
+      {
+        name: "Pepco",
+        img: "https://upload.wikimedia.org/wikipedia/commons/1/1f/Pepco_Logo.svg",
+        url: "https://pepco.sk/letak/"
+      },
+      {
+        name: "OBI",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/OBI_Logo.svg/512px-OBI_Logo.svg.png",
+        url: "https://www.obi.sk/akcie-a-ponuky/aktualny-letak/"
+      },
+      {
+        name: "DM drogerie",
+        img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Dm_logo.svg/512px-Dm_logo.svg.png",
+        url: "https://www.dm.sk/akcie/aktualny-letak"
+      }
     ];
 
-    const container = document.getElementById("shops");
-    shops.forEach(shop => {
-      const div = document.createElement("div");
-      div.className = "shop";
+    const container = document.getElementById('stores');
+    stores.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'store';
       div.innerHTML = `
-        <img src="${shop.logo}" alt="${shop.name} logo">
-        <h3>${shop.name}</h3>
-        <a href="${shop.link}" target="_blank" class="btn">Zobraziť leták</a>
+        <img src="${s.img}" alt="${s.name} logo">
+        <h2>${s.name}</h2>
+        <a href="${s.url}" target="_blank">Zobraziť leták</a>
       `;
       container.appendChild(div);
     });
