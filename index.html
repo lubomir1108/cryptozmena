@@ -1,133 +1,129 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profit Hub</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔥 SuperZľavy.sk – Aktuálne letáky a výhodné ponuky</title>
   <style>
-    :root {
-      --bg: #0a0f2f;
-      --card: #101839;
-      --accent: #ff6f61;
-      --muted: #b0b8c1;
-      --round: 12px;
-    }
     body {
+      font-family: "Segoe UI", sans-serif;
+      background: #f4f5f7;
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(180deg, #0a0f2f, #141b46);
-      color: white;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .wrap {
-      max-width: 1000px;
-      margin: 0 auto;
+      padding: 0;
     }
     header {
+      background: linear-gradient(90deg, #ff4b2b, #ff416c);
+      color: white;
       text-align: center;
-      margin-bottom: 30px;
+      padding: 1.5rem;
     }
     header h1 {
-      font-size: 2em;
-      margin-bottom: 5px;
-      color: var(--accent);
+      margin: 0;
+      font-size: 2rem;
     }
-    header p {
-      color: var(--muted);
-    }
-    .grid {
+    main {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+      max-width: 1200px;
+      margin: auto;
     }
     .card {
-      background: var(--card);
-      border-radius: var(--round);
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
       transition: transform 0.2s;
     }
     .card:hover {
-      transform: translateY(-5px);
+      transform: scale(1.03);
     }
-    .card h2 {
-      margin: 0 0 10px;
-      color: var(--accent);
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
     }
-    .card p {
-      color: var(--muted);
-      font-size: 0.95em;
+    .card-content {
+      padding: 1rem;
+    }
+    .card-content h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    .card-content p {
+      color: #666;
+      font-size: 0.9rem;
     }
     .btn {
       display: inline-block;
-      margin-top: 10px;
-      padding: 10px 15px;
-      border-radius: var(--round);
-      background: var(--accent);
+      margin-top: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      background: #ff416c;
       color: white;
+      border: none;
+      border-radius: 6px;
       text-decoration: none;
-      font-weight: bold;
     }
     footer {
+      background: #222;
+      color: #ccc;
       text-align: center;
-      margin-top: 40px;
-      color: var(--muted);
-      font-size: 0.85em;
+      padding: 1rem;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Profit Hub</h1>
-      <p>Najnovšie tipy, produkty a kryptomeny</p>
-    </header>
+  <header>
+    <h1>🔥 SuperZľavy.sk</h1>
+    <p>Aktuálne akcie, letáky a výhodné produkty</p>
+  </header>
 
-    <div class="grid" id="cardsGrid">
-      <!-- Dynamické karty sa tu načítajú -->
-    </div>
+  <main id="offers">
+    <!-- Ponuky sa načítajú cez JavaScript -->
+  </main>
 
-    <footer>
-      © 2025 Profit Hub — demo stránka
-    </footer>
-  </div>
+  <footer>
+    © 2025 SuperZľavy.sk – Sleduj tie najlepšie ponuky!  
+  </footer>
 
-<script>
-  const items = [
-    {
-      title: "Bitcoin",
-      desc: "Cena BTC a trendy na trhu.",
-      link: "https://www.binance.com",
-    },
-    {
-      title: "Ethereum",
-      desc: "Cena ETH a najnovšie správy.",
-      link: "https://www.coinbase.com",
-    },
-    {
-      title: "Affiliate produkt",
-      desc: "Zarob si províziu cez tento produkt.",
-      link: "https://www.amazon.com",
-    },
-    {
-      title: "Kurz online",
-      desc: "Investuj do seba a zlepši svoje zručnosti.",
-      link: "https://www.udemy.com",
-    }
-  ];
+  <script>
+    const offers = [
+      {
+        img: "https://cdn.alza.cz/Foto/f3/AA/AA621.jpg",
+        title: "Zľava 25% na notebooky Lenovo",
+        text: "Najlepšie notebooky teraz v akcii. Spoľahlivé, výkonné a za skvelú cenu.",
+        link: "https://www.alza.sk"
+      },
+      {
+        img: "https://m.media-amazon.com/images/I/71Nqj7qz2TL._AC_SL1500_.jpg",
+        title: "TOP slúchadlá 2025",
+        text: "Bezdrôtové slúchadlá s výdržou 40 hodín – teraz so zľavou 30%.",
+        link: "https://www.amazon.com"
+      },
+      {
+        img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Cola_coca_cola_can.png",
+        title: "Coca-Cola 1,5l len za 0,89€",
+        text: "Akcia v supermarketoch platí do nedele – neváhaj!",
+        link: "https://www.tesco.sk"
+      }
+    ];
 
-  const grid = document.getElementById("cardsGrid");
-  items.forEach(item => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
-      <h2>${item.title}</h2>
-      <p>${item.desc}</p>
-      <a class="btn" href="${item.link}" target="_blank">Zobraziť</a>
-    `;
-    grid.appendChild(card);
-  });
-</script>
+    const container = document.getElementById("offers");
+    offers.forEach(o => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${o.img}" alt="${o.title}">
+        <div class="card-content">
+          <h3>${o.title}</h3>
+          <p>${o.text}</p>
+          <a href="${o.link}" target="_blank" class="btn">Pozrieť ponuku</a>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  </script>
 </body>
 </html>
