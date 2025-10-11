@@ -3,24 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🔥 SuperZľavy.sk – Aktuálne letáky a výhodné ponuky</title>
+  <title>Letáky Online – Kaufland, Lidl, Tesco, OBI a ďalšie</title>
+  <meta name="description" content="Aktuálne letáky všetkých obchodov na jednom mieste – Kaufland, Lidl, Tesco, Billa, OBI, Pepco a ďalšie.">
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
-      background: #f4f5f7;
+      background: #f5f7fa;
       margin: 0;
-      padding: 0;
+      color: #222;
     }
     header {
-      background: linear-gradient(90deg, #ff4b2b, #ff416c);
+      background: linear-gradient(90deg, #ff416c, #ff4b2b);
       color: white;
       text-align: center;
-      padding: 1.5rem;
+      padding: 1.8rem;
     }
-    header h1 {
-      margin: 0;
-      font-size: 2rem;
-    }
+    h1 { margin: 0; font-size: 2rem; }
     main {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -29,100 +27,100 @@
       max-width: 1200px;
       margin: auto;
     }
-    .card {
+    .shop {
       background: white;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       overflow: hidden;
       transition: transform 0.2s;
+      text-align: center;
     }
-    .card:hover {
-      transform: scale(1.03);
-    }
-    .card img {
+    .shop:hover { transform: scale(1.03); }
+    .shop img {
       width: 100%;
-      height: 160px;
-      object-fit: cover;
+      height: 150px;
+      object-fit: contain;
+      background: #fff;
     }
-    .card-content {
-      padding: 1rem;
-    }
-    .card-content h3 {
-      margin-top: 0;
-      color: #333;
-    }
-    .card-content p {
-      color: #666;
-      font-size: 0.9rem;
-    }
+    .shop h3 { margin: 0.5rem 0; }
     .btn {
       display: inline-block;
-      margin-top: 0.5rem;
+      margin-bottom: 1rem;
       padding: 0.6rem 1.2rem;
       background: #ff416c;
       color: white;
-      border: none;
       border-radius: 6px;
       text-decoration: none;
+      font-weight: 500;
+    }
+    .ad-block {
+      background: #fff;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin: 1rem auto;
+      max-width: 700px;
     }
     footer {
-      background: #222;
-      color: #ccc;
       text-align: center;
       padding: 1rem;
+      background: #222;
+      color: #ccc;
       font-size: 0.9rem;
     }
   </style>
+  <!-- Google AdSense (vymeníš neskôr svoj kód) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0000000000000000"
+     crossorigin="anonymous"></script>
 </head>
+
 <body>
   <header>
-    <h1>🔥 SuperZľavy.sk</h1>
-    <p>Aktuálne akcie, letáky a výhodné produkty</p>
+    <h1>🛍️ Aktuálne letáky zo všetkých obchodov</h1>
+    <p>Kaufland • Lidl • Tesco • Billa • OBI • Pepco • Planeo • Teta a ďalšie</p>
   </header>
 
-  <main id="offers">
-    <!-- Ponuky sa načítajú cez JavaScript -->
-  </main>
+  <!-- Reklamný blok hore -->
+  <div class="ad-block">
+    <p>🔸 Reklama – tu sa zobrazí Google AdSense alebo banner partnera 🔸</p>
+  </div>
+
+  <main id="shops"></main>
+
+  <!-- Reklamný blok dole -->
+  <div class="ad-block">
+    <p>💰 Ušetri pri každom nákupe – využívaj cashback a zľavy!</p>
+  </div>
 
   <footer>
-    © 2025 SuperZľavy.sk – Sleduj tie najlepšie ponuky!  
+    © 2025 Letákový prehľad | Reklamy a odkazy môžu obsahovať affiliate linky
   </footer>
 
   <script>
-    const offers = [
-      {
-        img: "https://cdn.alza.cz/Foto/f3/AA/AA621.jpg",
-        title: "Zľava 25% na notebooky Lenovo",
-        text: "Najlepšie notebooky teraz v akcii. Spoľahlivé, výkonné a za skvelú cenu.",
-        link: "https://www.alza.sk"
-      },
-      {
-        img: "https://m.media-amazon.com/images/I/71Nqj7qz2TL._AC_SL1500_.jpg",
-        title: "TOP slúchadlá 2025",
-        text: "Bezdrôtové slúchadlá s výdržou 40 hodín – teraz so zľavou 30%.",
-        link: "https://www.amazon.com"
-      },
-      {
-        img: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Cola_coca_cola_can.png",
-        title: "Coca-Cola 1,5l len za 0,89€",
-        text: "Akcia v supermarketoch platí do nedele – neváhaj!",
-        link: "https://www.tesco.sk"
-      }
+    const shops = [
+      { name: "Kaufland", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Kaufland_Logo.svg/512px-Kaufland_Logo.svg.png", link: "https://www.kaufland.sk/letak.html" },
+      { name: "Lidl", logo: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Lidl-Logo.svg", link: "https://www.lidl.sk/letak" },
+      { name: "Tesco", logo: "https://upload.wikimedia.org/wikipedia/commons/1/12/Tesco_Logo.svg", link: "https://tesco.sk/akcie-a-zlavy/letaky/" },
+      { name: "Billa", logo: "https://upload.wikimedia.org/wikipedia/commons/1/1b/Billa_logo.svg", link: "https://www.billa.sk/letaky" },
+      { name: "OBI", logo: "https://upload.wikimedia.org/wikipedia/commons/6/64/OBI_logo.svg", link: "https://www.obi.sk/letak" },
+      { name: "Pepco", logo: "https://upload.wikimedia.org/wikipedia/commons/6/6f/PEPCO_logo.svg", link: "https://pepco.sk/letak/" },
+      { name: "Planeo Elektro", logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Planeo_logo.svg", link: "https://www.planeo.sk/planeo-elektro/aktualny-letak.html" },
+      { name: "Teta Drogérie", logo: "https://upload.wikimedia.org/wikipedia/commons/0/00/Teta_logo.svg", link: "https://www.tetadrogerie.sk/aktualny-letak" }
     ];
 
-    const container = document.getElementById("offers");
-    offers.forEach(o => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <img src="${o.img}" alt="${o.title}">
-        <div class="card-content">
-          <h3>${o.title}</h3>
-          <p>${o.text}</p>
-          <a href="${o.link}" target="_blank" class="btn">Pozrieť ponuku</a>
-        </div>
+    const container = document.getElementById("shops");
+    shops.forEach(shop => {
+      const div = document.createElement("div");
+      div.className = "shop";
+      div.innerHTML = `
+        <img src="${shop.logo}" alt="${shop.name} logo">
+        <h3>${shop.name}</h3>
+        <a href="${shop.link}" target="_blank" class="btn">Zobraziť leták</a>
       `;
-      container.appendChild(card);
+      container.appendChild(div);
     });
   </script>
 </body>
