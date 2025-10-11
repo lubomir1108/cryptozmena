@@ -1,271 +1,217 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AI Crypto Radar — CryptoZmena</title>
-  <style>
-    :root{--bg:#071427;--card:#071827;--accent:#7c3aed;--muted:#9aa4b2;--glass:rgba(255,255,255,0.03);--round:12px}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#041021,#071427);color:#e6eef8;min-height:100vh;padding:28px}
-    .wrap{max-width:1100px;margin:0 auto}
-    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
-    h1{margin:0;font-size:20px}
-    .muted{color:var(--muted);font-size:13px}
-    .lang{display:flex;gap:8px}
-    .lang button{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
-    .lang button.active{border-color:var(--accent);color:white;box-shadow:0 6px 20px rgba(124,58,237,0.12)}
-    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px}
-    .row{display:flex;gap:12px;align-items:center}
-    .asset{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:10px}
-    .asset .meta{min-width:160px}
-    .price{font-weight:700}
-    .change.pos{color:#7ef0c7}
-    .change.neg{color:#ff8a8a}
-    canvas{width:140px;height:40px}
-    .cta{display:flex;gap:8px;margin-top:10px}
-    .btn{padding:8px 12px;border-radius:8px;border:0;background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;cursor:pointer}
-    .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-    footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
-    @media(max-width:920px){.grid{grid-template-columns:1fr}}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DealRadar — Smart offers & live prices</title>
+<meta name="description" content="DealRadar – rýchle ceny, akcie a výhodné affiliate ponuky.">
+<style>
+  :root{--bg:#071427;--card:#0b1722;--accent:#7c3aed;--muted:#9aa4b2;--glass:rgba(255,255,255,0.03)}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#041021,#071427);color:#e6eef8}
+  .container{max-width:1100px;margin:0 auto;padding:28px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:48px;height:48;border-radius:10px;background:linear-gradient(135deg,var(--accent),#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+  h1{margin:0;font-size:20px}
+  p.lead{color:var(--muted);margin:6px 0 18px}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-top:18px}
+  .card{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,0.35)}
+  .offers .offer{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);margin-bottom:10px}
+  .btn{display:inline-block;padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;text-decoration:none;font-weight:600}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);padding:8px 12px;border-radius:8px;text-decoration:none}
+  .small{font-size:13px;color:var(--muted)}
+  .prices .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02)}
+  .price {font-weight:700}
+  .change.pos{color:#7ef0c7}
+  .change.neg{color:#ff8a8a}
+  .blog .post{margin-bottom:12px}
+  form input, form button{width:100%;padding:10px;border-radius:8px;border:0;margin-top:8px}
+  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center;padding-bottom:30px}
+  @media(max-width:920px){ .grid{grid-template-columns:1fr} }
+</style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
     <header>
       <div class="brand">
-        <div class="logo">CZ</div>
+        <div class="logo">DR</div>
         <div>
-          <h1 id="ui-title">AI Crypto Radar</h1>
-          <div class="muted" id="ui-sub">Live ceny • AI komentár • Affiliate</div>
+          <h1>DealRadar</h1>
+          <div class="small">Smart offers • Live prices • Affiliate</div>
         </div>
       </div>
-
-      <div style="display:flex;gap:10px;align-items:center">
-        <div class="lang">
-          <button id="btn-sk">SK</button>
-          <button id="btn-en">EN</button>
-        </div>
-        <a class="btn ghost" id="repoLink" href="https://github.com/lubomir1108/cryptozmena" target="_blank">Repo</a>
-        <a class="btn" id="support" href="https://www.buymeacoffee.com/yourname" target="_blank">Support</a>
+      <div>
+        <a class="ghost" href="https://your-site.example" target="_blank">Blog</a>
+        <a class="btn" href="#offers">Zarábaj</a>
       </div>
     </header>
 
-    <div class="grid">
-      <main>
-        <div class="card" id="mainCard">
-          <h2 id="heading">Top cryptos</h2>
-          <div class="muted" id="subHeading">Aktualizované: <span id="updated">–</span></div>
-
-          <div id="assets" style="margin-top:12px">
-            <!-- asset rows appended here -->
-          </div>
-
-          <div style="margin-top:12px" class="muted" id="aiInfo">AI komentár: <span id="aiText">–</span></div>
-
-          <div style="margin-top:12px" class="cta">
-            <button class="btn" id="refreshBtn">Refresh</button>
-            <button class="btn ghost" id="openDemo">Open demo</button>
-          </div>
-        </div>
-
-        <div style="margin-top:12px">
-          <div class="card">
-            <h3 id="why">Prečo AI Crypto Radar?</h3>
-            <p class="muted" id="whyText">Rýchly prehľad cien, automaticky generované stručné komentáre a CTA pre affiliate.</p>
-          </div>
-        </div>
-      </main>
-
-      <aside>
+    <main class="grid">
+      <!-- LEFT: main content -->
+      <section>
         <div class="card">
-          <h3 id="affTitle">Kúp / Získaj</h3>
-          <p class="muted" id="affSub">Podpora partnerov (affiliate)</p>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-            <a class="btn" id="aff1" href="https://www.binance.com" target="_blank">Buy on Binance</a>
-            <a class="btn ghost" id="aff2" href="https://www.coinbase.com" target="_blank">Buy on Coinbase</a>
-            <a class="btn ghost" id="aff3" href="https://www.okx.com" target="_blank">Buy on OKX</a>
+          <h2>Live ceny (ukážka)</h2>
+          <p class="small">Dáta z CoinGecko (bez API kľúča).</p>
+          <div id="prices" class="prices">
+            <div class="small">Načítavam...</div>
           </div>
-
           <div style="margin-top:12px">
-            <div class="muted">Donate</div>
-            <a class="btn" id="bmc" href="https://www.buymeacoffee.com/yourname" target="_blank">Buy me a coffee</a>
+            <a id="refreshBtn" class="ghost" href="#">Refresh</a>
+            <span class="small" id="updated" style="margin-left:12px">Aktualizované: –</span>
           </div>
         </div>
 
-        <div style="margin-top:12px" class="card">
-          <h4 id="langInfo">Jazyk</h4>
-          <div class="muted" id="langDesc">Prepni SK/EN</div>
+        <div class="card" style="margin-top:12px">
+          <h3 id="why">Prečo tento projekt?</h3>
+          <p class="small">Jednoduché landing pages s výhodnými ponukami + aktívny traffic = provízie. Tieto ponuky sú len príklad — vlož svoje affiliate linky.</p>
+        </div>
+
+        <div id="blog" class="card blog" style="margin-top:12px">
+          <h3>Aktuálne články</h3>
+          <div class="post">
+            <a class="small" href="#" target="_blank"><strong>3 spôsoby, ako začať zarábať s kryptomenami</strong></a>
+            <div class="small">Krátky prehľad stratégií pre začiatočníkov — affiliate odkazy na burzy a vzdelávacie produkty.</div>
+          </div>
+          <div class="post">
+            <a class="small" href="#" target="_blank"><strong>Top nástroje pre pasívny príjem</strong></a>
+            <div class="small">Staking, referral programy a cashback nástroje.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: sidebar -->
+      <aside>
+        <div id="offers" class="card offers">
+          <h3>Najlepšie ponuky</h3>
+
+          <!-- OFFER 1 -->
+          <div class="offer">
+            <div>
+              <div style="font-weight:700">Binance – sign up</div>
+              <div class="small">Zľava na poplatky + referral</div>
+            </div>
+            <!-- REPLACE URL BELOW with your affiliate link -->
+            <div>
+              <a class="btn" href="https://YOUR_BINANCE_AFFILIATE_LINK" target="_blank" data-aff="binance">Sign up</a>
+            </div>
+          </div>
+
+          <!-- OFFER 2 -->
+          <div class="offer">
+            <div>
+              <div style="font-weight:700">Coinbase – nový účet</div>
+              <div class="small">Jednoduchý nákup krypta</div>
+            </div>
+            <div>
+              <a class="btn" href="https://YOUR_COINBASE_AFFILIATE_LINK" target="_blank" data-aff="coinbase">Join</a>
+            </div>
+          </div>
+
+          <!-- OFFER 3 -->
+          <div class="offer">
+            <div>
+              <div style="font-weight:700">Buy me a coffee</div>
+              <div class="small">Podpor tvorbu obsahu</div>
+            </div>
+            <div>
+              <a class="btn" href="https://www.buymeacoffee.com/YOURNAME" target="_blank" data-aff="bmc">Donate</a>
+            </div>
+          </div>
+
+          <hr style="border:none;height:12px">
+          <div style="font-size:13px;color:var(--muted)">
+            <strong>Chceš viac?</strong>
+            <p class="small">Zadaj svoj e-mail a pošlem ti 5 tipov, ako rýchlo získať návštevnosť.</p>
+            <!-- Simple email capture: replace mailto or configure Formspree / Netlify -->
+            <form id="subscribeForm">
+              <input id="subEmail" type="email" placeholder="Tvoj e-mail" required />
+              <button id="subBtn" type="submit" class="btn">Chcem tipy</button>
+            </form>
+            <div id="subMsg" class="small" style="margin-top:8px;color:var(--muted)"></div>
+          </div>
         </div>
       </aside>
-    </div>
+    </main>
 
-    <footer>© 2025 CryptoZmena — demo • Data from CoinGecko</footer>
+    <footer>
+      <div class="small">© 2025 DealRadar — demo. Affiliate links: keď niekto kúpi cez tvoj link, môžeš získať províziu. Disclosure: niektoré odkazy sú affiliate.</div>
+    </footer>
   </div>
 
 <script>
-/* ---------- Config & strings ---------- */
-const T = {
-  sk: {
-    title: "AI Crypto Radar",
-    sub: "Live ceny • AI komentár • Affiliate",
-    heading: "Top kryptomeny",
-    aiLabel: "AI komentár",
-    refresh: "Obnoviť",
-    openDemo: "Otvoriť demo",
-    why: "Prečo AI Crypto Radar?",
-    whyText: "Rýchly prehľad cien, automaticky generované stručné komentáre a CTA pre affiliate.",
-    affTitle: "Kúp / Získaj",
-    affSub: "Podpora partnerov (affiliate)",
-    langInfo: "Jazyk",
-    langDesc: "Prepni SK/EN",
-    buyBinance: "Kúp na Binance",
-    buyCoinbase: "Kúp na Coinbase",
-    buyOKX: "Kúp na OKX",
-    support: "Podporiť",
-    errorFetch: "Chyba pri získavaní dát."
-  },
-  en: {
-    title: "AI Crypto Radar",
-    sub: "Live prices • AI commentary • Affiliate",
-    heading: "Top cryptocurrencies",
-    aiLabel: "AI commentary",
-    refresh: "Refresh",
-    openDemo: "Open demo",
-    why: "Why AI Crypto Radar?",
-    whyText: "Quick price overview, auto-generated short commentary and affiliate CTAs.",
-    affTitle: "Buy / Get",
-    affSub: "Support partners (affiliate)",
-    langInfo: "Language",
-    langDesc: "Switch SK/EN",
-    buyBinance: "Buy on Binance",
-    buyCoinbase: "Buy on Coinbase",
-    buyOKX: "Buy on OKX",
-    support: "Support",
-    errorFetch: "Error fetching data."
-  }
-};
-
-let LANG = localStorage.getItem('cz_lang') || 'sk';
-const assets = [
-  { id: 'bitcoin', sym: 'BTC' },
-  { id: 'ethereum', sym: 'ETH' },
-  { id: 'dogecoin', sym: 'DOGE' }
-];
-
-function $(sel){ return document.querySelector(sel); }
-function setText(sel, txt){ const el=$(sel); if(el) el.textContent = txt; }
-
-/* ---------- Language UI ---------- */
-function applyLang(){
-  const txt = T[LANG];
-  document.documentElement.lang = LANG;
-  setText('#ui-title', txt.title);
-  setText('#ui-sub', txt.sub);
-  setText('#heading', txt.heading);
-  setText('#aiInfo', txt.aiLabel + ': ');
-  setText('#why', txt.why);
-  setText('#whyText', txt.whyText);
-  setText('#affTitle', txt.affTitle);
-  setText('#affSub', txt.affSub);
-  setText('#langInfo', txt.langInfo);
-  setText('#langDesc', txt.langDesc);
-  $('#refreshBtn').textContent = txt.refresh;
-  $('#openDemo').textContent = txt.openDemo;
-  $('#aff1').textContent = txt.buyBinance;
-  $('#aff2').textContent = txt.buyCoinbase;
-  $('#aff3').textContent = txt.buyOKX;
-  $('#bmc').textContent = txt.support;
-  $('#btn-sk').classList.toggle('active', LANG==='sk');
-  $('#btn-en').classList.toggle('active', LANG==='en');
-}
-$('#btn-sk').addEventListener('click', ()=>{ LANG='sk'; localStorage.setItem('cz_lang','sk'); applyLang(); });
-$('#btn-en').addEventListener('click', ()=>{ LANG='en'; localStorage.setItem('cz_lang','en'); applyLang(); });
-
-/* ---------- Render helpers ---------- */
-function renderAsset(sym, price, change){
-  const div = document.createElement('div');
-  div.className = 'asset';
-  const changeClass = (change>=0)?'change pos':'change neg';
-  div.innerHTML = `
-    <div style="min-width:90px">
-      <div style="font-weight:700">${sym}</div>
-      <div class="muted" style="font-size:13px">${(price===null)?'–':'$'+Number(price).toLocaleString()}</div>
-    </div>
-    <div class="meta">
-      <div class="price">${(price===null)?'–':'$'+Number(price).toLocaleString()}</div>
-      <div class="${changeClass}" style="font-size:13px">${change>=0?'+':''}${(change===null)?'–':change.toFixed(2)+'%'}</div>
-    </div>
-  `;
-  return div;
-}
-
-/* ---------- AI comment (simple local heuristic) ---------- */
-function generateAIComment(prices){
-  // prices: [{sym, ch}, ...]
-  const changes = prices.map(p => ({sym:p.sym, ch: p.ch ?? 0}));
-  changes.sort((a,b)=>Math.abs(b.ch)-Math.abs(a.ch));
-  const top = changes[0] || {sym:'–', ch:0};
-  let textSK='', textEN='';
-  if(Math.abs(top.ch) < 0.5){
-    textSK = 'Trh je relatívne pokojný — žiadne veľké pohyby za posledných 24 h.';
-    textEN = 'The market is relatively calm — no major moves in the last 24h.';
-  } else {
-    if(top.ch > 0){
-      textSK = `${top.sym} rastie o ${top.ch.toFixed(2)}% za 24 h — možný pozitívny sentiment.`;
-      textEN = `${top.sym} is up ${top.ch.toFixed(2)}% in 24h — possible positive sentiment.`;
-    } else {
-      textSK = `${top.sym} klesá o ${Math.abs(top.ch).toFixed(2)}% za 24 h — trh môže byť volatilný.`;
-      textEN = `${top.sym} is down ${Math.abs(top.ch).toFixed(2)}% in 24h — market may be volatile.`;
-    }
-  }
-  return LANG==='sk' ? textSK : textEN;
-}
-
-/* ---------- Fetch data from CoinGecko (no API key) ---------- */
-async function fetchData(){
-  try {
-    $('#assets').innerHTML = '';
-    $('#aiText').textContent = '…';
-    const ids = assets.map(a=>a.id).join(',');
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
-    const resp = await fetch(url);
-    if(!resp.ok) throw new Error('Network response not ok');
-    const prices = await resp.json();
+/* ========= Live prices (CoinGecko, no key) ========= */
+const cgAssets = ['bitcoin','ethereum','dogecoin'];
+async function loadPrices(){
+  try{
+    const el = document.getElementById('prices');
+    el.innerHTML = '';
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${cgAssets.join(',')}&vs_currencies=usd&include_24hr_change=true`;
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('Network response not ok');
+    const data = await r.json();
     const now = new Date();
-    setText('#updated', now.toLocaleString());
+    document.getElementById('updated').textContent = 'Aktualizované: ' + now.toLocaleString();
 
-    const listForAI = [];
-
-    for(const a of assets){
-      const info = prices[a.id] || {};
-      const price = info.usd ?? null;
-      const change = info.usd_24h_change ?? null;
-      $('#assets').appendChild(renderAsset(a.sym, price, change));
-      listForAI.push({sym:a.sym, ch: change});
-    }
-
-    // generate local AI comment
-    setText('#aiText', generateAIComment(listForAI));
-
-  } catch(e){
-    console.error('fetchData error', e);
-    setText('#aiText', T[LANG].errorFetch);
-    setText('#updated', 'Chyba pri načítaní dát');
+    cgAssets.forEach(id=>{
+      const price = data[id]?.usd ?? null;
+      const change = data[id]?.usd_24h_change ?? null;
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="font-weight:700;text-transform:uppercase">${id}</div>
+          <div class="small" style="color:var(--muted)">${price===null?'-':'$'+Number(price).toLocaleString()}</div>
+        </div>
+        <div class="${change>=0?'change pos':'change neg'}">${change===null?'-':(change>=0?'+':'')+change.toFixed(2)+'%'}</div>
+      `;
+      el.appendChild(row);
+    });
+  }catch(e){
+    console.error('prices error', e);
+    document.getElementById('prices').innerHTML = '<div class="small">Chyba pri načítaní cien. Skús obnoviť stránku.</div>';
   }
 }
+document.getElementById('refreshBtn').addEventListener('click', (ev)=>{
+  ev.preventDefault();
+  loadPrices();
+});
+loadPrices();
+setInterval(loadPrices, 120000);
 
-/* ---------- Init & events ---------- */
-applyLang();
-$('#refreshBtn').addEventListener('click', ()=>{ fetchData(); });
-$('#openDemo').addEventListener('click', ()=>{ alert(LANG==='sk' ? 'Demo: táto stránka iba simuluje.' : 'Demo: this page only simulates.'); });
+/* ========= Affiliate click tracking (console) ========= */
+document.querySelectorAll('[data-aff]').forEach(a=>{
+  a.addEventListener('click', ()=> {
+    const tag = a.getAttribute('data-aff');
+    console.log('Affiliate click:', tag, a.href);
+    // tu môžeš poslať aj event do Google Analytics / Plausible atď.
+  });
+});
 
-// initial fetch + interval
-fetchData();
-setInterval(fetchData, 120000);
+/* ========= Subscribe form (mailto fallback) ========= */
+const subForm = document.getElementById('subscribeForm');
+subForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  const email = document.getElementById('subEmail').value.trim();
+  if(!email){ document.getElementById('subMsg').textContent = 'Zadaj e-mail.'; return; }
+  // Default behavior: open mail client. Replace this with Formspree/Netlify for real capture.
+  const subject = encodeURIComponent('Chcem tipy - DealRadar');
+  const body = encodeURIComponent('Ahoj,\nposielam svoj email: ' + email + '\nProsím pridajte ma do zoznamu.');
+  window.location.href = `mailto:YOUR@EMAIL.com?subject=${subject}&body=${body}`;
+  document.getElementById('subMsg').textContent = 'Otvára sa tvoj mailový klient...';
+});
+
+/* ========= Quick helper: replace placeholders ========= */
+/*
+  IMPORTANT:
+  - Replace YOUR_BINANCE_AFFILIATE_LINK, YOUR_COINBASE_AFFILIATE_LINK, and
+    https://www.buymeacoffee.com/YOURNAME with your real affiliate / donation links.
+  - Replace mailto address in subscribeForm with your email or use Formspree / Netlify Forms.
+  - Disclose affiliate links on the page (done in footer).
+*/
+
+/* ========= Small tips printed to console ========= */
+console.log('DealRadar ready — remember to replace affiliate links and mailto in the code.');
 </script>
 </body>
 </html>
