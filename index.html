@@ -1,78 +1,133 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartDeals — Váš prehľad produktov</title>
-<style>
-  :root {
-    --bg:#071427;
-    --card:#0a1a2a;
-    --accent:#7c3aed;
-    --muted:#9aa4b2;
-    --radius:12px;
-  }
-  *{box-sizing:border-box;}
-  body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#041021,#071427);color:#e6eef8;padding:20px;}
-  .wrap{max-width:1000px;margin:0 auto;}
-  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
-  .logo{font-weight:700;font-size:28px;color:white;}
-  .grid{display:grid;grid-template-columns:1fr 300px;gap:20px;}
-  .card{background:var(--card);padding:15px;border-radius:var(--radius);}
-  .product{display:flex;justify-content:space-between;align-items:center;padding:10px;margin-bottom:10px;border-radius:10px;background:rgba(255,255,255,0.03);}
-  .price{font-weight:700;color:#fff;}
-  .btn{padding:8px 12px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;cursor:pointer;text-decoration:none;}
-  footer{text-align:center;color:var(--muted);margin-top:20px;font-size:14px;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profit Hub</title>
+  <style>
+    :root {
+      --bg: #0a0f2f;
+      --card: #101839;
+      --accent: #ff6f61;
+      --muted: #b0b8c1;
+      --round: 12px;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(180deg, #0a0f2f, #141b46);
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    header h1 {
+      font-size: 2em;
+      margin-bottom: 5px;
+      color: var(--accent);
+    }
+    header p {
+      color: var(--muted);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: var(--round);
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card h2 {
+      margin: 0 0 10px;
+      color: var(--accent);
+    }
+    .card p {
+      color: var(--muted);
+      font-size: 0.95em;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 15px;
+      border-radius: var(--round);
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.85em;
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="logo">SmartDeals</div>
-    <div>Najlepšie produkty online</div>
-  </header>
+  <div class="wrap">
+    <header>
+      <h1>Profit Hub</h1>
+      <p>Najnovšie tipy, produkty a kryptomeny</p>
+    </header>
 
-  <div class="grid">
-    <main>
-      <div class="card">
-        <h2>Top produkty</h2>
-        <div id="products">
-          <!-- produkty sa doplnia sem -->
-        </div>
-      </div>
-    </main>
+    <div class="grid" id="cardsGrid">
+      <!-- Dynamické karty sa tu načítajú -->
+    </div>
 
-    <aside>
-      <div class="card">
-        <h3>Podpor affiliate</h3>
-        <p class="muted">Kliknite na odkazy a podpor našu stránku</p>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px">
-          <a class="btn" href="https://www.amazon.com" target="_blank">Amazon Deals</a>
-          <a class="btn" href="https://www.udemy.com" target="_blank">Kurzy</a>
-          <a class="btn" href="https://www.binance.com" target="_blank">Crypto</a>
-        </div>
-      </div>
-    </aside>
+    <footer>
+      © 2025 Profit Hub — demo stránka
+    </footer>
   </div>
 
-  <footer>© 2025 SmartDeals — demo • Affiliate odkazy</footer>
-</div>
-
 <script>
-const productList = [
-  {name:"Smartwatch X1", price:"$199", link:"https://www.amazon.com"},
-  {name:"Bezdrôtové slúchadlá Y", price:"$59", link:"https://www.amazon.com"},
-  {name:"Online kurz JS", price:"$29", link:"https://www.udemy.com"},
-  {name:"Krypto návod", price:"$9", link:"https://www.binance.com"}
-];
+  const items = [
+    {
+      title: "Bitcoin",
+      desc: "Cena BTC a trendy na trhu.",
+      link: "https://www.binance.com",
+    },
+    {
+      title: "Ethereum",
+      desc: "Cena ETH a najnovšie správy.",
+      link: "https://www.coinbase.com",
+    },
+    {
+      title: "Affiliate produkt",
+      desc: "Zarob si províziu cez tento produkt.",
+      link: "https://www.amazon.com",
+    },
+    {
+      title: "Kurz online",
+      desc: "Investuj do seba a zlepši svoje zručnosti.",
+      link: "https://www.udemy.com",
+    }
+  ];
 
-const container = document.getElementById('products');
-productList.forEach(p=>{
-  const div = document.createElement('div');
-  div.className = 'product';
-  div.innerHTML = `<div>${p.name}</div><div class="price">${p.price}</div><a class="btn" href="${p.link}" target="_blank">Kúpiť</a>`;
-  container.appendChild(div);
-});
+  const grid = document.getElementById("cardsGrid");
+  items.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h2>${item.title}</h2>
+      <p>${item.desc}</p>
+      <a class="btn" href="${item.link}" target="_blank">Zobraziť</a>
+    `;
+    grid.appendChild(card);
+  });
 </script>
 </body>
 </html>
