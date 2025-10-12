@@ -1,73 +1,331 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PixelBoard – Tvoja reklama na webe</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    header {
-      background: linear-gradient(90deg, #ff0077, #ffcc00);
-      padding: 1rem;
-      font-size: 1.8rem;
-      font-weight: bold;
-    }
-    p {
-      color: #ddd;
-      margin: 0.5rem 0 1.5rem 0;
-    }
-    #pixelboard {
-      display: grid;
-      grid-template-columns: repeat(50, 10px);
-      grid-template-rows: repeat(50, 10px);
-      justify-content: center;
-      margin: 1rem auto 2rem auto;
-      width: 500px;
-      border: 2px solid #444;
-      background: #000;
-    }
-    .pixel {
-      width: 10px;
-      height: 10px;
-      background: #222;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .pixel:hover {
-      background: #ff0077;
-    }
-    footer {
-      background: #000;
-      color: #888;
-      padding: 1rem;
-      font-size: 0.9rem;
-    }
-  </style>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Reťaz slov — hra (last-letter chain)</title>
+<style>
+  :root{
+    --bg:#071427; --card:#0f1b2a; --accent:#7c3aed; --muted:#9aa4b2; --good:#7ef0c7; --bad:#ff8a8a;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#041021,#071427);color:#e6eef8;min-height:100vh;padding:20px}
+  .wrap{max-width:960px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+  h1{margin:0;font-size:20px}
+  .muted{color:var(--muted);font-size:13px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);margin-bottom:12px}
+  .flex{display:flex;gap:10px;align-items:center}
+  label{font-size:13px;color:var(--muted)}
+  input[type="text"], input[type="number"], textarea{
+    width:100%;padding:8px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit
+  }
+  button{background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .board{display:grid;grid-template-columns:1fr 320px;gap:18px}
+  @media(max-width:920px){.board{grid-template-columns:1fr}}
+  .history{max-height:320px;overflow:auto;padding:8px;background:rgba(255,255,255,0.01);border-radius:8px}
+  .word-row{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.02)}
+  .turn{font-weight:700;color:var(--accent)}
+  .status{padding:8px;border-radius:8px;margin-top:10px}
+  .status.good{background:rgba(126,240,199,0.06);color:var(--good)}
+  .status.bad{background:rgba(255,138,138,0.06);color:var(--bad)}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  small{color:var(--muted)}
+</style>
 </head>
 <body>
-  <header>🟪 PixelBoard – Kúp si svoj pixel!</header>
-  <p>Každý pixel = jedno miesto pre tvoju reklamu. Klikni a rezervuj!</p>
-  <div id="pixelboard"></div>
-  <footer>© 2025 PixelBoard.sk | Inšpirované MillionDollarHomepage</footer>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Reťaz slov</h1>
+        <div class="muted">Povedz slovo → ďalší začína na posledné písmeno (je počítané 'ch').</div>
+      </div>
+      <div class="muted">Lokálne / pass-and-play • No backend</div>
+    </header>
 
-  <script>
-    const board = document.getElementById('pixelboard');
-    for (let i = 0; i < 2500; i++) {
-      const pixel = document.createElement('div');
-      pixel.classList.add('pixel');
-      pixel.addEventListener('click', () => {
-        const color = prompt("Vyber si farbu (napr. #ff0000 alebo red):");
-        if (color) pixel.style.background = color;
-      });
-      board.appendChild(pixel);
+    <div class="card">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <div style="min-width:200px">
+          <label>Hráči (oddelení čiarkou):</label>
+          <input id="playersInput" type="text" placeholder="Maroš, Eva, Jano" />
+        </div>
+        <div style="width:120px">
+          <label>Začiatočný hráč (1 = prvý):</label>
+          <input id="startIndex" type="number" min="1" value="1" />
+        </div>
+        <div style="align-self:end">
+          <button id="startBtn">Štart hry</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label>Voliteľný slovník (každé slovo v novom riadku) — ak vložíš, kliknutím na "Overiť" skontrolujeme existenciu slov.</label>
+        <textarea id="dictArea" rows="3" placeholder="mesto&#10;auto&#10;strom"></textarea>
+        <div style="margin-top:8px" class="controls">
+          <button id="loadDict" class="ghost">Načítať slovník</button>
+          <button id="clearDict" class="ghost">Vymazať slovník</button>
+          <small>Ak slovník nie je, hra akceptuje akékoľvek slová (len pravidlo písmen + opakovanie).</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="board">
+      <div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div>Aktuálny hráč: <span id="currentPlayer" class="turn">—</span></div>
+              <div class="muted" style="font-size:13px">Posledné písmeno: <span id="lastLetter">—</span></div>
+            </div>
+            <div>
+              <button id="resetBtn" class="ghost">Resetovať hru</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <label>Napíš slovo:</label>
+            <input id="wordInput" type="text" placeholder="napr. strom" />
+            <div class="controls">
+              <button id="submitBtn">Potvrdiť</button>
+              <button id="passBtn" class="ghost">Preskočiť</button>
+              <button id="challengeBtn" class="ghost" title="Overí len ak máš slovník">Vyvolať challenge</button>
+            </div>
+
+            <div id="status" class="status" style="display:none;margin-top:10px"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>Pravidlá</h3>
+          <ul class="muted" style="padding-left:18px">
+            <li>Nové slovo musí začínať na posledné písmeno (alebo digraf <strong>ch</strong>) predchádzajúceho slova.</li>
+            <li>Slová sa nesmú opakovať.</li>
+            <li>Ak si nahráte slovník, môžete volať "Vyvolať challenge" na overenie.</li>
+          </ul>
+        </div>
+      </div>
+
+      <aside>
+        <div class="card">
+          <h3>História slov</h3>
+          <div id="history" class="history"><div class="muted">Zatiaľ žiadne slová</div></div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>Hráči & skóre</h3>
+          <div id="playersList" class="muted">Žiadni hráči</div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+<script>
+/* ---------- Utility: normalize/strip diacritics ---------- */
+const diacriticsMap = {
+  'á':'a','ä':'a','č':'c','ď':'d','é':'e','í':'i','ľ':'l','ĺ':'l','ň':'n','ó':'o','ô':'o','ŕ':'r','š':'s','ť':'t','ú':'u','ý':'y','ž':'z',
+  'Á':'A','Ä':'A','Č':'C','Ď':'D','É':'E','Í':'I','Ľ':'L','Ĺ':'L','Ň':'N','Ó':'O','Ô':'O','Ŕ':'R','Š':'S','Ť':'T','Ú':'U','Ý':'Y','Ž':'Z'
+};
+function stripDiacritics(str){
+  return str.split('').map(ch => diacriticsMap[ch] ?? ch).join('');
+}
+function normalizeWord(w){
+  return stripDiacritics(w.trim().toLowerCase());
+}
+
+/* ---------- Game state ---------- */
+let players = []; // array of {name, score}
+let currentIdx = 0;
+let used = new Set();
+let lastKey = null; // 'a' or 'ch' etc.
+let dictSet = null; // optional Set of allowed words
+let history = []; // [{player, word}]
+const el = id => document.getElementById(id);
+
+/* ---------- DOM refs ---------- */
+const playersInput = el('playersInput');
+const startBtn = el('startBtn');
+const startIndex = el('startIndex');
+const dictArea = el('dictArea');
+const loadDict = el('loadDict');
+const clearDict = el('clearDict');
+
+const currentPlayerEl = el('currentPlayer');
+const lastLetterEl = el('lastLetter');
+const wordInput = el('wordInput');
+const submitBtn = el('submitBtn');
+const passBtn = el('passBtn');
+const resetBtn = el('resetBtn');
+const historyEl = el('history');
+const playersListEl = el('playersList');
+const statusEl = el('status');
+const challengeBtn = el('challengeBtn');
+
+/* ---------- Helpers ---------- */
+function showStatus(text, ok=true){
+  statusEl.style.display='block';
+  statusEl.textContent = text;
+  statusEl.className = 'status ' + (ok ? 'good' : 'bad');
+  setTimeout(()=>{ statusEl.style.display='none'; }, 4000);
+}
+function updatePlayersUI(){
+  if(players.length===0){ playersListEl.textContent='Žiadni hráči'; return; }
+  playersListEl.innerHTML = '';
+  players.forEach((p,i)=>{
+    const d = document.createElement('div');
+    d.innerHTML = `<strong>${i+1}. ${p.name}</strong> — skóre: ${p.score}`;
+    playersListEl.appendChild(d);
+  });
+}
+function updateHistoryUI(){
+  historyEl.innerHTML = '';
+  if(history.length===0){
+    historyEl.innerHTML = '<div class="muted">Zatiaľ žiadne slová</div>'; return;
+  }
+  history.slice().reverse().forEach(h=>{
+    const row = document.createElement('div');
+    row.className='word-row';
+    row.innerHTML = `<div>${h.word}</div><div class="muted">${h.player}</div>`;
+    historyEl.appendChild(row);
+  });
+}
+function setCurrent(){
+  currentPlayerEl.textContent = players.length ? players[currentIdx].name : '—';
+  lastLetterEl.textContent = lastKey ? lastKey.toUpperCase() : '—';
+}
+
+/* ---------- Rules: determine last letter (supports 'ch') ---------- */
+function extractLastKey(word){
+  // normalize original word but preserve 'ch' detection on lower-case raw
+  const w = normalizeWord(word);
+  if(w.length===0) return null;
+  // if ends with 'ch', return 'ch'
+  if(w.endsWith('ch')) return 'ch';
+  // else take last character letter a-z
+  const last = w[w.length-1];
+  return /[a-z]/.test(last) ? last : null;
+}
+
+/* ---------- Validation ---------- */
+function validateWord(candidate){
+  const raw = candidate.trim();
+  if(!raw) return {ok:false,msg:'Zadaj slovo.'};
+  const norm = normalizeWord(raw);
+  if(norm.length<1) return {ok:false,msg:'Slovo príliš krátke.'};
+  // not used
+  if(used.has(norm)) return {ok:false,msg:'Toto slovo už bolo použité.'};
+  // starts with required key?
+  if(lastKey){
+    // check starting prefix (ch or one char)
+    if(lastKey==='ch'){
+      if(!norm.startsWith('ch')) return {ok:false,msg:`Slovo musí začínať na "ch".`};
+    } else {
+      if(!norm.startsWith(lastKey)) return {ok:false,msg:`Slovo musí začínať na písmeno "${lastKey}".`};
     }
-  </script>
+  }
+  // optional dictionary check
+  if(dictSet){
+    if(!dictSet.has(norm)) return {ok:false,msg:'Slovo sa nenašlo v nahratom slovníku.'};
+  }
+  return {ok:true, norm};
+}
+
+/* ---------- Actions ---------- */
+function startGame(){
+  const raw = playersInput.value.split(',').map(s=>s.trim()).filter(Boolean);
+  if(raw.length<2){ alert('Zadaj aspoň 2 hráčov oddelených čiarkou.'); return; }
+  players = raw.map(n=>({name:n,score:0}));
+  currentIdx = Math.max(0, Math.min(players.length-1, Number(startIndex.value)-1 || 0));
+  used = new Set();
+  lastKey = null;
+  history = [];
+  dictSet = dictSet || null;
+  updatePlayersUI();
+  updateHistoryUI();
+  setCurrent();
+  showStatus('Hra spustená — poďte!', true);
+}
+function submitWord(){
+  const w = wordInput.value.trim();
+  const v = validateWord(w);
+  if(!v.ok){ showStatus(v.msg,false); return; }
+  // accept
+  used.add(v.norm);
+  history.push({player:players[currentIdx].name, word: w});
+  // scoring: give 1 point
+  players[currentIdx].score += 1;
+  // update lastKey
+  lastKey = extractLastKey(w);
+  // next player
+  currentIdx = (currentIdx + 1) % players.length;
+  updatePlayersUI(); updateHistoryUI(); setCurrent();
+  wordInput.value='';
+  showStatus('Slovo prijaté ✔', true);
+}
+function passTurn(){
+  showStatus(players[currentIdx].name + ' preskočil(a).', true);
+  currentIdx = (currentIdx + 1) % players.length;
+  setCurrent();
+}
+function resetGame(){
+  if(!confirm('Naozaj resetovať hru?')) return;
+  players = []; used = new Set(); lastKey = null; history = [];
+  playersInput.value = '';
+  dictArea.value = '';
+  dictSet = null;
+  updatePlayersUI(); updateHistoryUI(); setCurrent();
+  showStatus('Hra resetovaná.', true);
+}
+
+/* ---------- Dict import ---------- */
+function loadDictionary(){
+  const text = dictArea.value.trim();
+  if(!text){ alert('Prázdny slovník.'); return; }
+  const lines = text.split(/\r?\n/).map(l=>normalizeWord(l)).filter(Boolean);
+  dictSet = new Set(lines);
+  showStatus('Slovník načítaný ('+dictSet.size+' slov).', true);
+}
+function clearDictionary(){
+  dictSet = null;
+  dictArea.value = '';
+  showStatus('Slovník vymazaný.', true);
+}
+
+/* ---------- Challenge => overenie posledného slova v slovníku (ak existuje) ---------- */
+function challengeLast(){
+  if(!dictSet){ showStatus('Bez slovníka nie je challenge možná.', false); return; }
+  if(history.length===0){ showStatus('Žiadne slovo na overenie.', false); return; }
+  const last = history[history.length-1].word;
+  const norm = normalizeWord(last);
+  if(dictSet.has(norm)){
+    showStatus('Slovo "'+last+'" je v slovníku — challenge neúspešný.', true);
+  } else {
+    showStatus('Slovo "'+last+'" NIE JE v slovníku — challenge úspešný!', true);
+    // penalize previous player by removing point
+    const prevIdx = (currentIdx - 1 + players.length) % players.length;
+    players[prevIdx].score = Math.max(0, players[prevIdx].score - 1);
+    // optionally remove word from history/used
+    used.delete(norm);
+    history.pop();
+    updatePlayersUI(); updateHistoryUI(); setCurrent();
+  }
+}
+
+/* ---------- Event listeners ---------- */
+startBtn.addEventListener('click', startGame);
+submitBtn.addEventListener('click', submitWord);
+wordInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitWord(); });
+passBtn.addEventListener('click', passTurn);
+resetBtn.addEventListener('click', resetGame);
+loadDict.addEventListener('click', loadDictionary);
+clearDict.addEventListener('click', clearDictionary);
+challengeBtn.addEventListener('click', challengeLast);
+
+/* ---------- Init ---------- */
+setCurrent();
+updatePlayersUI();
+updateHistoryUI();
+</script>
 </body>
 </html>
