@@ -1,331 +1,438 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Reťaz slov — hra (last-letter chain)</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Odkaz pre ľudstvo</title>
+<meta name="description" content="Odkaz pre ľudstvo — nechaj svoju vetu pre budúce generácie.">
+
 <style>
   :root{
-    --bg:#071427; --card:#0f1b2a; --accent:#7c3aed; --muted:#9aa4b2; --good:#7ef0c7; --bad:#ff8a8a;
-    --radius:12px;
+    --bg:#0b1220; --card:#0f1b2a; --muted:#9aa4b2; --accent:#7c3aed; --good:#7ef0c7; --danger:#ff8a8a;
+    --radius:12px; --text:#e6eef8;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#041021,#071427);color:#e6eef8;min-height:100vh;padding:20px}
-  .wrap{max-width:960px;margin:0 auto}
+  html,body{height:100%}
+  body{margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#071427,#041021);color:var(--text);padding:18px}
+  .wrap{max-width:1100px;margin:0 auto}
   header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
-  h1{margin:0;font-size:20px}
+  h1{margin:0;font-size:22px;color:var(--accent)}
   .muted{color:var(--muted);font-size:13px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius);margin-bottom:12px}
-  .flex{display:flex;gap:10px;align-items:center}
+  .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+  @media(max-width:960px){.grid{grid-template-columns:1fr}}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--radius)}
   label{font-size:13px;color:var(--muted)}
-  input[type="text"], input[type="number"], textarea{
-    width:100%;padding:8px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:inherit
+  input[type="text"], textarea, select {
+    width:100%;padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.02);color:var(--text);margin-top:8px;
   }
-  button{background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+  textarea{min-height:80px;resize:vertical}
+  button{background:linear-gradient(90deg,var(--accent),#06b6d4);color:white;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
   .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-  .board{display:grid;grid-template-columns:1fr 320px;gap:18px}
-  @media(max-width:920px){.board{grid-template-columns:1fr}}
-  .history{max-height:320px;overflow:auto;padding:8px;background:rgba(255,255,255,0.01);border-radius:8px}
-  .word-row{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid rgba(255,255,255,0.02)}
-  .turn{font-weight:700;color:var(--accent)}
-  .status{padding:8px;border-radius:8px;margin-top:10px}
-  .status.good{background:rgba(126,240,199,0.06);color:var(--good)}
-  .status.bad{background:rgba(255,138,138,0.06);color:var(--bad)}
-  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-  small{color:var(--muted)}
+  .controls{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .list{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+  .item{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+  .meta{color:var(--muted);font-size:13px}
+  .tag-paid{background:linear-gradient(90deg,#ffd166,#ff9f1c);color:#111;padding:6px 8px;border-radius:8px;font-weight:700;margin-left:8px}
+  .small{font-size:13px;color:var(--muted)}
+  .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .search{flex:1}
+  .stats{display:flex;gap:8px;align-items:center}
+  .icon{opacity:0.9}
+  .like{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:6px 8px;border-radius:8px;color:var(--muted);cursor:pointer}
+  .highlight{box-shadow:0 8px 30px rgba(124,58,237,0.08);}
+  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div>
-        <h1>Reťaz slov</h1>
-        <div class="muted">Povedz slovo → ďalší začína na posledné písmeno (je počítané 'ch').</div>
+        <h1>Odkaz pre ľudstvo</h1>
+        <div class="muted">Zanechaj svoju vetu pre budúce generácie — bezpečne, jednoducho, navždy.</div>
       </div>
-      <div class="muted">Lokálne / pass-and-play • No backend</div>
+      <div class="toolbar">
+        <button id="toggleTheme" class="ghost">Tmavý režim</button>
+        <button id="exportBtn" class="ghost">Export JSON</button>
+        <label style="display:inline-flex;align-items:center;gap:8px;">
+          <input id="importFile" type="file" accept="application/json" style="display:none"/>
+          <button id="importBtn" class="ghost">Import JSON</button>
+        </label>
+      </div>
     </header>
 
-    <div class="card">
-      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-        <div style="min-width:200px">
-          <label>Hráči (oddelení čiarkou):</label>
-          <input id="playersInput" type="text" placeholder="Maroš, Eva, Jano" />
-        </div>
-        <div style="width:120px">
-          <label>Začiatočný hráč (1 = prvý):</label>
-          <input id="startIndex" type="number" min="1" value="1" />
-        </div>
-        <div style="align-self:end">
-          <button id="startBtn">Štart hry</button>
-        </div>
-      </div>
-
-      <div style="margin-top:12px">
-        <label>Voliteľný slovník (každé slovo v novom riadku) — ak vložíš, kliknutím na "Overiť" skontrolujeme existenciu slov.</label>
-        <textarea id="dictArea" rows="3" placeholder="mesto&#10;auto&#10;strom"></textarea>
-        <div style="margin-top:8px" class="controls">
-          <button id="loadDict" class="ghost">Načítať slovník</button>
-          <button id="clearDict" class="ghost">Vymazať slovník</button>
-          <small>Ak slovník nie je, hra akceptuje akékoľvek slová (len pravidlo písmen + opakovanie).</small>
-        </div>
-      </div>
-    </div>
-
-    <div class="board">
-      <div>
+    <div class="grid">
+      <!-- LEFT: feed & actions -->
+      <main>
         <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div>
-              <div>Aktuálny hráč: <span id="currentPlayer" class="turn">—</span></div>
-              <div class="muted" style="font-size:13px">Posledné písmeno: <span id="lastLetter">—</span></div>
-            </div>
-            <div>
-              <button id="resetBtn" class="ghost">Resetovať hru</button>
-            </div>
+          <h3>Pridať odkaz</h3>
+          <label>Meno (voliteľné)</label>
+          <input id="author" type="text" placeholder="Tvoje meno alebo anonymne"/>
+
+          <label style="margin-top:8px">Odkaz (max 300 znakov)</label>
+          <textarea id="message" maxlength="300" placeholder="Napíš vetu pre budúce generácie..."></textarea>
+
+          <div class="controls">
+            <button id="addBtn">Uložiť & (sim.) zaplatiť 1€</button>
+            <button id="previewBtn" class="ghost">Náhľad</button>
+            <div class="small" style="align-self:center">Po pridaní bude odkaz viditeľný v zozname.</div>
           </div>
 
           <div style="margin-top:12px">
-            <label>Napíš slovo:</label>
-            <input id="wordInput" type="text" placeholder="napr. strom" />
-            <div class="controls">
-              <button id="submitBtn">Potvrdiť</button>
-              <button id="passBtn" class="ghost">Preskočiť</button>
-              <button id="challengeBtn" class="ghost" title="Overí len ak máš slovník">Vyvolať challenge</button>
+            <label>Filter / Vyhľadávanie</label>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <input id="search" class="search" type="text" placeholder="Hľadať text alebo meno..."/>
+              <select id="sort">
+                <option value="new">Najnovšie</option>
+                <option value="old">Najstaršie</option>
+                <option value="likes">Najviac lajkované</option>
+                <option value="views">Najviac čítané</option>
+                <option value="paid">Platené najprv</option>
+                <option value="random">Náhodné</option>
+              </select>
             </div>
-
-            <div id="status" class="status" style="display:none;margin-top:10px"></div>
           </div>
         </div>
 
         <div class="card" style="margin-top:12px">
-          <h3>Pravidlá</h3>
-          <ul class="muted" style="padding-left:18px">
-            <li>Nové slovo musí začínať na posledné písmeno (alebo digraf <strong>ch</strong>) predchádzajúceho slova.</li>
-            <li>Slová sa nesmú opakovať.</li>
-            <li>Ak si nahráte slovník, môžete volať "Vyvolať challenge" na overenie.</li>
-          </ul>
-        </div>
-      </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3>Zoznam odkazov</h3>
+            <div class="small" id="count">0 odkazov</div>
+          </div>
 
+          <div id="list" class="list" style="margin-top:10px">
+            <div class="small">Zatiaľ žiadne odkazy — buď prvý!</div>
+          </div>
+        </div>
+      </main>
+
+      <!-- RIGHT: stats and top -->
       <aside>
         <div class="card">
-          <h3>História slov</h3>
-          <div id="history" class="history"><div class="muted">Zatiaľ žiadne slová</div></div>
+          <h3>Štatistiky</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <div class="small">Celkom odkazov: <strong id="statTotal">0</strong></div>
+            <div class="small">Platených: <strong id="statPaid">0</strong></div>
+            <div class="small">Celkové zobrazenia: <strong id="statViews">0</strong></div>
+            <div class="small">Celkové lajky: <strong id="statLikes">0</strong></div>
+          </div>
         </div>
 
         <div class="card" style="margin-top:12px">
-          <h3>Hráči & skóre</h3>
-          <div id="playersList" class="muted">Žiadni hráči</div>
+          <h3>Top odkazy</h3>
+          <div id="topList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"></div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>Info</h3>
+          <div class="small">
+            Toto je prototyp verzie 2.0. Platby sú momentálne simulované (tlačidlo "Uložiť & (sim.) zaplatiť 1€").<br/>
+            Ak chceš reálne platby a trvalé uloženie, viem ti pomôcť s implementáciou Stripe + Firebase/Supabase.
+          </div>
         </div>
       </aside>
     </div>
+
+    <footer>© 2025 Odkaz pre ľudstvo — verzia 2.0 (prototyp)</footer>
   </div>
 
 <script>
-/* ---------- Utility: normalize/strip diacritics ---------- */
-const diacriticsMap = {
-  'á':'a','ä':'a','č':'c','ď':'d','é':'e','í':'i','ľ':'l','ĺ':'l','ň':'n','ó':'o','ô':'o','ŕ':'r','š':'s','ť':'t','ú':'u','ý':'y','ž':'z',
-  'Á':'A','Ä':'A','Č':'C','Ď':'D','É':'E','Í':'I','Ľ':'L','Ĺ':'L','Ň':'N','Ó':'O','Ô':'O','Ŕ':'R','Š':'S','Ť':'T','Ú':'U','Ý':'Y','Ž':'Z'
-};
-function stripDiacritics(str){
-  return str.split('').map(ch => diacriticsMap[ch] ?? ch).join('');
-}
-function normalizeWord(w){
-  return stripDiacritics(w.trim().toLowerCase());
-}
-
-/* ---------- Game state ---------- */
-let players = []; // array of {name, score}
-let currentIdx = 0;
-let used = new Set();
-let lastKey = null; // 'a' or 'ch' etc.
-let dictSet = null; // optional Set of allowed words
-let history = []; // [{player, word}]
-const el = id => document.getElementById(id);
-
-/* ---------- DOM refs ---------- */
-const playersInput = el('playersInput');
-const startBtn = el('startBtn');
-const startIndex = el('startIndex');
-const dictArea = el('dictArea');
-const loadDict = el('loadDict');
-const clearDict = el('clearDict');
-
-const currentPlayerEl = el('currentPlayer');
-const lastLetterEl = el('lastLetter');
-const wordInput = el('wordInput');
-const submitBtn = el('submitBtn');
-const passBtn = el('passBtn');
-const resetBtn = el('resetBtn');
-const historyEl = el('history');
-const playersListEl = el('playersList');
-const statusEl = el('status');
-const challengeBtn = el('challengeBtn');
+/* =========================
+   Data model & persistence
+   =========================
+   Each entry schema:
+   {
+     id: string,
+     author: string|null,
+     text: string,
+     ts: number,        // timestamp created
+     likes: number,
+     views: number,
+     paid: boolean      // true if paid
+   }
+*/
+const STORAGE_KEY = 'odkaz_pre_ludstvo_v2';
+let entries = loadEntries();
 
 /* ---------- Helpers ---------- */
-function showStatus(text, ok=true){
-  statusEl.style.display='block';
-  statusEl.textContent = text;
-  statusEl.className = 'status ' + (ok ? 'good' : 'bad');
-  setTimeout(()=>{ statusEl.style.display='none'; }, 4000);
+function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,10); }
+function now(){ return Date.now(); }
+function saveEntries(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+function loadEntries(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){ console.error('load error', e); return []; }
 }
-function updatePlayersUI(){
-  if(players.length===0){ playersListEl.textContent='Žiadni hráči'; return; }
-  playersListEl.innerHTML = '';
-  players.forEach((p,i)=>{
-    const d = document.createElement('div');
-    d.innerHTML = `<strong>${i+1}. ${p.name}</strong> — skóre: ${p.score}`;
-    playersListEl.appendChild(d);
-  });
+function formatDate(ts){
+  const d = new Date(ts);
+  return d.toLocaleString();
 }
-function updateHistoryUI(){
-  historyEl.innerHTML = '';
-  if(history.length===0){
-    historyEl.innerHTML = '<div class="muted">Zatiaľ žiadne slová</div>'; return;
+
+/* ---------- UI refs ---------- */
+const authorEl = document.getElementById('author');
+const messageEl = document.getElementById('message');
+const addBtn = document.getElementById('addBtn');
+const previewBtn = document.getElementById('previewBtn');
+const searchEl = document.getElementById('search');
+const sortEl = document.getElementById('sort');
+const listEl = document.getElementById('list');
+const countEl = document.getElementById('count');
+const statTotal = document.getElementById('statTotal');
+const statPaid = document.getElementById('statPaid');
+const statViews = document.getElementById('statViews');
+const statLikes = document.getElementById('statLikes');
+const topList = document.getElementById('topList');
+const toggleThemeBtn = document.getElementById('toggleTheme');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const importFile = document.getElementById('importFile');
+
+/* ---------- Core actions ---------- */
+function render(){
+  // filter & sort
+  const q = searchEl.value.trim().toLowerCase();
+  let list = entries.slice();
+
+  // search
+  if(q){
+    list = list.filter(e => (e.text + ' ' + (e.author||'')).toLowerCase().includes(q));
   }
-  history.slice().reverse().forEach(h=>{
-    const row = document.createElement('div');
-    row.className='word-row';
-    row.innerHTML = `<div>${h.word}</div><div class="muted">${h.player}</div>`;
-    historyEl.appendChild(row);
-  });
-}
-function setCurrent(){
-  currentPlayerEl.textContent = players.length ? players[currentIdx].name : '—';
-  lastLetterEl.textContent = lastKey ? lastKey.toUpperCase() : '—';
-}
 
-/* ---------- Rules: determine last letter (supports 'ch') ---------- */
-function extractLastKey(word){
-  // normalize original word but preserve 'ch' detection on lower-case raw
-  const w = normalizeWord(word);
-  if(w.length===0) return null;
-  // if ends with 'ch', return 'ch'
-  if(w.endsWith('ch')) return 'ch';
-  // else take last character letter a-z
-  const last = w[w.length-1];
-  return /[a-z]/.test(last) ? last : null;
-}
+  // sort
+  const s = sortEl.value;
+  if(s==='new') list.sort((a,b)=>b.ts-a.ts);
+  else if(s==='old') list.sort((a,b)=>a.ts-b.ts);
+  else if(s==='likes') list.sort((a,b)=>b.likes-a.likes);
+  else if(s==='views') list.sort((a,b)=>b.views-a.views);
+  else if(s==='paid') list.sort((a,b)=> (b.paid?1:0) - (a.paid?1:0) || b.ts-a.ts);
+  else if(s==='random') list.sort(()=>Math.random()-0.5);
 
-/* ---------- Validation ---------- */
-function validateWord(candidate){
-  const raw = candidate.trim();
-  if(!raw) return {ok:false,msg:'Zadaj slovo.'};
-  const norm = normalizeWord(raw);
-  if(norm.length<1) return {ok:false,msg:'Slovo príliš krátke.'};
-  // not used
-  if(used.has(norm)) return {ok:false,msg:'Toto slovo už bolo použité.'};
-  // starts with required key?
-  if(lastKey){
-    // check starting prefix (ch or one char)
-    if(lastKey==='ch'){
-      if(!norm.startsWith('ch')) return {ok:false,msg:`Slovo musí začínať na "ch".`};
-    } else {
-      if(!norm.startsWith(lastKey)) return {ok:false,msg:`Slovo musí začínať na písmeno "${lastKey}".`};
-    }
-  }
-  // optional dictionary check
-  if(dictSet){
-    if(!dictSet.has(norm)) return {ok:false,msg:'Slovo sa nenašlo v nahratom slovníku.'};
-  }
-  return {ok:true, norm};
-}
-
-/* ---------- Actions ---------- */
-function startGame(){
-  const raw = playersInput.value.split(',').map(s=>s.trim()).filter(Boolean);
-  if(raw.length<2){ alert('Zadaj aspoň 2 hráčov oddelených čiarkou.'); return; }
-  players = raw.map(n=>({name:n,score:0}));
-  currentIdx = Math.max(0, Math.min(players.length-1, Number(startIndex.value)-1 || 0));
-  used = new Set();
-  lastKey = null;
-  history = [];
-  dictSet = dictSet || null;
-  updatePlayersUI();
-  updateHistoryUI();
-  setCurrent();
-  showStatus('Hra spustená — poďte!', true);
-}
-function submitWord(){
-  const w = wordInput.value.trim();
-  const v = validateWord(w);
-  if(!v.ok){ showStatus(v.msg,false); return; }
-  // accept
-  used.add(v.norm);
-  history.push({player:players[currentIdx].name, word: w});
-  // scoring: give 1 point
-  players[currentIdx].score += 1;
-  // update lastKey
-  lastKey = extractLastKey(w);
-  // next player
-  currentIdx = (currentIdx + 1) % players.length;
-  updatePlayersUI(); updateHistoryUI(); setCurrent();
-  wordInput.value='';
-  showStatus('Slovo prijaté ✔', true);
-}
-function passTurn(){
-  showStatus(players[currentIdx].name + ' preskočil(a).', true);
-  currentIdx = (currentIdx + 1) % players.length;
-  setCurrent();
-}
-function resetGame(){
-  if(!confirm('Naozaj resetovať hru?')) return;
-  players = []; used = new Set(); lastKey = null; history = [];
-  playersInput.value = '';
-  dictArea.value = '';
-  dictSet = null;
-  updatePlayersUI(); updateHistoryUI(); setCurrent();
-  showStatus('Hra resetovaná.', true);
-}
-
-/* ---------- Dict import ---------- */
-function loadDictionary(){
-  const text = dictArea.value.trim();
-  if(!text){ alert('Prázdny slovník.'); return; }
-  const lines = text.split(/\r?\n/).map(l=>normalizeWord(l)).filter(Boolean);
-  dictSet = new Set(lines);
-  showStatus('Slovník načítaný ('+dictSet.size+' slov).', true);
-}
-function clearDictionary(){
-  dictSet = null;
-  dictArea.value = '';
-  showStatus('Slovník vymazaný.', true);
-}
-
-/* ---------- Challenge => overenie posledného slova v slovníku (ak existuje) ---------- */
-function challengeLast(){
-  if(!dictSet){ showStatus('Bez slovníka nie je challenge možná.', false); return; }
-  if(history.length===0){ showStatus('Žiadne slovo na overenie.', false); return; }
-  const last = history[history.length-1].word;
-  const norm = normalizeWord(last);
-  if(dictSet.has(norm)){
-    showStatus('Slovo "'+last+'" je v slovníku — challenge neúspešný.', true);
+  // render
+  listEl.innerHTML = '';
+  if(list.length===0){
+    listEl.innerHTML = '<div class="small">Žiadne výsledky.</div>';
   } else {
-    showStatus('Slovo "'+last+'" NIE JE v slovníku — challenge úspešný!', true);
-    // penalize previous player by removing point
-    const prevIdx = (currentIdx - 1 + players.length) % players.length;
-    players[prevIdx].score = Math.max(0, players[prevIdx].score - 1);
-    // optionally remove word from history/used
-    used.delete(norm);
-    history.pop();
-    updatePlayersUI(); updateHistoryUI(); setCurrent();
+    list.forEach(e=>{
+      const item = document.createElement('div');
+      item.className = 'item' + (e.paid ? ' highlight' : '');
+      // left: content
+      const left = document.createElement('div');
+      left.style.flex='1';
+      left.style.marginRight='12px';
+      left.innerHTML = `<div style="display:flex;align-items:center;gap:8px">
+                          <div style="font-weight:700">${escapeHtml(e.author||'Anonym')}</div>
+                          <div class="meta">${formatDate(e.ts)}</div>
+                          ${e.paid?'<span class="tag-paid">PLATENÝ</span>':''}
+                        </div>
+                        <div style="margin-top:8px;font-size:15px">${escapeHtml(e.text)}</div>
+                        <div style="margin-top:8px" class="meta">Zobrazení: ${e.views} • Lajky: ${e.likes}</div>`;
+      // right: actions
+      const right = document.createElement('div');
+      right.style.display='flex';
+      right.style.flexDirection='column';
+      right.style.gap='8px';
+      right.style.alignItems='flex-end';
+
+      // view / open (increment views)
+      const viewBtn = document.createElement('button');
+      viewBtn.className='ghost';
+      viewBtn.textContent='Otvoriť / Prečítať';
+      viewBtn.addEventListener('click', ()=>{ e.views++; saveEntries(); render(); });
+      // like
+      const likeBtn = document.createElement('button');
+      likeBtn.className='like';
+      likeBtn.textContent = `❤ ${e.likes}`;
+      likeBtn.addEventListener('click', ()=>{
+        e.likes++; saveEntries(); render();
+      });
+      // delete (admin local)
+      const delBtn = document.createElement('button');
+      delBtn.className='ghost';
+      delBtn.textContent='Vymazať';
+      delBtn.addEventListener('click', ()=>{
+        if(confirm('Naozaj odstrániť tento odkaz?')) {
+          entries = entries.filter(x=>x.id!==e.id);
+          saveEntries(); render();
+        }
+      });
+      // simulate payment if not paid
+      const payBtn = document.createElement('button');
+      payBtn.className = 'btn';
+      payBtn.textContent = e.paid ? 'Platené' : 'Zaplať 1€ (sim.)';
+      payBtn.disabled = e.paid;
+      payBtn.addEventListener('click', ()=>{
+        // Simulate payment flow (replace with real Stripe/PayPal)
+        if(confirm('Simulovaná platba 1€ — označiť odkaz ako platený?')){
+          e.paid = true;
+          saveEntries(); render();
+          alert('Ďakujeme — tvoj odkaz je teraz zvýraznený ako platený.');
+        }
+      });
+
+      right.appendChild(payBtn);
+      right.appendChild(likeBtn);
+      right.appendChild(viewBtn);
+      right.appendChild(delBtn);
+
+      item.appendChild(left);
+      item.appendChild(right);
+      listEl.appendChild(item);
+    });
+  }
+
+  // stats
+  statTotal.textContent = entries.length;
+  statPaid.textContent = entries.filter(e=>e.paid).length;
+  statViews.textContent = entries.reduce((s,e)=>s+e.views,0);
+  statLikes.textContent = entries.reduce((s,e)=>s+e.likes,0);
+  countEl.textContent = list.length + ' odkazov';
+
+  // top list (by likes)
+  const top = entries.slice().sort((a,b)=>b.likes-a.likes).slice(0,5);
+  topList.innerHTML = '';
+  if(top.length===0) topList.innerHTML = '<div class="small">Žiadne odkazy</div>';
+  else top.forEach(t=>{
+    const d = document.createElement('div');
+    d.className='small';
+    d.innerHTML = `<strong>${escapeHtml(t.author||'Anonym')}</strong>: ${escapeHtml(truncate(t.text,60))} — ❤ ${t.likes}`;
+    topList.appendChild(d);
+  });
+}
+
+/* ---------- Add entry ---------- */
+function addEntry(){
+  const author = authorEl.value.trim() || null;
+  const text = messageEl.value.trim();
+  if(!text) { alert('Napíš tvoj odkaz.'); return; }
+  if(text.length>300){ alert('Max 300 znakov.'); return; }
+
+  // create entry (here we simulate payment before final save: in real flow you'd initiate Stripe checkout)
+  const entry = {
+    id: uid('o_'),
+    author: author,
+    text: text,
+    ts: now(),
+    likes: 0,
+    views: 0,
+    paid: false
+  };
+
+  // simulate immediate "paid" option via confirm
+  const wantPaid = confirm('Chceš zaplatiť 1 € (simulácia) aby bol odkaz zvýraznený? (OK = zaplatiť (sim.), Cancel = uložiť zdarma)');
+  if(wantPaid){
+    entry.paid = true;
+    // in production: call payment API and on success set paid=true in DB
+  }
+
+  entries.push(entry);
+  saveEntries();
+  // clear inputs
+  authorEl.value=''; messageEl.value='';
+  render();
+  alert('Tvoj odkaz bol uložený. Ďakujeme!');
+}
+
+/* ---------- Export / Import ---------- */
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(entries, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'odkazy_export.json'; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 5000);
+}
+function handleImportFile(file){
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const arr = JSON.parse(e.target.result);
+      if(!Array.isArray(arr)) throw new Error('Invalid format');
+      // basic validation + merge (avoid id collisions)
+      const existingIds = new Set(entries.map(x=>x.id));
+      const merged = arr.map(x=>{
+        if(!x.id) x.id = uid('o_');
+        if(existingIds.has(x.id)) x.id = uid('o_');
+        // ensure fields
+        x.likes = Number(x.likes || 0);
+        x.views = Number(x.views || 0);
+        x.paid = Boolean(x.paid);
+        x.ts = Number(x.ts || now());
+        return x;
+      });
+      entries = entries.concat(merged);
+      saveEntries();
+      render();
+      alert('Import úspešný: pridaných ' + merged.length + ' položiek');
+    }catch(err){ alert('Chyba pri importe: ' + err.message); }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- Utils ---------- */
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
+
+/* ---------- Theme toggle (simple simulation of light mode) ---------- */
+let dark = true;
+function toggleTheme(){
+  dark = !dark;
+  if(!dark){
+    document.body.style.background = '#fff';
+    document.body.style.color = '#111';
+    document.querySelectorAll('.card').forEach(c => c.style.background = '#fff');
+    toggleThemeBtn.textContent = 'Svetlý režim';
+  } else {
+    document.body.style.background = 'linear-gradient(180deg,#071427,#041021)';
+    document.body.style.color = '';
+    document.querySelectorAll('.card').forEach(c => c.style.background = '');
+    toggleThemeBtn.textContent = 'Tmavý režim';
   }
 }
 
-/* ---------- Event listeners ---------- */
-startBtn.addEventListener('click', startGame);
-submitBtn.addEventListener('click', submitWord);
-wordInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') submitWord(); });
-passBtn.addEventListener('click', passTurn);
-resetBtn.addEventListener('click', resetGame);
-loadDict.addEventListener('click', loadDictionary);
-clearDict.addEventListener('click', clearDictionary);
-challengeBtn.addEventListener('click', challengeLast);
+/* ---------- Events ---------- */
+addBtn.addEventListener('click', addEntry);
+previewBtn.addEventListener('click', ()=> {
+  const a = authorEl.value.trim() || 'Anonym';
+  const t = messageEl.value.trim() || '—';
+  alert('Preview:\n\n' + a + ':\n' + t);
+});
+searchEl.addEventListener('input', render);
+sortEl.addEventListener('change', render);
+toggleThemeBtn.addEventListener('click', toggleTheme);
+exportBtn.addEventListener('click', exportJSON);
+importBtn.addEventListener('click', ()=> importFile.click());
+importFile.addEventListener('change', (ev)=> {
+  const f = ev.target.files[0];
+  if(f) handleImportFile(f);
+});
 
-/* ---------- Init ---------- */
-setCurrent();
-updatePlayersUI();
-updateHistoryUI();
+/* ---------- Init render ---------- */
+render();
+
+/* ============================
+   Notes / Next steps (server)
+   ============================
+1) Real payment flow:
+   - Integrate Stripe Checkout / PayPal for 1€ payment.
+   - On success, set entry.paid = true in DB.
+   - Recommended: use Firebase Functions or server to verify webhook.
+
+2) Persistent storage:
+   - Replace localStorage with Firestore / Realtime DB / Supabase.
+   - Frontend: on addEntry(), call REST API to create entry, get ID back.
+   - For scaling: implement pagination, moderation queue, spam filtering.
+
+3) Moderation & anti-spam:
+   - Add a moderation flag; require admin approval for non-paid entries or use CAPTCHA.
+   - Rate-limit by IP / require account.
+
+4) Transparency:
+   - Show payment receipts / order ID if real payments used, and T&Cs.
+
+If chceš, implementujem ti krok-za-krokom nasadenie s Firebase (DB + Auth) a Stripe (Checkout):
+- Napíšem serverless flow + kód na uloženie paid=true po úspešnej platbe.
+- Zabezpečím jednoduchú administráciu (moderovanie / vymazanie).
+
+*/
 </script>
 </body>
 </html>
