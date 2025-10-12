@@ -1,119 +1,73 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Letáky Online - Aktuálne akcie</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelBoard – Tvoja reklama na webe</title>
   <style>
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #f9f9f9;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
       margin: 0;
       padding: 0;
-      color: #222;
+      text-align: center;
     }
     header {
-      background: linear-gradient(90deg, #ff3b3b, #ff9900);
-      color: white;
-      text-align: center;
-      padding: 1.5rem 1rem;
+      background: linear-gradient(90deg, #ff0077, #ffcc00);
+      padding: 1rem;
       font-size: 1.8rem;
       font-weight: bold;
-      letter-spacing: 1px;
     }
-    main {
+    p {
+      color: #ddd;
+      margin: 0.5rem 0 1.5rem 0;
+    }
+    #pixelboard {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 2rem;
-      max-width: 1200px;
-      margin: auto;
+      grid-template-columns: repeat(50, 10px);
+      grid-template-rows: repeat(50, 10px);
+      justify-content: center;
+      margin: 1rem auto 2rem auto;
+      width: 500px;
+      border: 2px solid #444;
+      background: #000;
     }
-    .store {
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      overflow: hidden;
-      text-align: center;
-      transition: transform 0.2s ease;
+    .pixel {
+      width: 10px;
+      height: 10px;
+      background: #222;
+      cursor: pointer;
+      transition: background 0.2s;
     }
-    .store:hover {
-      transform: scale(1.03);
-    }
-    .store img {
-      width: 100%;
-      height: 150px;
-      object-fit: contain;
-      background: #fff;
-      padding: 10px;
-    }
-    .store h2 {
-      font-size: 1.2rem;
-      margin: 0.5rem 0;
-    }
-    .store a {
-      display: inline-block;
-      margin: 10px 0 20px 0;
-      background: #ff3b3b;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .store a:hover {
-      background: #e03030;
+    .pixel:hover {
+      background: #ff0077;
     }
     footer {
-      background: #222;
-      color: white;
-      text-align: center;
+      background: #000;
+      color: #888;
       padding: 1rem;
       font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <header>🛒 Letáky Online – Aktuálne zľavy a akcie</header>
+  <header>🟪 PixelBoard – Kúp si svoj pixel!</header>
+  <p>Každý pixel = jedno miesto pre tvoju reklamu. Klikni a rezervuj!</p>
+  <div id="pixelboard"></div>
+  <footer>© 2025 PixelBoard.sk | Inšpirované MillionDollarHomepage</footer>
 
-  <main>
-    <div class="store">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Kaufland-Logo.svg" alt="Kaufland" />
-      <h2>Kaufland</h2>
-      <a href="https://www.kaufland.sk/letak.html" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
-    </div>
-
-    <div class="store">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Lidl-Logo.svg" alt="Lidl" />
-      <h2>Lidl</h2>
-      <a href="https://www.lidl.sk/c/aktualny-letak/s10008502" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
-    </div>
-
-    <div class="store">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Tesco_Logo.svg" alt="Tesco" />
-      <h2>Tesco</h2>
-      <a href="https://tesco.sk/letak/" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
-    </div>
-
-    <div class="store">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Billa_logo.svg" alt="Billa" />
-      <h2>Billa</h2>
-      <a href="https://www.billa.sk/aktualny-letak" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
-    </div>
-
-    <div class="store">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/f/f4/OBI_Logo.svg" alt="OBI" />
-      <h2>OBI</h2>
-      <a href="https://www.obi.sk/letak/" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
-    </div>
-
-    <div class="store">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/1/13/DM-drogerie_logo.svg" alt="dm drogerie" />
-      <h2>dm drogerie</h2>
-      <a href="https://www.dm.sk/akcne-produkty" target="_blank" rel="noopener noreferrer">Zobraziť leták</a>
-    </div>
-  </main>
-
-  <footer>© 2025 Letáky Online – Všetky odkazy vedú na oficiálne stránky obchodov</footer>
+  <script>
+    const board = document.getElementById('pixelboard');
+    for (let i = 0; i < 2500; i++) {
+      const pixel = document.createElement('div');
+      pixel.classList.add('pixel');
+      pixel.addEventListener('click', () => {
+        const color = prompt("Vyber si farbu (napr. #ff0000 alebo red):");
+        if (color) pixel.style.background = color;
+      });
+      board.appendChild(pixel);
+    }
+  </script>
 </body>
 </html>
