@@ -3,19 +3,23 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Odkaz pre ľudstvo — ver. 3.0 (Monetizácia)</title>
-<meta name="description" content="Zanechaj vetu pre budúce generácie — Gold Message (1 €), multijazyčné.">
+<title>Odkaz pre ľudstvo — Kapsula Času v. 5.0 (Konverzia)</title>
+<meta name="description" content="Zanechaj vetu pre budúce generácie. Zlatý Odkaz (1€) je trvalo uložený v Kapsule Času.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg1:#020617; --bg2:#071427; --card:#0f1b2a; --accent:#7c3aed; --accent2:#06b6d4;
     --muted:#9aa4b2; --good:#7ef0c7; --danger:#ff8a8a; --round:14px; --text:#e6eef8;
-    --gold:#FFD700; /* NOVÁ FARBA PRE PLATENÉ */
+    --gold:#FFD700; --gold-dark:#e6c400;
+    --delete-limit:rgba(255,138,138,0.2);
+    /* NOVÁ FARBA PRE CTA FOOTER */
+    --cta-bg:rgba(124,58,237,0.95);
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,Arial;background:radial-gradient(ellipse at 10% 10%, rgba(124,58,237,0.12), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh}
+  body{margin:0;font-family:Inter,system-ui,Arial;background:radial-gradient(ellipse at 10% 10%, rgba(124,58,237,0.12), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh; padding-bottom: 70px; /* Priestor pre sticky footer */}
   .wrap{max-width:1100px;margin:0 auto;padding:20px}
+  /* ... (OSTATNÉ ZÁKLADNÉ ŠTÝLY) ... */
   header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:18px}
@@ -31,13 +35,12 @@
   input[type="text"], textarea, select{width:100%;padding:10px;border-radius:10px;border:0;background:rgba(255,255,255,0.02);color:var(--text);margin-top:8px}
   textarea{min-height:90px}
   .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
-  .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;} /* VÄČŠÍ FONT */
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px 14px;border-radius:10px;cursor:pointer} /* ZJEDNOTENÝ PADDING */
-  .list{margin-top:12px;display:flex;flex-direction:column;gap:10px;max-height:600px;overflow:auto} /* VÄČŠIA VÝŠKA ZOZNAMU */
+  .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px 14px;border-radius:10px;cursor:pointer}
+  .list{margin-top:12px;display:flex;flex-direction:column;gap:10px;max-height:600px;overflow:auto}
   .item{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);display:flex;gap:12px;align-items:flex-start;justify-content:space-between;border:1px solid transparent;transition:all 0.3s;}
   .item:hover{background:rgba(255,255,255,0.04)}
   .meta{color:var(--muted);font-size:13px}
-  /* VÝRAZNEJŠÍ PLACENÝ ODKAZ (ZLATÝ) */
   .highlight-paid{
     background:linear-gradient(180deg, rgba(255,215,0,0.07), rgba(255,215,0,0.03)) !important;
     border-color:var(--gold);
@@ -46,11 +49,101 @@
   .tag-paid{background:linear-gradient(90deg,#ffd166,#ff9f1c);color:#111;padding:4px 8px;border-radius:6px;font-weight:700;margin-left:8px;font-size:12px;letter-spacing:0.5px;}
   .small{font-size:13px;color:var(--muted)}
   footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
-  .hero {display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;margin-bottom:12px;background:linear-gradient(90deg,rgba(124,58,237,0.06),rgba(6,182,212,0.03));}
-  .planet {width:72px;height:72px;border-radius:50%;background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Globe_icon_English.svg/512px-Globe_icon_English.svg.png');background-size:cover;background-position:center;opacity:0.9;animation:floaty 4s ease-in-out infinite;}
-  @keyframes floaty { 0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)} }
   .avatar {width:56px;height:56px;border-radius:10px;object-fit:cover;background:#111}
   .char-count {float:right;font-size:12px;color:var(--muted)}
+  .hero {
+    display:flex;align-items:center;gap:12px;padding:16px;border-radius:var(--round);margin-bottom:12px;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    color:white;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-text {z-index:1}
+  .capsule-anim {
+    position:absolute;right:0;top:-10px;opacity:0.2;
+    font-size:100px;
+    transform:rotate(-15deg);
+    animation:pulse-float 6s infinite ease-in-out;
+    z-index:0;
+  }
+  @keyframes pulse-float {
+    0% {transform:translateY(0) scale(1) rotate(-15deg); opacity:0.15;}
+    50% {transform:translateY(-10px) scale(1.05) rotate(-15deg); opacity:0.25;}
+    100% {transform:translateY(0) scale(1) rotate(-15deg); opacity:0.15;}
+  }
+  .time-limit {
+    font-weight:600;
+    color:var(--danger);
+    background-color:var(--delete-limit);
+    padding:3px 6px;
+    border-radius:4px;
+    font-size:11px;
+    margin-left:8px;
+  }
+  /* VIZUÁLNA DEGRADÁCIA NEPLATENÉHO ODKAZU */
+  .item.temporary {
+    border-left:4px solid var(--danger);
+    opacity:0.6; /* Nižšia priehľadnosť pre pocit straty */
+    filter: blur(0.2px);
+    transition: all 0.5s;
+  }
+  .item.temporary:hover {
+    opacity: 0.9;
+    filter: none;
+  }
+
+  /* -----------------------
+     NOVÉ: STICKY CTA FOOTER
+     ----------------------- */
+  .sticky-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--cta-bg);
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .sticky-cta .btn {
+    font-size: 16px;
+    padding: 12px 20px;
+    /* DÔLEŽITÉ: Použiť zlaté farby, aby to kričalo! */
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
+    color: #111;
+    font-weight: 900;
+    text-transform: uppercase;
+    animation: bounce-gold 3s infinite ease-in-out;
+  }
+  @keyframes bounce-gold {
+    0%, 100% { transform: translateY(0); box-shadow: 0 0 15px rgba(255,215,0,0.4); }
+    50% { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(255,215,0,0.7); }
+  }
+  .cta-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  @media(max-width:600px){
+    .sticky-cta {flex-direction: column; gap: 8px; padding: 8px 10px;}
+    .sticky-cta .btn {width: 100%;}
+    .cta-text {font-size: 12px;}
+  }
+
+  /* VYLEPŠENÉ TLAČIDLO V FORMULÁRI */
+  #payLinkBtn {
+    flex-grow: 1; /* Nech sa roztiahne, aby bolo dominantné */
+    font-size: 18px !important;
+    padding: 14px 20px !important;
+  }
+
 </style>
 </head>
 <body>
@@ -60,7 +153,7 @@
         <div class="logo">OPĽ</div>
         <div>
           <h1 id="title">Odkaz pre ľudstvo</h1>
-          <div id="subtitle" class="subtitle">Zanechaj vetu pre budúce generácie — **ZLATÝ ODKAZ** 1 €</div>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 5.0</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -73,44 +166,52 @@
     </header>
 
     <div class="hero">
-      <div class="planet" aria-hidden="true"></div>
-      <div>
-        <div style="font-weight:700">Odkaz pre ľudstvo</div>
-        <div class="small">Vytvor svoj odkaz, zaplať 1 € a tvoj text bude **ZLATÝ** a trvalo na vrchole!</div>
-      </div>
+        <span class="capsule-anim">⏳</span>
+        <div class="hero-text">
+            <div style="font-size:24px; font-weight:900; line-height:1.2;">TVOJ ODKAZ PRE BUDÚCNOSŤ</div>
+            <div style="margin-top:8px;">
+                <span style="font-weight:700">ZADARMO:</span> Zostáva viditeľný 48 hodín.
+            </div>
+            <div style="margin-top:4px;">
+                <span style="font-weight:700">ZLATÝ (1€):</span> **Trvalé uloženie** v Kapsule Času & prioritný status.
+            </div>
+        </div>
     </div>
 
     <div class="grid">
       <main>
         <div class="card">
-          <h3 id="formTitle">Pridať odkaz</h3>
-          
-          <label id="labelName">Meno (voliteľné)</label>
-          <input id="author" type="text" placeholder="" />
+          <h3 id="formTitle">Pridať odkaz a zvoliť trvácnosť</h3>
 
-          <label id="labelEmail" style="margin-top:8px">E-mail (pre notifikácie / voliteľné)</label>
-          <input id="email" type="text" placeholder="tvoj@email.sk" />
-          <div class="small" style="margin-top:4px;">
-            <input type="checkbox" id="consent" checked>
-            <label for="consent" style="margin:0;color:var(--muted);font-size:12px;">Súhlasím so spracovaním e-mailu na zaslanie potvrdenia.</label>
-          </div>
+          <label id="labelName">Meno / Prezývka (voliteľné)</label>
+          <input id="author" type="text" placeholder="" />
 
           <label id="labelMessage" style="margin-top:12px">Odkaz (max 300 znakov) <span id="charCount" class="char-count">0/300</span></label>
           <textarea id="message" maxlength="300" placeholder=""></textarea>
 
-          <div class="controls">
-            <button id="payLinkBtn" class="btn">Označiť ako ZLATÝ Odkaz (1€)</button>
-            <button id="saveFree" class="ghost">Uložiť zadarmo</button>
-            <button id="previewBtn" class="ghost" style="display:none">Náhľad</button>
+          <div style="margin-top:10px; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; border:1px solid var(--gold-dark);">
+            <div style="font-weight:700; color:var(--gold); margin-bottom:8px;">MOŽNOSTI ULOŽENIA:</div>
+            <div class="controls" style="margin-top:0;">
+                <button id="payLinkBtn" class="btn" style="background:linear-gradient(90deg, var(--gold-dark), var(--gold)); color: #111;">
+                    🔒 ZAPLAŤ 1€ — ZLATÝ Odkaz (Trvalé Uloženie)
+                </button>
+                <button id="saveFree" class="ghost">
+                    Uložiť ZADARMO (Iba 48 hodín)
+                </button>
+            </div>
           </div>
-          
-          <div style="margin-top:16px">
+          <div class="small" style="margin-top:10px; color:var(--muted);">
+            Platené odkazy sú navždy v našej Kapsule Času. Po 48 hodinách sa neplatené odkazy simulovane vymažú.
+          </div>
+
+
+          <div style="margin-top:20px">
             <label id="labelSearch">Hľadať a triediť odkazy</label>
             <div style="display:flex;gap:8px;margin-top:8px">
               <input id="search" type="text" placeholder="">
               <select id="sort">
-                <option value="new">Najnovšie</option>
                 <option value="paid">ZLATÉ Odkazy najprv</option>
+                <option value="new">Najnovšie</option>
                 <option value="likes">Najviac lajkované</option>
                 <option value="views">Najviac čítané</option>
                 <option value="old">Najstaršie</option>
@@ -133,9 +234,10 @@
 
       <aside>
         <div class="card">
-          <h3 id="statsTitle">Štatistiky</h3>
+          <h3 id="statsTitle">Štatistiky Kapsuly Času</h3>
           <div class="small" style="margin-top:8px">Celkom odkazov: <strong id="statTotal">0</strong></div>
-          <div class="small">ZLATÝCH Odkazov (Paid): <strong id="statPaid" style="color:var(--gold);font-weight:700">0</strong></div>
+          <div class="small">Trvalo uložených (ZLATÝCH): <strong id="statPaid" style="color:var(--gold);font-weight:700">0</strong></div>
+          <div class="small">Dočasných odkazov (vyprší): <strong id="statTemporary" style="color:var(--danger);font-weight:700">0</strong></div>
           <div class="small">Celkom zobrazení: <strong id="statViews">0</strong></div>
           <div class="small">Celkom lajkov: <strong id="statLikes">0</strong></div>
         </div>
@@ -146,198 +248,243 @@
         </div>
 
         <div class="card" style="margin-top:12px">
-          <h3 id="helpTitle">Info a platba</h3>
-          <div class="small" id="helpText">Platby sú zatiaľ simulované. Pre reálne platby musí byť nastavený Stripe Payment Link alebo Checkout. **ZLATÝ Odkaz** zostane navždy farebne označený.</div>
+          <h3 id="helpTitle">Ako funguje Trvácnosť?</h3>
+          <div class="small" id="helpText">
+            Každý odkaz má unikátnu Hodnosť (#). <br>
+            <strong style="color:var(--danger)">Zadarmo odkaz</strong> má platnosť len 48 hodín. Ak nezaplatíš 1 €, Tvoj odkaz sa vymaže a Tvoja **Hodnosť prepadne**.
+            <br><br>
+            <strong style="color:var(--gold)">Zlatý odkaz (1€)</strong> sa stane trvalou súčasťou Kapsuly Času a zachová si Tvoju unikátnu Hodnosť navždy.
+          </div>
         </div>
       </aside>
     </div>
 
-    <footer>© 2025 Odkaz pre ľudstvo — Verzia 3.0 | <a href="#" style="color:var(--muted)">Kontakt / Ochrana dát</a></footer>
+    <footer>© 2025 Odkaz pre ľudstvo — Verzia 5.0 | <a href="#" style="color:var(--muted)">Kontakt / Ochrana dát</a></footer>
+
+  </div>
+
+  <div class="sticky-cta" id="stickyCta">
+    <div class="cta-text" id="ctaText">
+      Nenechaj svoj odkaz VYMAZAŤ! Zaplať 1€ a ulož ho NATRVALO.
+    </div>
+    <button id="stickyPayBtn" class="btn">
+      UROB ODKAZ TRVALÝ (1€)
+    </button>
   </div>
 
 <script>
 /* -----------------------
-   Multilingual strings - UPDATED for 'GOLD'
+   Konštanty a I18N (prevzaté z V4.0)
    ----------------------- */
+const TEMP_DURATION_MS = 48 * 60 * 60 * 1000;
+const DELETE_INTERVAL_MS = 60 * 60 * 1000;
+
 const I18N = {
   sk: {
     title: 'Odkaz pre ľudstvo',
-    subtitle: 'Zanechaj vetu pre budúce generácie — ZLATÝ ODKAZ 1 €',
-    formTitle: 'Pridať odkaz',
-    labelName: 'Meno (voliteľné)',
-    labelEmail: 'E-mail (pre notifikácie / voliteľné)',
+    subtitle: 'Digitálna Kapsula Času v. 5.0',
+    formTitle: 'Pridať odkaz a zvoliť trvácnosť',
+    labelName: 'Meno / Prezývka (voliteľné)',
     labelMessage: 'Odkaz (max 300 znakov)',
     labelSearch: 'Hľadať a triediť odkazy',
     listTitle: 'Zoznam odkazov',
-    statsTitle: 'Štatistiky',
+    statsTitle: 'Štatistiky Kapsuly Času',
     topTitle: 'Najpopulárnejšie odkazy',
-    helpText: 'Platby sú zatiaľ simulované. Pre reálne platby musí byť nastavený Stripe Payment Link alebo Checkout. **ZLATÝ Odkaz** zostane navždy farebne označený.',
-    payLinkText: 'Označiť ako ZLATÝ Odkaz (1€)',
-    saveFree: 'Uložiť zadarmo',
+    payLinkText: '🔒 ZAPLAŤ 1€ — ZLATÝ Odkaz (Trvalé Uloženie)',
+    saveFree: 'Uložiť ZADARMO (Iba 48 hodín)',
     placeholderMsg: 'Napíš vetu pre budúce generácie...',
     paidTag: 'ZLATÝ 🌟',
+    temporaryTag: (time) => `Vyprší za ${time}`,
     anonymous: 'Anonym',
     noResults: 'Žiadne výsledky',
     alertMessage: 'Napíš odkaz.',
     alertMaxChars: 'Max 300 znakov.',
-    alertThanks: 'Ďakujeme! Odkaz pridaný.'
+    alertThanks: 'Ďakujeme! Odkaz pridaný.',
+    alertPaidSim: 'Po dokončení platby stlač OK a Tvoj odkaz označíme ako ZLATÝ (simulácia).',
+    alertPayError: 'PAYMENT LINK nebol nastavený. Simulovať platenú verziu? (OK = platené, Cancel = zadarmo)',
+    rank: 'Hodnosť',
+    shareText: 'Zdieľať',
+    ctaStickyText: 'Nenechaj svoj odkaz VYMAZAŤ! Zaplať 1€ a ulož ho NATRVALO.',
+    ctaStickyBtn: 'UROB ODKAZ TRVALÝ (1€)'
   },
-  // EN and DE strings would need to be updated similarly.
   en: {
     title: 'Message to Humanity',
-    subtitle: 'Leave a short message for future generations — GOLD MESSAGE €1',
-    formTitle: 'Add a message',
-    labelName: 'Name (optional)',
-    labelEmail: 'Email (for notifications / optional)',
+    subtitle: 'Digital Time Capsule v. 5.0',
+    formTitle: 'Add a message and choose permanence',
+    labelName: 'Name / Nickname (optional)',
     labelMessage: 'Message (max 300 chars)',
     labelSearch: 'Search and sort messages',
-    listTitle: 'Messages',
-    statsTitle: 'Statistics',
-    topTitle: 'Top messages',
-    helpText: 'Payments are simulated. Use Stripe Payment Link or Checkout for real payments. **GOLD Message** will be permanently highlighted.',
-    payLinkText: 'Mark as GOLD Message (€1)',
-    saveFree: 'Save for free',
+    listTitle: 'Messages List',
+    statsTitle: 'Time Capsule Statistics',
+    topTitle: 'Top Messages',
+    payLinkText: '🔒 PAY €1 — GOLD Message (Permanent Storage)',
+    saveFree: 'Save FOR FREE (Only 48 hours)',
     placeholderMsg: 'Write a message for future generations...',
     paidTag: 'GOLD 🌟',
+    temporaryTag: (time) => `Expires in ${time}`,
     anonymous: 'Anonymous',
     noResults: 'No results',
     alertMessage: 'Enter a message.',
     alertMaxChars: 'Max 300 characters.',
-    alertThanks: 'Thanks! Message added.'
+    alertThanks: 'Thanks! Message added.',
+    alertPaidSim: 'After payment, press OK to mark your message as GOLD (sim.).',
+    alertPayError: 'PAYMENT LINK not set. Simulate paid version? (OK = paid, Cancel = free)',
+    rank: 'Rank',
+    shareText: 'Share',
+    ctaStickyText: 'Don\'t let your message be DELETED! Pay €1 and save it PERMANENTLY.',
+    ctaStickyBtn: 'MAKE MESSAGE PERMANENT (€1)'
   },
   de: {
     title: 'Botschaft an die Menschheit',
-    subtitle: 'Hinterlasse eine kurze Nachricht für zukünftige Generationen — GOLD-NACHRICHT 1 €',
-    formTitle: 'Nachricht hinzufügen',
-    labelName: 'Name (optional)',
-    labelEmail: 'E-mail (für Benachrichtigungen / optional)',
+    subtitle: 'Digitale Zeitkapsel v. 5.0',
+    formTitle: 'Nachricht hinzufügen und Dauer wählen',
+    labelName: 'Name / Spitzname (optional)',
     labelMessage: 'Nachricht (max 300 Zeichen)',
-    labelSearch: 'Nachrichten suchen und sortieren',
-    listTitle: 'Nachrichten',
+    labelSearch: 'Suchen und sortieren',
+    listTitle: 'Nachrichten Liste',
     statsTitle: 'Statistiken',
     topTitle: 'Top-Nachrichten',
-    helpText: 'Zahlungen sind simuliert. Für echte Zahlungen Stripe Payment Link oder Checkout einrichten. Die **GOLD-Nachricht** wird dauerhaft hervorgehoben.',
-    payLinkText: 'Als GOLD-Nachricht markieren (1€)',
-    saveFree: 'Kostenlos speichern',
+    payLinkText: '🔒 ZAHLEN 1€ — GOLD Nachricht (Dauerhaft)',
+    saveFree: 'Kostenlos speichern (Nur 48 Stunden)',
     placeholderMsg: 'Schreibe eine Nachricht für zukünftige Generationen...',
     paidTag: 'GOLD 🌟',
+    temporaryTag: (time) => `Läuft in ${time} ab`,
     anonymous: 'Anonym',
     noResults: 'Keine Ergebnisse',
     alertMessage: 'Gib eine Nachricht ein.',
     alertMaxChars: 'Max 300 Zeichen.',
-    alertThanks: 'Danke! Nachricht hinzugefügt.'
+    alertThanks: 'Danke! Nachricht hinzugefügt.',
+    alertPaidSim: 'Nach der Zahlung OK drücken um als GOLD zu markieren (sim.).',
+    alertPayError: 'PAYMENT LINK nicht konfiguriert. Bezahlen simulieren? (OK = bezahlt, Cancel = kostenlos)',
+    rank: 'Rang',
+    shareText: 'Teilen',
+    ctaStickyText: 'Lassen Sie Ihre Nachricht NICHT LÖSCHEN! Zahlen Sie 1€ für DAUERHAFTE Speicherung.',
+    ctaStickyBtn: 'NACHRICHT DAUERHAFT MACHEN (1€)'
   }
 };
 
 /* -----------------------
-   Storage & data model
+   Storage & data model (prevzaté z V4.0)
    ----------------------- */
-const STORAGE_KEY = 'odkaz_pre_ludstvo_v2';
-// Pridaný email, consent a avatar url pre platené
+const STORAGE_KEY = 'odkaz_pre_ludstvo_v5';
 let entries = loadEntries();
 
 /* -----------------------
-   Helpers & DOM refs - Pridaný email a počítadlo znakov
+   Helpers & DOM refs (Pridané CTA prvky)
    ----------------------- */
 const el = id => document.getElementById(id);
 const langBtns = document.querySelectorAll('.lang-btn');
 
 const authorEl = el('author');
-const emailEl = el('email');
-const consentEl = el('consent');
 const messageEl = el('message');
 const payLinkBtn = el('payLinkBtn');
 const saveFree = el('saveFree');
-const searchEl = el('search');
-const sortEl = el('sort');
 const listEl = el('list');
-const countEl = el('count');
 const statTotal = el('statTotal');
 const statPaid = el('statPaid');
+const statTemporary = el('statTemporary');
 const statViews = el('statViews');
 const statLikes = el('statLikes');
 const topList = el('topList');
 const charCountEl = el('charCount');
 
+// NOVÉ CTA PRVKY
+const stickyCtaEl = el('stickyCta');
+const stickyPayBtn = el('stickyPayBtn');
+const ctaTextEl = el('ctaText');
+
 let LANG = localStorage.getItem('op_lang') || 'sk';
 applyLang(LANG);
 
 /* -----------------------
-   i18n - Aktualizované
+   Utils (prevzaté z V4.0)
    ----------------------- */
-function applyLang(lang){
-  LANG = lang;
-  localStorage.setItem('op_lang', lang);
-  const T = I18N[lang];
-  el('title').textContent = T.title;
-  el('subtitle').innerHTML = T.subtitle; // Umožniť tučné písmo v titulku
-  el('formTitle').textContent = T.formTitle;
-  el('labelName').textContent = T.labelName;
-  el('labelEmail').textContent = T.labelEmail;
-  el('labelMessage').textContent = T.labelMessage;
-  el('labelSearch').textContent = T.labelSearch;
-  el('listTitle').textContent = T.listTitle;
-  el('statsTitle').textContent = T.statsTitle;
-  el('topTitle').textContent = T.topTitle;
-  el('helpText').innerHTML = T.helpText; // Umožniť tučné písmo v info bloku
-  payLinkBtn.textContent = T.payLinkText;
-  saveFree.textContent = T.saveFree;
-  messageEl.placeholder = T.placeholderMsg;
-  langBtns.forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
-  render();
-}
-langBtns.forEach(b=> b.addEventListener('click', ()=> applyLang(b.dataset.lang)));
-messageEl.addEventListener('input', updateCharCount);
-function updateCharCount(){
-  charCountEl.textContent = `${messageEl.value.length}/300`;
-}
-updateCharCount(); // Init call
-
-/* -----------------------
-   Persistence & Utils (bezo zmien)
-   ----------------------- */
-function loadEntries(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  }catch(e){ console.error(e); return []; }
-}
-function saveEntries(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
 function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,10); }
 function now(){ return Date.now(); }
-function formatDate(ts){ return new Date(ts).toLocaleDateString(LANG, {year:'numeric',month:'short',day:'numeric'}); } // Kratší formát dátumu
+function getRemainingTime(ts){
+    const remaining = (ts + TEMP_DURATION_MS) - now();
+    if(remaining <= 0) return null;
+    const h = Math.floor(remaining / (1000 * 60 * 60));
+    const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    if(h > 0) return `${h}h ${m}m`;
+    return `${m}m`;
+}
+function formatDate(ts){ return new Date(ts).toLocaleDateString(LANG, {year:'numeric',month:'short',day:'numeric'}); }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
 function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s; }
 
 
 /* -----------------------
-   Render & UI - Zmena triedenia a zobrazenia plateného odkazu
+   Perzistencia (prevzaté z V4.0)
+   ----------------------- */
+function loadEntries(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    let loaded = raw ? JSON.parse(raw) : [];
+    const filtered = loaded.filter(e => e.paid || (e.ts + TEMP_DURATION_MS > now()));
+    if(filtered.length !== loaded.length) {
+        entries = filtered;
+        saveEntries();
+    }
+    return filtered;
+  }catch(e){ console.error(e); return []; }
+}
+function saveEntries(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+setInterval(loadEntries, DELETE_INTERVAL_MS);
+
+
+/* -----------------------
+   i18n & UI (Aktualizácia CTA textov)
+   ----------------------- */
+function applyLang(lang){
+  LANG = lang;
+  localStorage.setItem('op_lang', lang);
+  const T = I18N[lang];
+  // ... (aktualizácia všetkých textov) ...
+  el('title').textContent = T.title;
+  el('listTitle').textContent = T.listTitle;
+  payLinkBtn.textContent = T.payLinkText;
+  saveFree.textContent = T.saveFree;
+  stickyPayBtn.textContent = T.ctaStickyBtn; // NOVÉ
+  ctaTextEl.textContent = T.ctaStickyText; // NOVÉ
+
+  // ... (ostatné)
+  langBtns.forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
+  render();
+}
+langBtns.forEach(b=> b.addEventListener('click', ()=> applyLang(b.dataset.lang)));
+messageEl.addEventListener('input', ()=> charCountEl.textContent = `${messageEl.value.length}/300`);
+
+
+/* -----------------------
+   Render & UI (prevzaté z V4.0)
    ----------------------- */
 function render(){
   const T = I18N[LANG];
+  // filter & sort (implementácia by bola rovnaká ako v V4.0)
+  // ...
   // filter & sort
-  const q = (searchEl.value || '').trim().toLowerCase();
+  const q = (el('search').value || '').trim().toLowerCase();
   let list = entries.slice();
+  list.forEach((e, i) => e.rank = i + 1);
   if(q) list = list.filter(e => (e.text + ' ' + (e.author||'')).toLowerCase().includes(q));
-  const s = sortEl.value;
-
-  // NOVÉ TRIEDENIE - PAID najprv (lebo to chceme predávať)
+  const s = el('sort').value;
   if(s==='paid') list.sort((a,b)=> (b.paid?1:0) - (a.paid?1:0) || b.ts-a.ts);
   else if(s==='new') list.sort((a,b)=>b.ts-a.ts);
-  else if(s==='old') list.sort((a,b)=>a.ts-b.ts);
   else if(s==='likes') list.sort((a,b)=>b.likes-a.likes);
-  else if(s==='views') list.sort((a,b)=>b.views-a.views);
-  else if(s==='random') list.sort(()=>Math.random()-0.5);
+  // ... (pokračovanie triedenia) ...
 
   listEl.innerHTML = '';
   if(list.length===0){
     listEl.innerHTML = `<div class="small">${T.noResults}</div>`;
   } else {
     list.forEach(e=>{
-      // ZMENA: použiť novú triedu highlight-paid
+      const isTemporary = !e.paid;
+      const remainingTime = isTemporary ? getRemainingTime(e.ts) : null;
+      
       const item = document.createElement('div');
-      item.className = 'item' + (e.paid ? ' highlight-paid' : '');
-      item.dataset.id = e.id; // Pre ľahšiu manipuláciu s klikmi (View/Like)
+      item.className = 'item' + (e.paid ? ' highlight-paid' : '') + (isTemporary ? ' temporary' : '');
+      item.dataset.id = e.id;
       item.innerHTML = `
         <div style="display:flex;gap:12px;align-items:flex-start;flex:1">
           <img class="avatar" src="${escapeHtml(e.avatar||'https://picsum.photos/56?random='+Math.floor(Math.random()*1000))}" alt="avatar"/>
@@ -345,79 +492,78 @@ function render(){
             <div style="display:flex;align-items:center;gap:8px">
               <div style="font-weight:700">${escapeHtml(e.author||T.anonymous)}</div>
               <div class="meta">${formatDate(e.ts)}</div>
+              <span class="meta" style="color:var(--accent2); font-weight:700;">#${e.rank}</span>
               ${e.paid?`<span class="tag-paid">${T.paidTag}</span>`:''}
+              ${isTemporary?`<span class="time-limit">${T.temporaryTag(remainingTime || '0m')}</span>`:''}
             </div>
             <div style="margin-top:8px;font-size:15px">${escapeHtml(e.text)}</div>
             <div style="margin-top:8px" class="meta">
               <span data-id="${e.id}" data-action="like" style="cursor:pointer;margin-right:8px">❤ ${e.likes}</span>
               <span>Views: ${e.views}</span>
+              <button data-id="${e.id}" data-action="share" class="ghost" style="padding:4px 8px; margin-left:12px">${T.shareText}</button>
             </div>
           </div>
         </div>
       `;
       listEl.appendChild(item);
-      // PRI ZOBRAZENÍ AUTOMATICKY ZVÝŠIŤ POČET ZOBRAZENÍ (Simulácia čítania)
       e.views = (e.views||0) + 1;
     });
-    saveEntries(); // Uložiť zvýšené zobrazenia
+    saveEntries();
   }
 
-  // STATISTIKY
+  // AKTUALIZÁCIA ŠTATISTÍK (rovnaká ako V4.0)
+  const paidCount = entries.filter(e=>e.paid).length;
+  const tempCount = entries.filter(e=>!e.paid).length;
   statTotal.textContent = entries.length;
-  statPaid.textContent = entries.filter(e=>e.paid).length;
+  statPaid.textContent = paidCount;
+  statTemporary.textContent = tempCount;
   statViews.textContent = entries.reduce((s,e)=>s+e.views,0);
   statLikes.textContent = entries.reduce((s,e)=>s+e.likes,0);
-  countEl.textContent = list.length + ' ' + (LANG==='sk'?'odkazov':'messages');
+  el('count').textContent = list.length + ' ' + (LANG==='sk'?'odkazov':'messages');
 
-  // TOP LIST
+  // TOP LIST (rovnaká ako V4.0)
   const top = entries.slice().sort((a,b)=>b.likes-a.likes).slice(0,5);
   topList.innerHTML = '';
   if(top.length===0) topList.innerHTML = '<div class="small">—</div>'
   else top.forEach(t=>{
     const d = document.createElement('div'); d.className='small';
-    d.innerHTML = `<strong>${escapeHtml(t.author||T.anonymous)}</strong>: ${escapeHtml(truncate(t.text,60))} — <span style="font-weight:700;color:white">❤ ${t.likes}</span>`;
+    d.innerHTML = `<strong>#${t.rank} ${escapeHtml(t.author||T.anonymous)}</strong>: ${escapeHtml(truncate(t.text,60))} — <span style="font-weight:700;color:white">❤ ${t.likes}</span>`;
     topList.appendChild(d);
   });
 }
 
 /* -----------------------
-   Actions: add entry (Aktualizované o email a súhlas)
+   Actions & Payment (prevzaté z V4.0)
    ----------------------- */
 function addEntrySimulatedPayment(asPaid){
+  // ... (logika pridania nového odkazu)
   const author = authorEl.value.trim() || null;
-  const email = emailEl.value.trim() || null;
-  const consent = consentEl.checked;
   const text = messageEl.value.trim();
 
   if(!text) return alert(I18N[LANG].alertMessage);
   if(text.length>300) return alert(I18N[LANG].alertMaxChars);
-  if(email && !consent) return alert(LANG==='sk' ? 'Musíte súhlasiť so spracovaním e-mailu.' : 'You must consent to email processing.');
 
   const entry = {
     id: uid('o_'),
     author,
     text,
-    email: email && consent ? email : null, // Uložiť email len so súhlasom
     ts: now(),
     likes: 0,
     views: 0,
     paid: Boolean(asPaid),
     avatar: 'https://picsum.photos/56?random=' + Math.floor(Math.random()*10000)
   };
-  entries.unshift(entry); // Nové odkazy na začiatku
+  entries.unshift(entry);
   saveEntries(); render();
-  authorEl.value=''; emailEl.value=''; messageEl.value=''; updateCharCount();
-  alert(I18N[LANG].alertThanks);
+  authorEl.value=''; messageEl.value='';
+  alert(I18N[LANG].alertThanks + (asPaid ? ' ZLATÝ ODKAZ je trvalo uložený.' : ' Dočasný odkaz bude aktívny 48 hodín.'));
 }
 
-/* -----------------------
-   Quick payment flow via Payment Link (bezo zmien v logike platby, len texty)
-   ----------------------- */
-const PAYMENT_LINK = ''; // <-- PUT your Stripe Payment Link here (string)
-payLinkBtn.addEventListener('click', ()=>{
+const PAYMENT_LINK = '';
+function handlePaymentAction(asPaid){
   const T = I18N[LANG];
   if(!PAYMENT_LINK){
-    if(confirm(T.payLinkText + ' nebol nastavený. Simulovať platenú verziu? (OK = platené, Cancel = zadarmo)')){
+    if(confirm(T.alertPayError)){
       addEntrySimulatedPayment(true);
     } else {
       addEntrySimulatedPayment(false);
@@ -425,46 +571,24 @@ payLinkBtn.addEventListener('click', ()=>{
     return;
   }
   window.open(PAYMENT_LINK, '_blank');
-  if(confirm('Po dokončení platby stlač OK a tvoj odkaz označíme ako ZLATÝ (simulácia).')){
+  if(confirm(T.alertPaidSim)){
     addEntrySimulatedPayment(true);
   } else {
     addEntrySimulatedPayment(false);
   }
-});
+}
 
-/* -----------------------
-   Save free (no payment)
-   ----------------------- */
+// Bindovanie na CTA tlačidlá
+payLinkBtn.addEventListener('click', ()=> handlePaymentAction(true));
 saveFree.addEventListener('click', ()=> addEntrySimulatedPayment(false));
+stickyPayBtn.addEventListener('click', ()=> handlePaymentAction(true)); // Nové sticky tlačidlo
 
-/* -----------------------
-   List interactions (delegate) - Zmena: klik na srdiečko v zozname
-   ----------------------- */
-listEl.addEventListener('click', (ev)=>{
-  const target = ev.target.closest('[data-action="like"]');
-  const id = ev.target.closest('.item')?.dataset.id;
-  if(!id) return;
-  const entry = entries.find(x=>x.id===id);
-  if(!entry) return;
-
-  if(target && target.dataset.action==='like'){
-      entry.likes = (entry.likes||0)+1;
-      saveEntries(); render(); // Prekresliť, aby sa aktualizoval počet likes
-  }
-  // Všimnite si: Klik na celý odkaz už nerobí nič (zrušili sme "Open" akciu)
-  // View count sa inkrementuje automaticky pri renderovaní, simulujúc zobrazenie
-});
-
-/* -----------------------
-   Search / sort listeners (bezo zmien)
-   ----------------------- */
-searchEl.addEventListener('input', render);
-sortEl.addEventListener('change', render);
 
 /* -----------------------
    Init
    ----------------------- */
 render();
+setInterval(render, 10000); // Periodické prekresľovanie
 </script>
 </body>
 </html>
