@@ -3,171 +3,138 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Odkaz pre ľudstvo — Kapsula Času v. 9.0 (Šťastný Slot Edition)</title>
-<meta name="description" content="Zanechaj vetu pre budúce generácie. Chyť si jeden z 5 DENNÝCH ŠŤASTNÝCH ZLATÝCH SLOTov!">
+<title>Archív Dedičstva — Kapsula Času v. 10.0 (Umelecké Dielo)</title>
+<meta name="description" content="Zanechaj vetu pre budúce generácie. Vytvor si Archív Dedičstva s trvalým uchovaním.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1:#020617; --bg2:#071427; --card:#0f1b2a; --accent:#7c3aed; --accent2:#06b6d4;
-    --muted:#9aa4b2; --good:#7ef0c7; --danger:#ff8a8a; --round:14px; --text:#e6eef8;
-    --gold:#FFD700; --gold-dark:#e6c400;
-    --delete-limit:rgba(255,138,138,0.2);
-    --cta-bg:rgba(124,58,237,0.95);
+    --bg1:#0a0a0a; /* Hlboká čierna */
+    --bg2:#141414; /* Tmavosivá */
+    --card:#1c1c1c; /* Tmavá karta */
+    --accent:#b8860b; /* Deep Gold - Jemné a Luxusné */
+    --accent2:#daa520;
+    --muted:#aaaaaa;
+    --danger:#c94c4c; /* Tmavšia, decentnejšia červená */
+    --round:10px;
+    --text:#f0f0f0;
+    --gold:var(--accent);
+    --gold-light:#e0b230;
+    --delete-limit:rgba(201,76,76,0.2);
+    --cta-bg:rgba(10,10,10,0.95);
   }
-  /* ... (OSTATNÉ ŠTÝLY ZOSTÁVAJÚ ROVNAKÉ PRE ZJEDNODUŠENIE) ... */
+  
+  /* Zmena fontu pre titulky pre eleganciu */
+  h1, h3, .hero-text div:first-child {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+  }
+  
   *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,system-ui,Arial;background:radial-gradient(ellipse at 10% 10%, rgba(124,58,237,0.12), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh; padding-bottom: 70px;}
-  .wrap{max-width:1100px;margin:0 auto;padding:20px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+  body{margin:0;font-family:Inter,system-ui,Arial;background:radial-gradient(ellipse at 10% 10%, rgba(184,134,11,0.1), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh; padding-bottom: 80px;}
+  .wrap{max-width:1000px;margin:0 auto;padding:20px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
   .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:18px}
-  h1{margin:0;font-size:20px}
-  .subtitle{color:var(--muted);font-size:13px}
-  .lang{display:flex;gap:8px}
-  .lang button{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer}
-  .lang button.active{border-color:var(--accent);color:white;box-shadow:0 8px 30px rgba(124,58,237,0.06)}
-  .grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+  .logo{width:50px;height:50px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--bg1);font-size:20px;box-shadow:0 0 10px rgba(184,134,11,0.5);}
+  h1{margin:0;font-size:28px}
+  .subtitle{color:var(--muted);font-size:14px; margin-top: 4px;}
+  /* ... (ostatné štýly zostávajú podobné, ale s novými farbami) ... */
+  .grid{display:grid;grid-template-columns:1fr 340px;gap:24px}
   @media(max-width:960px){.grid{grid-template-columns:1fr}}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:var(--round)}
-  label{font-size:13px;color:var(--muted)}
-  input[type="text"], textarea, select{width:100%;padding:10px;border-radius:10px;border:0;background:rgba(255,255,255,0.02);color:var(--text);margin-top:8px}
-  textarea{min-height:90px}
-  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
-  .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:white;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:600;}
-  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px 14px;border-radius:10px;cursor:pointer}
-  .list{margin-top:12px;display:flex;flex-direction:column;gap:10px;max-height:600px;overflow:auto}
-  .item{padding:12px;border-radius:10px;background:rgba(255,255,255,0.02);display:flex;gap:12px;align-items:flex-start;justify-content:space-between;border:1px solid transparent;transition:all 0.3s;}
-  .item:hover{background:rgba(255,255,255,0.04)}
-  .meta{color:var(--muted);font-size:13px}
-  .highlight-paid{
-    background:linear-gradient(180deg, rgba(255,215,0,0.07), rgba(255,215,0,0.03)) !important;
-    border-color:var(--gold);
-    box-shadow:0 0 0 2px var(--gold), 0 15px 40px rgba(255,215,0,0.15);
-  }
-  .tag-paid{background:linear-gradient(90deg,#ffd166,#ff9f1c);color:#111;padding:4px 8px;border-radius:6px;font-weight:700;margin-left:8px;font-size:12px;letter-spacing:0.5px;}
-  .small{font-size:13px;color:var(--muted)}
-  footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
-  .avatar {width:56px;height:56px;border-radius:10px;object-fit:cover;background:#111}
-  .char-count {float:right;font-size:12px;color:var(--muted)}
+  .card{background:var(--card);padding:20px;border-radius:var(--round);border:1px solid rgba(255,255,255,0.05);box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+
+  /* ELEGANTNÉ TLAČIDLÁ */
+  .btn{background:linear-gradient(90deg,var(--accent),var(--accent2));color:var(--bg1);border:0;padding:12px 18px;border-radius:8px;cursor:pointer;font-weight:700;font-size:16px;box-shadow:0 4px 10px rgba(184,134,11,0.3); transition: all 0.3s;}
+  .btn:hover {box-shadow:0 6px 15px rgba(184,134,11,0.5); transform: translateY(-1px);}
+  .ghost{background:transparent;border:1px solid var(--muted);color:var(--muted);padding:12px 18px;border-radius:8px;cursor:pointer; transition: all 0.3s;}
+  .ghost:hover {border-color:var(--text); color:var(--text);}
+  
   .hero {
-    display:flex;align-items:center;gap:12px;padding:16px;border-radius:var(--round);margin-bottom:12px;
-    background:linear-gradient(90deg,var(--accent),var(--accent2));
-    color:white;
-    position:relative;
-    overflow:hidden;
+    /* Jemnejší gradient */
+    background: linear-gradient(90deg, rgba(184,134,11,0.1), rgba(184,134,11,0.05));
+    border: 1px solid rgba(184,134,11,0.2);
+    color: var(--text);
+    padding: 20px;
   }
-  .hero-text {z-index:1}
-  .capsule-anim {
-    position:absolute;right:0;top:-10px;opacity:0.2;
-    font-size:100px;
-    transform:rotate(-15deg);
-    animation:pulse-float 6s infinite ease-in-out;
-    z-index:0;
+  .hero-text div:first-child {font-size:28px;}
+  .capsule-anim { /* Jemnejšia animácia */
+    opacity:0.08;
+    animation:pulse-float 10s infinite ease-in-out;
   }
-  @keyframes pulse-float {
-    0% {transform:translateY(0) scale(1) rotate(-15deg); opacity:0.15;}
-    50% {transform:translateY(-10px) scale(1.05) rotate(-15deg); opacity:0.25;}
-    100% {transform:translateY(0) scale(1) rotate(-15deg); opacity:0.15;}
-  }
+
   .time-limit {
-    font-weight:600;
+    font-weight:500;
     color:var(--danger);
-    background-color:var(--delete-limit);
-    padding:3px 6px;
+    background-color:rgba(201,76,76,0.1); /* Jemnejšia farba */
+    padding:4px 8px;
     border-radius:4px;
-    font-size:11px;
-    margin-left:8px;
+    font-size:12px;
+    margin-left:10px;
+    border: 1px solid rgba(201,76,76,0.3);
   }
-  /* VIZUÁLNA DEGRADÁCIA NEPLATENÉHO ODKAZU */
+  
+  /* SUBTÍLNE VIZUÁLNE UPOZORNENIE PRE DOČASNÉ */
   .item.temporary {
     border-left:4px solid var(--danger);
-    opacity:0.6;
-    filter: blur(1.0px);
-    transition: all 0.5s;
+    opacity:0.75; /* Mierne znížená */
+    filter: none; /* Odstránime neprofesionálny blur */
+    background:rgba(201,76,76,0.05); /* Jemné pozadie */
   }
-  .item.temporary:hover {
-    opacity: 0.9;
-    filter: blur(0.2px);
-  }
+  .item.temporary:hover {opacity: 1.0; background:rgba(201,76,76,0.1);} /* Zvýrazníme hover */
 
-  /* STICKY CTA FOOTER */
-  .sticky-cta {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: var(--cta-bg);
-    box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
-    padding: 10px 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    z-index: 1000;
-    backdrop-filter: blur(8px);
-    border-top: 1px solid rgba(255,255,255,0.1);
-  }
-  .sticky-cta .btn {
-    font-size: 16px;
-    padding: 12px 20px;
-    background: linear-gradient(90deg, var(--gold-dark), var(--gold));
-    color: #111;
-    font-weight: 900;
-    text-transform: uppercase;
-    animation: bounce-gold 3s infinite ease-in-out;
-  }
-  @keyframes bounce-gold {
-    0%, 100% { transform: translateY(0); box-shadow: 0 0 15px rgba(255,215,0,0.4); }
-    50% { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(255,215,0,0.7); }
-  }
-  .cta-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  }
-  @media(max-width:600px){
-    .sticky-cta {flex-direction: column; gap: 8px; padding: 8px 10px;}
-    .sticky-cta .btn {width: 100%;}
-    .cta-text {font-size: 12px;}
-  }
-
-  /* VYLEPŠENÉ TLAČIDLO V FORMULÁRI */
+  /* PREMIUM TLAČIDLO */
   #payLinkBtn {
     flex-grow: 1;
     font-size: 18px !important;
     padding: 14px 20px !important;
+    font-family: 'Playfair Display', serif;
   }
-  /* UPOZORNENIE NA LIMIT */
+  /* UPOZORNENIE NA LIMIT - DECENTNÉ */
   .limit-info {
     font-size: 14px;
-    font-weight: 700;
-    color: var(--gold);
-    padding: 8px;
+    font-weight: 500;
+    color: var(--gold-light);
+    padding: 10px;
     text-align: center;
-    border: 1px dashed var(--gold);
+    border: 1px solid rgba(184,134,11,0.3);
     border-radius: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
+    background:rgba(184,134,11,0.05);
   }
-  /* NOVÝ ŠTÝL PRE ZDARMA TLAČIDLO PRI AKCII */
-  .free-gold-btn {
-    background: linear-gradient(90deg, #10b981, #06b6d4) !important;
+  /* SUBTÍLNY ŠTÝL PRE ZDARMA */
+  .free-slot-btn {
+    background: linear-gradient(90deg, #10b981, #06b6d4) !important; /* Ponecháme decentnú farbu pre šancu */
     color: white !important;
-    font-weight: 900 !important;
-    box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    font-weight: 700 !important;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
   }
-
+  
+  /* CTA FOOTER DECENTNÝ */
+  .sticky-cta {
+    background: var(--cta-bg);
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.5);
+    border-top: 1px solid rgba(184,134,11,0.2);
+  }
+  .sticky-cta .btn {
+      padding: 14px 24px;
+  }
+  .cta-text {
+      color: var(--muted);
+      font-weight: 400;
+      text-shadow: none;
+      font-size: 15px;
+  }
+  .cta-text strong {color: var(--gold-light);}
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div class="brand">
-        <div class="logo">OPĽ</div>
+        <div class="logo">AČ</div>
         <div>
-          <h1 id="title">Odkaz pre ľudstvo</h1>
-          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 9.0 | ŠŤASTNÝ SLOT EDITION</div>
+          <h1 id="title">Archív Dedičstva</h1>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.0 | Kurátorované Vydanie</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -181,14 +148,14 @@
     </header>
 
     <div class="hero">
-        <span class="capsule-anim">⏳</span>
+        <span class="capsule-anim">📜</span>
         <div class="hero-text">
-            <div style="font-size:24px; font-weight:900; line-height:1.2;">TVOJ ODKAZ PRE BUDÚCNOSŤ</div>
-            <div style="margin-top:8px;">
-                <span style="font-weight:700">DOČASNÝ (Riziko):</span> **VYMAZANIE** za 48 hodín. Strata Hodnosti.
+            <div style="font-size:24px; font-weight:900; line-height:1.2;">UCHOVANIE ODKAZU PRE VEČNOSŤ</div>
+            <div style="margin-top:12px; font-size:15px;">
+                <span style="font-weight:700; color:var(--muted)">DOČASNÉ (Prechodné):</span> Veta podlieha **ZÁNIKU** po 48 hodinách. Dedičstvo prepadá.
             </div>
-            <div style="margin-top:4px;">
-                <span style="font-weight:700; color:var(--gold)">ZLATÝ (1€ / Šťastný Slot ZADARMO):</span> **TRVALÉ ULOŽENIE**, Hodnosť zachovaná, Prioritný Status.
+            <div style="margin-top:4px; font-size:15px;">
+                <span style="font-weight:700; color:var(--gold)">ARCHÍV DEDIČSTVA (1€ / Kurátorovaný Slot):</span> **TRVALÉ ULOŽENIE**, Odznaky uchované, Prioritný Status.
             </div>
         </div>
     </div>
@@ -196,40 +163,40 @@
     <div class="grid">
       <main>
         <div class="card">
-          <h3 id="formTitle">Pridať odkaz a zvoliť trvácnosť</h3>
+          <h3 id="formTitle">Vytvoriť a archivovať odkaz</h3>
           
           <div id="dailyLimitInfo" class="limit-info"></div>
 
           <label id="labelName">Meno / Prezývka (voliteľné)</label>
           <input id="author" type="text" placeholder="" />
 
-          <label id="labelMessage" style="margin-top:12px">Odkaz (max 300 znakov) <span id="charCount" class="char-count">0/300</span></label>
+          <label id="labelMessage" style="margin-top:12px">Archívny Vstup (max 300 znakov) <span id="charCount" class="char-count">0/300</span></label>
           <textarea id="message" maxlength="300" placeholder=""></textarea>
 
-          <div style="margin-top:10px; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; border:1px solid var(--gold-dark);">
-            <div style="font-weight:700; color:var(--gold); margin-bottom:8px;">MOŽNOSTI ULOŽENIA:</div>
+          <div style="margin-top:15px; padding:15px; background:rgba(184,134,11,0.03); border-radius:10px; border:1px solid var(--gold);">
+            <div style="font-weight:700; color:var(--gold); margin-bottom:10px;">VOĽBA UCHOVANIA:</div>
             <div class="controls" style="margin-top:0;">
-                <button id="payLinkBtn" class="btn" style="background:linear-gradient(90deg, var(--gold-dark), var(--gold)); color: #111;">
-                    🔒 ZAPLAŤ 1€ — ZLATÝ Odkaz (Trvalé Uloženie)
+                <button id="payLinkBtn" class="btn">
+                    🔒 ZAPLAŤ 1€ — ARCHÍV DEDIČSTVA (Trvalé Uloženie)
                 </button>
                 <button id="saveFree" class="ghost">
                     Uložiť DOČASNE (48 hodín)
                 </button>
             </div>
           </div>
-          <div class="small" style="margin-top:10px; color:var(--danger); font-weight:700;">
-            *Neplatené odkazy sa po 48 hodinách bez milosti vymažú! Nechaj svoj odkaz PREŽIŤ!
+          <div class="small" style="margin-top:12px; color:var(--danger); font-weight:500;">
+            *Dočasné vstupy budú po 48 hodinách navždy odstránené. Zachráň svoje Dedičstvo!
           </div>
 
 
-          <div style="margin-top:20px">
-            <label id="labelSearch">Hľadať a triediť odkazy</label>
+          <div style="margin-top:25px">
+            <label id="labelSearch">Prehľad a triedenie Archívu</label>
             <div style="display:flex;gap:8px;margin-top:8px">
               <input id="search" type="text" placeholder="">
               <select id="sort">
-                <option value="paid">ZLATÉ Odkazy najprv</option>
+                <option value="paid">DEDIČSTVO ARCHÍV najprv</option>
                 <option value="new">Najnovšie</option>
-                <option value="likes">Najviac lajkované</option>
+                <option value="likes">Najviac uznávané</option>
                 <option value="views">Najviac čítané</option>
                 <option value="old">Najstaršie</option>
                 <option value="random">Náhodné</option>
@@ -238,9 +205,9 @@
           </div>
         </div>
 
-        <div class="card" style="margin-top:12px">
+        <div class="card" style="margin-top:16px">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <h3 id="listTitle">Zoznam odkazov</h3>
+            <h3 id="listTitle">Archívne Vstupy</h3>
             <div class="small" id="count">0 odkazov</div>
           </div>
           <div id="list" class="list" style="margin-top:10px">
@@ -251,41 +218,42 @@
 
       <aside>
         <div class="card">
-          <h3 id="statsTitle">Štatistiky Kapsuly Času</h3>
-          <div class="small" style="margin-top:8px">Celkom odkazov: <strong id="statTotal">0</strong></div>
-          <div class="small">Trvalo uložených (ZLATÝCH): <strong id="statPaid" style="color:var(--gold);font-weight:700">0</strong></div>
-          <div class="small">Dočasných odkazov (vyprší): <strong id="statTemporary" style="color:var(--danger);font-weight:700">0</strong></div>
-          <div class="small">Usporená Hodnota: <strong id="statSavedValue" style="color:#10b981;font-weight:700">0 €</strong></div> <div class="small" style="margin-top:10px">Celkom zobrazení: <strong id="statViews">0</strong></div>
-          <div class="small">Celkom lajkov: <strong id="statLikes">0</strong></div>
+          <h3 id="statsTitle">Metadáta Archívu</h3>
+          <div class="small" style="margin-top:8px">Celkom Archívnych Vstupov: <strong id="statTotal">0</strong></div>
+          <div class="small">Trvalo Uchovaných (DEDIČSTVO): <strong id="statPaid" style="color:var(--gold);font-weight:700">0</strong></div>
+          <div class="small">Prechodné Vstupy (Zaniknú): <strong id="statTemporary" style="color:var(--danger);font-weight:700">0</strong></div>
+          <div class="small">Kurátorovaná Hodnota (Ušetrené): <strong id="statSavedValue" style="color:#10b981;font-weight:700">0 €</strong></div>
+          <div class="small" style="margin-top:10px">Celkom Čítaní: <strong id="statViews">0</strong></div>
+          <div class="small">Celkom Uznaní (Lajkov): <strong id="statLikes">0</strong></div>
         </div>
 
-        <div class="card" style="margin-top:12px">
-          <h3 id="topTitle">Najpopulárnejšie odkazy</h3>
+        <div class="card" style="margin-top:16px">
+          <h3 id="topTitle">Najviac Uznávané Dedičstvo</h3>
           <div id="topList" style="display:flex;flex-direction:column;gap:8px;margin-top:8px"></div>
         </div>
 
-        <div class="card" style="margin-top:12px">
-          <h3 id="helpTitle">NEPRÍĎ O SVOJU HODNOSŤ!</h3>
+        <div class="card" style="margin-top:16px">
+          <h3 id="helpTitle" style="color:var(--gold)">KURÁTOROVANÝ ARCHÍV</h3>
           <div class="small" id="helpText">
-            Každý odkaz má unikátnu Hodnosť (#). <br>
-            <strong style="color:var(--danger)">Dočasný odkaz</strong> má platnosť len 48 hodín. Ak nezaplatíš 1 €, Tvoj odkaz sa vymaže a Tvoja **Hodnosť prepadne NAVŽDY**!
+            Každý trvalo uložený odkaz (Archív Dedičstva) obdrží unikátny **Odznak Uchovania (#)**, ktorý odráža jeho trvalé miesto v histórii. <br><br>
+            <strong style="color:var(--danger)">Prechodný vstup</strong> bude vymazaný po 48 hodinách a **príde o možnosť získať tento Odznak**.
             <br><br>
-            <strong style="color:var(--gold)">Zlatý odkaz (1€ / Šťastný Slot)</strong> sa stane trvalou súčasťou Kapsuly Času a zachová si Tvoju unikátnu Hodnosť, ktorá sa s každým pridaným odkazom stáva **cennejšou**!
+            <strong style="color:var(--gold)">Archív Dedičstva (1€ / Kurátorovaný Slot)</strong> zabezpečuje uchovanie Odznaku a prioritné čítanie. Chráň svoje Dedičstvo pred Zánikom.
           </div>
         </div>
       </aside>
     </div>
 
-    <footer>© 2025 Odkaz pre ľudstvo — Verzia 9.0 | Limitovaná Šanca Dňa!</footer>
+    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.0 | Umelecká Schránka pre Váš Odkaz.</footer>
 
   </div>
 
   <div class="sticky-cta" id="stickyCta">
     <div class="cta-text" id="ctaText">
-      ⌛ Posledná šanca! Nenechaj svoj odkaz VYMAZAŤ! Zaplať 1€ a ulož ho NATRVALO!
+      ⌛ Váš odkaz je len **Prechodný**. Uchovajte svoje Dedičstvo natrvalo za **len 1€**!
     </div>
     <button id="stickyPayBtn" class="btn">
-      UROB ODKAZ TRVALÝ (1€)
+      ZABEZPEČ ARCHÍV DEDIČSTVA (1€)
     </button>
   </div>
 
@@ -295,10 +263,10 @@
    ----------------------- */
 const TEMP_DURATION_MS = 48 * 60 * 60 * 1000;
 const DELETE_INTERVAL_MS = 60 * 60 * 1000;
-const DAILY_FREE_LIMIT = 5; 
-const MESSAGE_PRICE = 1.00; // Cena za trvalé uloženie
-const STORAGE_KEY = 'odkaz_pre_ludstvo_v9';
-const DAILY_LIMIT_KEY = 'op_daily_free_v9';
+const DAILY_FREE_LIMIT = 3; // Znižujeme limit na zvýšenie exkluzivity
+const MESSAGE_PRICE = 1.00; 
+const STORAGE_KEY = 'odkaz_pre_ludstvo_v10';
+const DAILY_LIMIT_KEY = 'op_daily_free_v10';
 
 // Denno-limitný stav
 let dailyLimitState = loadDailyLimit();
@@ -306,70 +274,80 @@ let entries = loadEntries();
 
 const I18N = {
   sk: {
-    title: 'Odkaz pre ľudstvo',
-    subtitle: 'Digitálna Kapsula Času v. 9.0 | ŠŤASTNÝ SLOT EDITION',
-    formTitle: 'Pridať odkaz a zvoliť trvácnosť',
+    title: 'Archív Dedičstva',
+    subtitle: 'Digitálna Kapsula Času v. 10.0 | Kurátorované Vydanie',
+    formTitle: 'Vytvoriť a archivovať odkaz',
     labelName: 'Meno / Prezývka (voliteľné)',
-    labelMessage: 'Odkaz (max 300 znakov)',
-    labelSearch: 'Hľadať a triediť odkazy',
-    listTitle: 'Zoznam odkazov',
-    statsTitle: 'Štatistiky Kapsuly Času',
-    topTitle: 'Najpopulárnejšie odkazy',
-    payLinkText: '🔒 ZAPLAŤ 1€ — ZLATÝ Odkaz (Trvalé Uloženie)',
+    labelMessage: 'Archívny Vstup (max 300 znakov)',
+    labelSearch: 'Prehľad a triedenie Archívu',
+    listTitle: 'Archívne Vstupy',
+    statsTitle: 'Metadáta Archívu',
+    topTitle: 'Najviac Uznávané Dedičstvo',
+    payLinkText: '🔒 ZAPLAŤ 1€ — ARCHÍV DEDIČSTVA (Trvalé Uloženie)',
     saveFree: 'Uložiť DOČASNE (48 hodín)',
-    placeholderMsg: 'Napíš vetu pre budúce generácie, skôr než bude neskoro...',
-    paidTag: 'ZLATÝ 🌟',
-    temporaryTag: (time) => `Vyprší za ${time} 🚨`,
-    anonymous: 'Anonym',
-    noResults: 'Žiadne výsledky',
-    alertMessage: 'Nezabudni napísať odkaz!',
-    alertMaxChars: 'Príliš dlhé. Max 300 znakov.',
-    alertPayError: 'PAYMENT LINK nebol nastavený. Simulovať ZLATÚ verziu? (OK = platené, Cancel = dočasné)',
-    rank: 'Hodnosť',
-    shareText: 'Zdieľaj',
-    ctaStickyText: '⌛ Posledná šanca! Nenechaj svoj odkaz VYMAZAŤ! Zaplať 1€ a ulož ho NATRVALO!',
-    ctaStickyBtn: 'UROB ODKAZ TRVALÝ (1€)',
+    placeholderMsg: 'Zanechaj stopu pre budúcnosť, než tvoja veta zanikne...',
+    paidTag: 'DEDIČSTVO 📜',
+    temporaryTag: (time) => `Zánik za ${time} 🕯️`,
+    anonymous: 'Neznámy Autor',
+    noResults: 'Žiadne vstupy v archíve',
+    alertMessage: 'Archívny vstup nemôže byť prázdny!',
+    alertMaxChars: 'Vstup je príliš rozsiahly. Max 300 znakov.',
+    alertPayError: 'PLATOBNÝ LINK chýba. Similácia Archívu Dedičstva? (OK = platené, Cancel = dočasné)',
+    rank: 'Odznak Uchovania',
+    shareText: 'Zdieľať Vstup',
+    ctaStickyText: '⌛ Váš odkaz je len **Prechodný**. Uchovajte svoje Dedičstvo natrvalo za **len 1€**!',
+    ctaStickyBtn: 'ZABEZPEČ ARCHÍV DEDIČSTVA (1€)',
+    // Zmena textu pre free slot - Kurátorovaný Slot
     dailyLimitText: (remaining) => remaining > 0 
-      ? `🍀 ŠANCA DŇA: Získaj TRVALÝ odkaz ZDARMA! Zostáva **${remaining} ŠŤASTNÝCH SLOTov**!`
-      : `⚠️ Dnešný limit (${DAILY_FREE_LIMIT}) bol vyčerpaný. Zlatý odkaz (Trvalé uloženie) je len za 1€!`,
-    alertThanksFree: (savedValue) => `GRATULUJEME! Získal si ŠŤASTNÝ SLOT! Tvoj ZLATÝ ODKAZ bol uložený NATRVALO. Ušetril si ${savedValue} €! Šír to ďalej!`,
-    alertThanksTemporary: 'Úspešne pridané, ale POZOR! Dočasný odkaz bude aktívny len 48 hodín. Nechaj si prepadnúť svoju Hodnosť a 1 € hodnotu?'
+      ? `🗝️ KURÁTOROVANÝ SLOT DŇA: Získaj TRVALÝ ARCHÍV ZDARMA! Zostáva **${remaining} Exkluzívnych Slotov**!`
+      : `🚫 Dnešný limit (${DAILY_FREE_LIMIT}) bol vyčerpaný. Archív Dedičstva (Trvalé uchovanie) je dostupný za symbolické 1€!`,
+    alertThanksFree: (savedValue) => `✅ UZNANIE! Váš vstup získal KURÁTOROVANÝ SLOT a bol uložený NATRVALO! Ušetrená Vnímaná Hodnota: ${savedValue} €! Šírte odkaz!`,
+    alertThanksTemporary: 'Vstup bol uložený ako PRECHODNÝ. Pripravte sa na Zánik po 48 hodinách. Chcete riskovať stratu Dedičstva?'
   },
   en: { 
-    title: 'Message to Humanity',
-    subtitle: 'Digital Time Capsule v. 9.0 | Lucky Slot Edition',
+    title: 'Archive of Heritage',
+    subtitle: 'Digital Time Capsule v. 10.0 | Curated Edition',
     saveFree: 'Save TEMPORARILY (48 hours)',
-    dailyLimitText: (remaining) => remaining > 0
-      ? `🍀 LUCKY CHANCE: Get a PERMANENT message for FREE! **${remaining} LUCKY SLOTS LEFT**!`
-      : `⚠️ Today's limit (${DAILY_FREE_LIMIT}) has been reached. Gold Message (Permanent) is just €1!`,
-    alertThanksFree: (savedValue) => `CONGRATULATIONS! You got a LUCKY SLOT! Your GOLD MESSAGE has been stored PERMANENTLY. You saved ${savedValue} €! Spread the word!`,
-    alertThanksTemporary: 'Successfully added, but BEWARE! Temporary message will only be active for 48 hours. Risk losing your Rank and €1 value?'
+    paidTag: 'HERITAGE 📜',
+    temporaryTag: (time) => `Expires in ${time} 🕯️`,
+    anonymous: 'Unknown Author',
+    dailyLimitText: (remaining) => remaining > 0 
+      ? `🗝️ CURATED SLOT OF THE DAY: Get a PERMANENT ARCHIVE for FREE! **${remaining} Exclusive Slots Remaining**!`
+      : `🚫 Today's limit (${DAILY_FREE_LIMIT}) has been reached. Heritage Archive (Permanent) is available for a symbolic €1!`,
+    alertThanksFree: (savedValue) => `✅ ACCEPTED! Your entry earned a CURATED SLOT and has been stored PERMANENTLY! Saved Perceived Value: ${savedValue} €! Spread the word!`,
+    alertThanksTemporary: 'Entry stored as TEMPORARY. Prepare for Expiration in 48 hours. Risk losing your Heritage?'
   },
   de: {
-    title: 'Botschaft an die Menschheit',
-    subtitle: 'Digitale Zeitkapsel v. 9.0 | Glücks-Slot Edition',
+    title: 'Archiv des Erbes',
+    subtitle: 'Digitale Zeitkapsel v. 10.0 | Kuratierte Ausgabe',
     saveFree: 'Vorübergehend speichern (48 Stunden)',
-    dailyLimitText: (remaining) => remaining > 0
-      ? `🍀 GLÜCKSCANCE: Erhalte eine PERMANENTE Nachricht KOSTENLOS! **${remaining} GLÜCKS-SLOTS** übrig!`
-      : `⚠️ Das heutige Limit (${DAILY_FREE_LIMIT}) ist erreicht. Gold-Nachricht (Permanent) nur für 1€!`,
-    alertThanksFree: (savedValue) => `HERZLICHEN GLÜCKWUNSCH! Sie haben einen Glücks-Slot erhalten! Ihre GOLD-NACHRICHT wurde DAUERHAFT gespeichert. Sie haben ${savedValue} € gespart! Erzählen Sie es weiter!`,
-    alertThanksTemporary: 'Erfolgreich hinzugefügt, aber ACHTUNG! Die temporäre Nachricht ist nur 48 Stunden aktiv. Riskieren Sie den Verlust Ihres Rangs und des €1 Wertes?'
+    paidTag: 'ERBE 📜',
+    temporaryTag: (time) => `Läuft ab in ${time} 🕯️`,
+    anonymous: 'Unbekannter Autor',
+    dailyLimitText: (remaining) => remaining > 0 
+      ? `🗝️ KURATIERTER SLOT DES TAGES: Erhalten Sie ein PERMANENTES ARCHIV KOSTENLOS! **${remaining} Exklusive Slots** übrig!`
+      : `🚫 Das heutige Limit (${DAILY_FREE_LIMIT}) ist erreicht. Das Archiv des Erbes (Permanent) ist für symbolische 1€ verfügbar!`,
+    alertThanksFree: (savedValue) => `✅ ANERKANNT! Ihr Eintrag hat einen KURATIERTEN SLOT erhalten und wurde DAUERHAFT gespeichert! Gesparter Wahrgenommener Wert: ${savedValue} €! Teilen Sie die Botschaft!`,
+    alertThanksTemporary: 'Eintrag als VORÜBERGEHEND gespeichert. Bereiten Sie sich auf den Ablauf in 48 Stunden vor. Möchten Sie riskieren, Ihr Erbe zu verlieren?'
   },
   cs: {
-    title: 'Odkaz pro lidstvo',
-    subtitle: 'Digitální Kapsle Času v. 9.0 | Šťastný Slot Edition',
+    title: 'Archiv Dědictví',
+    subtitle: 'Digitální Kapsle Času v. 10.0 | Kurátorované Vydání',
     saveFree: 'Uložit DOČASNĚ (48 hodin)',
-    dailyLimitText: (remaining) => remaining > 0
-      ? `🍀 ŠANCE DNE: Získej TRVALÝ vzkaz ZDARMA! Zbývá **${remaining} ŠŤASTNÝCH SLOTŮ**!`
-      : `⚠️ Dnešní limit (${DAILY_FREE_LIMIT}) byl vyčerpán. Zlatý vzkaz (Trvalé uložení) je jen za 1€!`,
-    alertThanksFree: (savedValue) => `GRATULUJEME! Získal jsi ŠŤASTNÝ SLOT! Tvůj ZLATÝ VZKAZ byl uložen NATRVALO. Ušetřil jsi ${savedValue} Kč! Šiř to dál!`, // Pre CZ mením menu na CZK pre zábavu
-    alertThanksTemporary: 'Úspěšně přidáno, ale POZOR! Dočasný vzkaz bude aktivní jen 48 hodin. Rizikuješ ztrátu své Hodnosti a 1 € hodnoty?'
+    paidTag: 'DĚDICTVÍ 📜',
+    temporaryTag: (time) => `Zánik za ${time} 🕯️`,
+    anonymous: 'Neznámý Autor',
+    dailyLimitText: (remaining) => remaining > 0 
+      ? `🗝️ KURÁTOROVANÝ SLOT DNE: Získej TRVALÝ ARCHIV ZDARMA! Zbývá **${remaining} Exkluzivních Slotů**!`
+      : `🚫 Dnešní limit (${DAILY_FREE_LIMIT}) byl vyčerpán. Archiv Dědictví (Trvalé uložení) je k dispozici za symbolické 1€!`,
+    alertThanksFree: (savedValue) => `✅ UZNÁNÍ! Váš vstup získal KURÁTOROVANÝ SLOT a byl uložen NATRVALO! Ušetřená Vnímaná Hodnota: ${savedValue} Kč! Šiřte odkaz!`,
+    alertThanksTemporary: 'Vstup byl uložen jako PŘECHODNÝ. Připravte se na Zánik po 48 hodinách. Chcete riskovat ztrátu Dědictví?'
   }
 };
 
 
 /* -----------------------
-   LIMIT LOGIKA
+   LIMIT LOGIKA (Bez Zmien)
    ----------------------- */
 function loadDailyLimit() {
     try {
@@ -404,7 +382,7 @@ function getRemainingFreeSlots() {
 
 
 /* -----------------------
-   Helpers & DOM refs
+   Helpers & DOM refs (Bez Zmien)
    ----------------------- */
 const el = id => document.getElementById(id);
 
@@ -421,13 +399,13 @@ const statTemporary = el('statTemporary');
 const statViews = el('statViews');
 const statLikes = el('statLikes');
 const topList = el('topList');
-const statSavedValue = el('statSavedValue'); // NOVÝ REF
+const statSavedValue = el('statSavedValue'); 
 
 let LANG = localStorage.getItem('op_lang') || 'sk';
 applyLang(LANG);
 
 /* -----------------------
-   Utils
+   Utils (Bez Zmien)
    ----------------------- */
 function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,10); }
 function now(){ return Date.now(); }
@@ -454,7 +432,7 @@ function simulateTranslation(text, targetLang) {
 
 
 /* -----------------------
-   Perzistencia
+   Perzistencia (Bez Zmien)
    ----------------------- */
 function loadEntries(){
   try{
@@ -473,7 +451,7 @@ setInterval(loadEntries, DELETE_INTERVAL_MS);
 
 
 /* -----------------------
-   i18n & UI
+   i18n & UI - Upravený
    ----------------------- */
 function applyLang(lang){
   LANG = lang;
@@ -486,14 +464,21 @@ function applyLang(lang){
   
   // Vizuálne úpravy tlačidiel na základe limitu
   if (remaining > 0) {
-      saveFree.textContent = `🍀 CHYŤ ZLATÝ SLOT ZDARMA! (${remaining} ostáva)`;
-      saveFree.classList.add('free-gold-btn');
+      // Prémiový, tichší popis
+      saveFree.textContent = `🍀 ZÍSKAJ KURÁTOROVANÝ SLOT! (${remaining} ostáva)`;
+      saveFree.classList.add('free-slot-btn'); // Zmenený názov triedy pre jemnejší štýl
       saveFree.classList.remove('ghost');
   } else {
       saveFree.textContent = T.saveFree;
-      saveFree.classList.remove('free-gold-btn');
+      saveFree.classList.remove('free-slot-btn');
       saveFree.classList.add('ghost');
   }
+
+  // Zmena textu na platenom CTA tlačidle (Pre CZ trh)
+  const ctaPrice = LANG === 'cs' ? '25 Kč' : '1€';
+  payLinkBtn.textContent = T.payLinkText.replace('1€', ctaPrice);
+  stickyPayBtn.textContent = T.ctaStickyBtn.replace('1€', ctaPrice);
+  el('ctaText').innerHTML = T.ctaStickyText.replace('1€', ctaPrice).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
   // Ostatné texty UI
   el('title').textContent = T.title;
@@ -509,12 +494,11 @@ function applyLang(lang){
 
 
 /* -----------------------
-   Render & UI
+   Render & UI (Upravený)
    ----------------------- */
 function render(){
   const T = I18N[LANG];
   
-  // ... (filter & sort logika z V8.0) ...
   const q = (el('search').value || '').trim().toLowerCase();
   let list = entries.slice();
   list.forEach((e, i) => e.rank = i + 1);
@@ -522,7 +506,6 @@ function render(){
   const s = el('sort').value;
   if(s==='paid') list.sort((a,b)=> (b.paid?1:0) - (a.paid?1:0) || b.ts-a.ts);
   else if(s==='new') list.sort((a,b)=>b.ts-a.ts);
-  // ... (pokračovanie triedenia) ...
 
   listEl.innerHTML = '';
   if(list.length===0){
@@ -535,7 +518,7 @@ function render(){
       if (LANG !== 'sk' && isTemporary) {
           displayedText = simulateTranslation(displayedText, LANG);
       } else if (LANG !== 'sk' && e.paid) {
-           displayedText = `<span style="color:var(--gold); font-size:12px">🥇 (Original Text) </span>` + displayedText;
+           displayedText = `<span style="color:var(--gold); font-size:12px">📜 (Original Text) </span>` + displayedText;
       }
       
       const item = document.createElement('div');
@@ -555,7 +538,7 @@ function render(){
             <div style="margin-top:8px;font-size:15px">${displayedText}</div>
             <div style="margin-top:8px" class="meta">
               <span data-id="${e.id}" data-action="like" style="cursor:pointer;margin-right:8px">❤ ${e.likes}</span>
-              <span>Views: ${e.views}</span>
+              <span>Čítaní: ${e.views}</span>
               <button data-id="${e.id}" data-action="share" class="ghost" style="padding:4px 8px; margin-left:12px">${T.shareText}</button>
             </div>
           </div>
@@ -570,15 +553,15 @@ function render(){
   // AKTUALIZÁCIA ŠTATISTÍK
   const paidCount = entries.filter(e=>e.paid).length;
   const tempCount = entries.filter(e=>!e.paid).length;
-  const savedValue = paidCount * MESSAGE_PRICE; // Všetky trvalé odkazy majú hodnotu 1€
+  const savedValue = paidCount * MESSAGE_PRICE; 
   
   statTotal.textContent = entries.length;
   statPaid.textContent = paidCount;
   statTemporary.textContent = tempCount;
   statViews.textContent = entries.reduce((s,e)=>s+e.views,0);
   statLikes.textContent = entries.reduce((s,e)=>s+e.likes,0);
-  statSavedValue.textContent = `${savedValue.toFixed(2)} €`; // Nová štatistika
-  el('count').textContent = list.length + ' ' + (LANG==='sk' || LANG==='cs' ? 'odkazov' : 'messages');
+  statSavedValue.textContent = `${savedValue.toFixed(2)} €`; 
+  el('count').textContent = list.length + ' ' + (LANG==='sk' || LANG==='cs' ? 'vstupov' : 'entries');
 
   // TOP LIST
   const top = entries.slice().sort((a,b)=>b.likes-a.likes).slice(0,5);
@@ -586,14 +569,14 @@ function render(){
   if(top.length===0) topList.innerHTML = '<div class="small">—</div>'
   else top.forEach(t=>{
     const d = document.createElement('div'); d.className='small';
-    d.innerHTML = `<strong>#${t.rank} ${escapeHtml(t.author||T.anonymous)}</strong>: ${escapeHtml(truncate(t.text,60))} — <span style="font-weight:700;color:white">❤ ${t.likes}</span>`;
+    d.innerHTML = `<strong>#${t.rank} ${escapeHtml(t.author||T.anonymous)}</strong>: ${escapeHtml(truncate(t.text,60))} — <span style="font-weight:700;color:var(--gold-light)">❤ ${t.likes}</span>`;
     topList.appendChild(d);
   });
 }
 
 
 /* -----------------------
-   Actions & Payment 
+   Actions & Payment (Upravený)
    ----------------------- */
 function addEntry(asPaid, isFreeSlot = false){
   const T = I18N[LANG];
@@ -616,19 +599,19 @@ function addEntry(asPaid, isFreeSlot = false){
   entries.unshift(entry);
   saveEntries(); 
   
-  // RESET FORMULÁRA 
   authorEl.value=''; 
   messageEl.value='';
   el('charCount').textContent = `0/300`;
-  applyLang(LANG); // Volanie applyLang automaticky volá render() a aktualizuje limit!
+  applyLang(LANG); 
   
-  // VYLEPŠENÉ ALERTOVANIE
+  // ELEGANTNEJŠÍ ALERT
   if (isFreeSlot) {
-      const savedValue = LANG === 'cs' ? '25 Kč' : '1.00'; // Kotvenie hodnoty pre CS trh
+      const savedValue = LANG === 'cs' ? '25 Kč' : '1.00'; 
       alert(T.alertThanksFree(savedValue));
   } else if (asPaid) {
-      alert(T.alertThanksFree('1.00')); // Po zaplatení povieme, že si ho kúpil
+      alert(T.alertThanksFree('1.00')); 
   } else {
+      // Tichšie varovanie pred zánikom
       alert(T.alertThanksTemporary);
   }
 }
@@ -644,9 +627,8 @@ function handlePaymentAction(){
         }
         return;
     }
-    // Realistický flow simulácie:
     window.open(PAYMENT_LINK, '_blank');
-    if(confirm("Po dokončení platby stlač OK na aktiváciu ZLATÉHO ODKAZU.")){
+    if(confirm("Po dokončení platby stlač OK pre TRVALÉ UCHOVANIE ARCHÍVNEHO VSTUPU.")){
         addEntry(true);
     } 
 }
@@ -657,15 +639,44 @@ function handleFreeAction(){
 
     const remaining = getRemainingFreeSlots();
     if (remaining > 0) {
-        // ZLATÝ ODKAZ ZDARMA (Šťastný Slot)
-        if (confirm(`GRATULUJEME! Máš šancu získať ZLATÝ SLOT ZDARMA! Chceš to skúsiť? (${remaining} ostáva)`)) {
+        // Kurátorovaný Slot (Tichá Ponuka)
+        if (confirm(`GRATULUJEME! Váš vstup môže byť KURÁTOROVANÝ ZDARMA. Chcete využiť jeden z ${remaining} Exkluzívnych Slotov?`)) {
              useFreeSlot();
              addEntry(false, true); 
         }
     } else {
         // Uložiť len dočasne (rizikové)
-        if (confirm(`Limit (${DAILY_FREE_LIMIT}) bol vyčerpaný. Uložiť len DOČASNE (48h) a riskovať, že PRÍDEŠ O SVOJU HODNOSŤ?`)) {
+        if (confirm(`Limit (${DAILY_FREE_LIMIT}) pre Kurátorované Slot bol vyčerpaný. Uložiť len PRECHODNE (48h) a riskovať Zánik Dedičstva?`)) {
             addEntry(false);
+        }
+    }
+}
+
+function handleInteraction(event) {
+    const target = event.target.closest('[data-action]');
+    if (!target) return;
+    const action = target.dataset.action;
+    const id = target.dataset.id;
+    const entry = entries.find(e => e.id === id);
+
+    if (!entry) return;
+
+    if (action === 'like') {
+        entry.likes = (entry.likes || 0) + 1;
+        saveEntries();
+        render(); 
+    } else if (action === 'share') {
+        const shareText = `Pozrite si môj ARCHÍV DEDIČSTVA - "${truncate(entry.text, 80)}" (#${entry.rank}). Pridajte svoj odkaz tu: ${window.location.href}`;
+        if (navigator.share) {
+            navigator.share({
+                title: I18N[LANG].title,
+                text: shareText,
+                url: window.location.href,
+            }).catch(error => console.log('Zdieľanie zrušené/zlyhalo', error));
+        } else {
+            // Fallback pre desktop/nepodporované prehliadače
+            navigator.clipboard.writeText(shareText);
+            alert("Odkaz na Archív Dedičstva bol skopírovaný do schránky!");
         }
     }
 }
@@ -678,6 +689,9 @@ saveFree.addEventListener('click', handleFreeAction);
 el('message').addEventListener('input', ()=> el('charCount').textContent = `${el('message').value.length}/300`);
 el('sort').addEventListener('change', render);
 el('search').addEventListener('input', render);
+
+// Nový delegovaný listener pre lajky a zdieľanie
+listEl.addEventListener('click', handleInteraction);
 
 /* -----------------------
    Init
