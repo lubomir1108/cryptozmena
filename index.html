@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Odkaz pre ľudstvo — Kapsula Času v. 7.0 (Limitovaná Edícia)</title>
+<title>Odkaz pre ľudstvo — Kapsula Času v. 8.0 (Funkčné Ukladanie)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Prvých 5 odkazov denne je ZLATÝCH ZADARMO!">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
@@ -18,7 +18,6 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:Inter,system-ui,Arial;background:radial-gradient(ellipse at 10% 10%, rgba(124,58,237,0.12), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh; padding-bottom: 70px;}
   .wrap{max-width:1100px;margin:0 auto;padding:20px}
-  /* ... (OSTATNÉ ZÁKLADNÉ ŠTÝLY) ... */
   header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .brand{display:flex;align-items:center;gap:12px}
   .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:18px}
@@ -160,7 +159,7 @@
         <div class="logo">OPĽ</div>
         <div>
           <h1 id="title">Odkaz pre ľudstvo</h1>
-          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 7.0 | Limitovaná Edícia</div>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 8.0 | Limitovaná Edícia</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -269,7 +268,7 @@
       </aside>
     </div>
 
-    <footer>© 2025 Odkaz pre ľudstvo — Verzia 7.0 | Chytro, Rýchlo, Zlatá Hodnosť za 1€!</footer>
+    <footer>© 2025 Odkaz pre ľudstvo — Verzia 8.0 | Chytro, Rýchlo, Zlatá Hodnosť za 1€!</footer>
 
   </div>
 
@@ -288,9 +287,9 @@
    ----------------------- */
 const TEMP_DURATION_MS = 48 * 60 * 60 * 1000;
 const DELETE_INTERVAL_MS = 60 * 60 * 1000;
-const DAILY_FREE_LIMIT = 5; // NOVÝ LIMIT!
-const STORAGE_KEY = 'odkaz_pre_ludstvo_v7';
-const DAILY_LIMIT_KEY = 'op_daily_free'; // Kľúč pre denný limit
+const DAILY_FREE_LIMIT = 5; 
+const STORAGE_KEY = 'odkaz_pre_ludstvo_v8';
+const DAILY_LIMIT_KEY = 'op_daily_free_v8';
 
 // Denno-limitný stav
 let dailyLimitState = loadDailyLimit();
@@ -298,16 +297,39 @@ let entries = loadEntries();
 
 const I18N = {
   sk: {
-    // ... (ostatné texty zostali z V6.0, menia sa len tie pre limit)
+    title: 'Odkaz pre ľudstvo',
+    subtitle: 'Digitálna Kapsula Času v. 8.0 | Limitovaná Edícia',
+    formTitle: 'Pridať odkaz a zvoliť trvácnosť',
+    labelName: 'Meno / Prezývka (voliteľné)',
+    labelMessage: 'Odkaz (max 300 znakov)',
+    labelSearch: 'Hľadať a triediť odkazy',
+    listTitle: 'Zoznam odkazov',
+    statsTitle: 'Štatistiky Kapsuly Času',
+    topTitle: 'Najpopulárnejšie odkazy',
+    payLinkText: '🔒 ZAPLAŤ 1€ — ZLATÝ Odkaz (Trvalé Uloženie)',
     saveFree: 'Uložiť DOČASNE (48 hodín)',
+    placeholderMsg: 'Napíš vetu pre budúce generácie, skôr než bude neskoro...',
+    paidTag: 'ZLATÝ 🌟',
+    temporaryTag: (time) => `Vyprší za ${time} 🚨`,
+    anonymous: 'Anonym',
+    noResults: 'Žiadne výsledky',
+    alertMessage: 'Nezabudni napísať odkaz!',
+    alertMaxChars: 'Príliš dlhé. Max 300 znakov.',
+    alertPayError: 'PAYMENT LINK nebol nastavený. Simulovať ZLATÚ verziu? (OK = platené, Cancel = dočasné)',
+    rank: 'Hodnosť',
+    shareText: 'Zdieľaj',
+    ctaStickyText: '⌛ Posledná šanca! Nenechaj svoj odkaz VYMAZAŤ! Zaplať 1€ a ulož ho NATRVALO!',
+    ctaStickyBtn: 'UROB ODKAZ TRVALÝ (1€)',
     dailyLimitText: (remaining) => remaining > 0 
       ? `🎉 Zostáva **${remaining} ZLATÝCH ODKAZOV ZDARMA** pre dnešok! Chyť si svoj!`
       : `⚠️ Dnešný limit (${DAILY_FREE_LIMIT}) bol vyčerpaný. Zlatý odkaz je len za 1€!`,
     alertThanksFree: 'Úspešne pridané! ZLATÝ ODKAZ ZDARMA je trvalo uložený.',
     alertThanksTemporary: 'Úspešne pridané! Dočasný odkaz bude aktívny 48 hodín.'
   },
-  en: {
-    // ...
+  en: { 
+    // ... (ostatné EN texty)
+    title: 'Message to Humanity',
+    subtitle: 'Digital Time Capsule v. 8.0 | Gold Edition',
     saveFree: 'Save TEMPORARILY (48 hours)',
     dailyLimitText: (remaining) => remaining > 0
       ? `🎉 **${remaining} GOLD MESSAGES LEFT FOR FREE** today! Grab yours!`
@@ -316,7 +338,9 @@ const I18N = {
     alertThanksTemporary: 'Successfully added! Temporary message will be active for 48 hours.'
   },
   de: {
-    // ...
+    // ... (ostatné DE texty)
+    title: 'Botschaft an die Menschheit',
+    subtitle: 'Digitale Zeitkapsel v. 8.0 | Gold Edition',
     saveFree: 'Vorübergehend speichern (48 Stunden)',
     dailyLimitText: (remaining) => remaining > 0
       ? `🎉 **${remaining} GOLD-NACHRICHTEN KOSTENLOS** sind noch übrig! Sichern Sie sich Ihre!`
@@ -325,7 +349,9 @@ const I18N = {
     alertThanksTemporary: 'Erfolgreich hinzugefügt! Vorübergehende Nachricht ist 48 Stunden aktiv.'
   },
   cs: {
-    // ...
+    // ... (ostatné CZ texty)
+    title: 'Odkaz pro lidstvo',
+    subtitle: 'Digitální Kapsle Času v. 8.0 | Zlatá edice',
     saveFree: 'Uložit DOČASNĚ (48 hodin)',
     dailyLimitText: (remaining) => remaining > 0
       ? `🎉 Zbývá **${remaining} ZLATÝCH VZKAZŮ ZDARMA** pro dnešek! Rychle si uchovejte ten svůj!`
@@ -344,10 +370,9 @@ function loadDailyLimit() {
         const raw = localStorage.getItem(DAILY_LIMIT_KEY);
         const state = raw ? JSON.parse(raw) : { count: 0, date: now() };
         
-        // Reset, ak uplynulo viac ako 24 hodín (nový deň)
         const msPerDay = 24 * 60 * 60 * 1000;
         if (now() - state.date > msPerDay) {
-            return { count: 0, date: now() }; // Reset
+            return { count: 0, date: now() }; 
         }
         return state;
     } catch (e) {
@@ -360,14 +385,13 @@ function saveDailyLimit() {
 function useFreeSlot() {
     if (dailyLimitState.count < DAILY_FREE_LIMIT) {
         dailyLimitState.count++;
-        dailyLimitState.date = now(); // Aktualizácia dátumu posledného použitia (pre lepšiu kontrolu)
+        dailyLimitState.date = now(); 
         saveDailyLimit();
         return true;
     }
     return false;
 }
 function getRemainingFreeSlots() {
-    // Pre istotu skontrolujeme reset pred vrátením
     dailyLimitState = loadDailyLimit();
     return DAILY_FREE_LIMIT - dailyLimitState.count;
 }
@@ -377,19 +401,26 @@ function getRemainingFreeSlots() {
    Helpers & DOM refs
    ----------------------- */
 const el = id => document.getElementById(id);
-const langBtns = document.querySelectorAll('.lang-btn');
+
 const authorEl = el('author');
 const messageEl = el('message');
 const payLinkBtn = el('payLinkBtn');
 const saveFree = el('saveFree');
-const dailyLimitInfoEl = el('dailyLimitInfo'); // NOVÝ PRVOK
+const dailyLimitInfoEl = el('dailyLimitInfo');
 const stickyPayBtn = el('stickyPayBtn');
+const listEl = el('list'); // DOM ref pre list
+const statTotal = el('statTotal');
+const statPaid = el('statPaid');
+const statTemporary = el('statTemporary');
+const statViews = el('statViews');
+const statLikes = el('statLikes');
+const topList = el('topList');
 
 let LANG = localStorage.getItem('op_lang') || 'sk';
 applyLang(LANG);
 
 /* -----------------------
-   Utils (z V6.0)
+   Utils
    ----------------------- */
 function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,10); }
 function now(){ return Date.now(); }
@@ -417,7 +448,7 @@ function simulateTranslation(text, targetLang) {
 
 
 /* -----------------------
-   Perzistencia (z V6.0)
+   Perzistencia
    ----------------------- */
 function loadEntries(){
   try{
@@ -436,7 +467,7 @@ setInterval(loadEntries, DELETE_INTERVAL_MS);
 
 
 /* -----------------------
-   i18n & UI (Aktualizácia textov a limitu)
+   i18n & UI
    ----------------------- */
 function applyLang(lang){
   LANG = lang;
@@ -447,9 +478,7 @@ function applyLang(lang){
   const remaining = getRemainingFreeSlots();
   dailyLimitInfoEl.innerHTML = T.dailyLimitText(remaining).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   
-  // Vizuálne úpravy tlačidiel
-  payLinkBtn.disabled = false;
-  saveFree.disabled = false;
+  // Vizuálne úpravy tlačidiel na základe limitu
   if (remaining > 0) {
       saveFree.textContent = `Uložiť ZDARMA A TRVALO! (${remaining} ostáva)`;
       saveFree.style.background = 'linear-gradient(90deg, #10b981, #06b6d4)';
@@ -462,13 +491,22 @@ function applyLang(lang){
       saveFree.classList.add('ghost');
   }
 
-  // ... (ostatné texty UI)
+  // Ostatné texty UI
   el('title').textContent = T.title;
   el('subtitle').textContent = T.subtitle;
-  // ... (a ďalšie texty)
-  stickyPayBtn.textContent = T.ctaStickyBtn;
+  el('formTitle').textContent = T.formTitle;
+  el('labelName').textContent = T.labelName;
+  el('labelMessage').textContent = T.labelMessage + ` (${messageEl.value.length}/300)`;
+  el('labelSearch').textContent = T.labelSearch;
+  el('listTitle').textContent = T.listTitle;
+  el('statsTitle').textContent = T.statsTitle;
+  el('topTitle').textContent = T.topTitle;
+  el('helpTitle').textContent = T.helpTitle;
+  payLinkBtn.textContent = T.payLinkText;
   el('message').placeholder = T.placeholderMsg;
-  
+  el('ctaText').textContent = T.ctaStickyText;
+  el('stickyPayBtn').textContent = T.ctaStickyBtn;
+
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
   render();
 }
@@ -477,43 +515,90 @@ el('message').addEventListener('input', ()=> el('charCount').textContent = `${el
 
 
 /* -----------------------
-   Render & UI (z V6.0)
+   Render & UI (Opravené vykresľovanie)
    ----------------------- */
 function render(){
-  // ... (render logika, filter, sort, štatistiky) ...
-  // Používam len render pre zjednodušenie, v reálnom kóde by bolo celé telo render() funkcie
-
   const T = I18N[LANG];
   
-  // Update CTA pri každom renderi, pre zmenu limitu
-  applyLang(LANG); 
+  // filter & sort
+  const q = (el('search').value || '').trim().toLowerCase();
+  let list = entries.slice();
+  list.forEach((e, i) => e.rank = i + 1);
+  if(q) list = list.filter(e => (e.text + ' ' + (e.author||'')).toLowerCase().includes(q));
+  const s = el('sort').value;
+  if(s==='paid') list.sort((a,b)=> (b.paid?1:0) - (a.paid?1:0) || b.ts-a.ts);
+  else if(s==='new') list.sort((a,b)=>b.ts-a.ts);
+  else if(s==='likes') list.sort((a,b)=>b.likes-a.likes);
+  // ... (pokračovanie triedenia) ...
 
-  // Simulácia prekreslenia zoznamu
-  const listEl = el('list');
-  listEl.innerHTML = ''; // Vymazať pre opätovné vykreslenie
-  if(entries.length===0){
+  listEl.innerHTML = '';
+  if(list.length===0){
     listEl.innerHTML = `<div class="small">${T.noResults}</div>`;
   } else {
-    entries.slice(0, 10).forEach(e => { // Len prvých 10 pre rýchlosť ukážky
-        const isTemporary = !e.paid;
-        let displayedText = escapeHtml(e.text);
-        if (LANG !== 'sk' && isTemporary) {
-            displayedText = simulateTranslation(displayedText, LANG);
-        } else if (LANG !== 'sk' && e.paid) {
-             displayedText = `<span style="color:var(--gold); font-size:12px">🥇 (Original Text) </span>` + displayedText;
-        }
-
-        const item = document.createElement('div');
-        item.className = 'item' + (e.paid ? ' highlight-paid' : '') + (isTemporary ? ' temporary' : '');
-        item.innerHTML = `<div style="flex:1">${displayedText}</div>`;
-        listEl.appendChild(item);
+    list.forEach(e=>{
+      const isTemporary = !e.paid;
+      const remainingTime = isTemporary ? getRemainingTime(e.ts) : null;
+      
+      let displayedText = escapeHtml(e.text);
+      if (LANG !== 'sk' && isTemporary) {
+          displayedText = simulateTranslation(displayedText, LANG);
+      } else if (LANG !== 'sk' && e.paid) {
+           displayedText = `<span style="color:var(--gold); font-size:12px">🥇 (Original Text) </span>` + displayedText;
+      }
+      
+      const item = document.createElement('div');
+      item.className = 'item' + (e.paid ? ' highlight-paid' : '') + (isTemporary ? ' temporary' : '');
+      item.dataset.id = e.id;
+      item.innerHTML = `
+        <div style="display:flex;gap:12px;align-items:flex-start;flex:1">
+          <img class="avatar" src="${escapeHtml(e.avatar||'https://picsum.photos/56?random='+Math.floor(Math.random()*10000))}" alt="avatar"/>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="font-weight:700">${escapeHtml(e.author||T.anonymous)}</div>
+              <div class="meta">${formatDate(e.ts)}</div>
+              <span class="meta" style="color:var(--accent2); font-weight:700;">#${e.rank}</span>
+              ${e.paid?`<span class="tag-paid">${T.paidTag}</span>`:''}
+              ${isTemporary?`<span class="time-limit">${T.temporaryTag(remainingTime || '0m')}</span>`:''}
+            </div>
+            <div style="margin-top:8px;font-size:15px">${displayedText}</div>
+            <div style="margin-top:8px" class="meta">
+              <span data-id="${e.id}" data-action="like" style="cursor:pointer;margin-right:8px">❤ ${e.likes}</span>
+              <span>Views: ${e.views}</span>
+              <button data-id="${e.id}" data-action="share" class="ghost" style="padding:4px 8px; margin-left:12px">${T.shareText}</button>
+            </div>
+          </div>
+        </div>
+      `;
+      listEl.appendChild(item);
+      e.views = (e.views||0) + 1;
     });
+    saveEntries();
   }
+
+  // AKTUALIZÁCIA ŠTATISTÍK
+  const paidCount = entries.filter(e=>e.paid).length;
+  const tempCount = entries.filter(e=>!e.paid).length;
+  statTotal.textContent = entries.length;
+  statPaid.textContent = paidCount;
+  statTemporary.textContent = tempCount;
+  statViews.textContent = entries.reduce((s,e)=>s+e.views,0);
+  statLikes.textContent = entries.reduce((s,e)=>s+e.likes,0);
+  el('count').textContent = list.length + ' ' + (LANG==='sk' || LANG==='cs' ? 'odkazov' : 'messages');
+
+  // TOP LIST
+  const top = entries.slice().sort((a,b)=>b.likes-a.likes).slice(0,5);
+  topList.innerHTML = '';
+  if(top.length===0) topList.innerHTML = '<div class="small">—</div>'
+  else top.forEach(t=>{
+    const d = document.createElement('div'); d.className='small';
+    d.innerHTML = `<strong>#${t.rank} ${escapeHtml(t.author||T.anonymous)}</strong>: ${escapeHtml(truncate(t.text,60))} — <span style="font-weight:700;color:white">❤ ${t.likes}</span>`;
+    topList.appendChild(d);
+  });
 }
 
 
 /* -----------------------
-   Actions & Payment (Úprava pre limit)
+   Actions & Payment (Opravené volanie ukladania)
    ----------------------- */
 function addEntry(asPaid, isFreeSlot = false){
   const T = I18N[LANG];
@@ -530,49 +615,61 @@ function addEntry(asPaid, isFreeSlot = false){
     ts: now(),
     likes: 0,
     views: 0,
-    paid: Boolean(asPaid || isFreeSlot), // Ak je zaplatené ALEBO je free slot
+    paid: Boolean(asPaid || isFreeSlot),
     avatar: 'https://picsum.photos/56?random=' + Math.floor(Math.random()*10000)
   };
   entries.unshift(entry);
-  saveEntries(); render();
-  authorEl.value=''; messageEl.value=''; el('charCount').textContent = `0/300`;
+  saveEntries(); 
   
+  // RESET FORMULÁRA A ODKAZOV
+  authorEl.value=''; 
+  messageEl.value='';
+  el('charCount').textContent = `0/300`;
+  applyLang(LANG); // Volanie applyLang automaticky volá render() a aktualizuje limit!
+  
+  // ALERTOVANIE
   if (isFreeSlot) {
       alert(T.alertThanksFree);
   } else if (asPaid) {
-      alert("Platba prebehla úspešne! " + T.alertThanksFree); // V reále by sa tu nealertovalo, ale presmerovalo
+      alert(T.alertThanksFree);
   } else {
       alert(T.alertThanksTemporary);
   }
 }
 
-const PAYMENT_LINK = ''; // Nahraďte skutočným platobným linkom
+const PAYMENT_LINK = ''; 
 function handlePaymentAction(){
-    // Toto je pre platobné tlačidlo (1€)
     const T = I18N[LANG];
+    // Overenie textu pred presmerovaním/simuláciou
+    if(!messageEl.value.trim()) return alert(T.alertMessage);
+
     if(!PAYMENT_LINK){
-        if(confirm("PAYMENT LINK nie je nastavený. Simulovať ZLATÚ platbu?")){
-            addEntry(true);
+        if(confirm(T.alertPayError)){
+            addEntry(true); // Simulovať platené
         }
         return;
     }
+    // V reálnom scenári by sa to simulovalo inak, teraz len pre ukážku:
     window.open(PAYMENT_LINK, '_blank');
-    if(confirm("Po dokončení platby stlač OK.")){
+    if(confirm("Po dokončení platby stlač OK na aktiváciu ZLATÉHO ODKAZU.")){
         addEntry(true);
     } 
 }
 
 function handleFreeAction(){
+    const T = I18N[LANG];
+    if(!messageEl.value.trim()) return alert(T.alertMessage);
+
     const remaining = getRemainingFreeSlots();
     if (remaining > 0) {
-        // Má nárok na zlatý odkaz ZDARMA
-        if (confirm(`GRATULUJEME! Patríš medzi ${remaining}. Využiť ZLATÝ ODKAZ ZDARMA?`)) {
+        // ZLATÝ ODKAZ ZDARMA
+        if (confirm(`GRATULUJEME! Patríš medzi šťastných. Využiť ZLATÝ ODKAZ ZDARMA? (${remaining} ostáva)`)) {
              useFreeSlot();
-             addEntry(false, true); // Nie je platený, ale je freeSlot
+             addEntry(false, true); 
         }
     } else {
-        // Už len dočasný
-        if (confirm("Dnes už nemáme žiadne ZLATÉ ODKAZY ZDARMA. Uložiť len DOČASNE (48h)?")) {
+        // Uložiť len dočasne (rizikové)
+        if (confirm(`Limit (${DAILY_FREE_LIMIT}) bol vyčerpaný. Uložiť len DOČASNE (48h) a riskovať vymazanie?`)) {
             addEntry(false);
         }
     }
@@ -590,9 +687,10 @@ saveFree.addEventListener('click', handleFreeAction);
 /* -----------------------
    Init
    ----------------------- */
-// Vyvolanie render na začiatku a periodicky
-render();
-setInterval(render, 10000); 
+// Vyvolanie render na začiatku a periodicky (cez applyLang a loadEntries)
+setInterval(loadEntries, DELETE_INTERVAL_MS); 
+applyLang(LANG); 
 </script>
 </body>
 </html>
+
