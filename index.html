@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Archív Dedičstva — Kapsula Času v. 10.3 (Opravené)</title>
+<title>Archív Dedičstva — Kapsula Času v. 10.4 (Najrobustnejšie Vydanie)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Vytvor si Archív Dedičstva s trvalým uchovaním.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -143,7 +143,7 @@
         <div class="logo">AČ</div>
         <div>
           <h1 id="title">Archív Dedičstva</h1>
-          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.3 | Opravené Vydanie</div>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.4 | Najrobustnejšie Vydanie</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -253,7 +253,7 @@
       </aside>
     </div>
 
-    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.3 | Opravené Vydanie.</footer>
+    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.4 | Najrobustnejšie Vydanie.</footer>
 
   </div>
 
@@ -290,7 +290,7 @@ let userLikes;
 const I18N = {
   sk: {
     title: 'Archív Dedičstva',
-    subtitle: 'Digitálna Kapsula Času v. 10.3 | Opravené Vydanie',
+    subtitle: 'Digitálna Kapsula Času v. 10.4 | Najrobustnejšie Vydanie',
     formTitle: 'Vytvoriť a archivovať odkaz',
     labelName: 'Meno / Prezývka (voliteľné)',
     labelMessage: 'Archívny Vstup (max 300 znakov)',
@@ -318,10 +318,9 @@ const I18N = {
     alertThanksFree: (savedValue) => `✅ UZNANIE! Váš vstup získal KURÁTOROVANÝ SLOT a bol uložený NATRVALO! Ušetrená Vnímaná Hodnota: ${savedValue} €! Šírte odkaz!`,
     alertThanksTemporary: 'Vstup bol uložený ako PRECHODNÝ. Pripravte sa na Zánik po 48 hodinách. Chcete riskovať stratu Dedičstva?'
   },
-  // Ostatné jazyky (pre zjednodušenie ich nechám len ako placeholder)
   en: { 
     title: 'Archive of Heritage',
-    subtitle: 'Digital Time Capsule v. 10.3 | Fixed Edition',
+    subtitle: 'Digital Time Capsule v. 10.4 | Most Robust Edition',
     formTitle: 'Create and Archive Message',
     labelName: 'Name / Nickname (optional)',
     labelMessage: 'Archival Entry (max 300 chars)',
@@ -351,11 +350,28 @@ const I18N = {
   },
   de: { 
     title: 'Archiv des Erbes',
-    subtitle: 'Digitale Zeitkapsel v. 10.3 | Behobene Ausgabe',
+    subtitle: 'Digitale Zeitkapsel v. 10.4 | Robusteste Ausgabe',
+    formTitle: 'Nachricht erstellen und archivieren',
+    labelName: 'Name / Spitzname (optional)',
+    labelMessage: 'Archiv-Eintrag (max. 300 Zeichen)',
+    labelSearch: 'Archivübersicht und Sortierung',
+    listTitle: 'Archiv-Einträge',
+    statsTitle: 'Archiv-Metadaten',
+    topTitle: 'Meist anerkanntes Erbe',
+    payLinkText: '🔒 ZAHLEN SIE 1€ — ERBE ARCHIV (Dauerhafte Speicherung)',
     saveFree: 'Vorübergehend speichern (48 Stunden)',
+    placeholderMsg: 'Hinterlassen Sie eine Spur für die Zukunft, bevor Ihr Satz abläuft...',
     paidTag: 'ERBE 📜',
     temporaryTag: (time) => `Läuft ab in ${time} 🕯️`,
     anonymous: 'Unbekannter Autor',
+    noResults: 'Keine Einträge im Archiv',
+    alertMessage: 'Archiv-Eintrag darf nicht leer sein!',
+    alertMaxChars: 'Eintrag ist zu lang. Max 300 Zeichen.',
+    alertPayError: 'ZAHLUNGS-LINK ist nicht real. Möchten Sie DAUERHAFTE SPEICHERUNG SIMULIEREN? (OK = bezahlt, Abbrechen = vorübergehend)',
+    rank: 'Erhaltungsabzeichen',
+    shareText: 'Eintrag teilen',
+    ctaStickyText: '⌛ Ihre Nachricht ist nur **Vorübergehend**. Bewahren Sie Ihr Erbe dauerhaft für **nur 1€**!',
+    ctaStickyBtn: 'ERBE ARCHIV SICHERN (1€)',
     dailyLimitText: (remaining) => remaining > 0 
       ? `🗝️ KURATIERTER SLOT DES TAGES: Erhalten Sie ein PERMANENTES ARCHIV KOSTENLOS! **${remaining} Exklusive Slots** übrig!`
       : `🚫 Das heutige Limit (${DAILY_FREE_LIMIT}) ist erreicht. Das Archiv des Erbes (Permanent) ist für symbolische 1€ verfügbar!`,
@@ -364,11 +380,28 @@ const I18N = {
   },
   cs: { 
     title: 'Archiv Dědictví',
-    subtitle: 'Digitální Kapsle Času v. 10.3 | Opravené Vydání',
+    subtitle: 'Digitální Kapsle Času v. 10.4 | Nejrobustnější Vydání',
+    formTitle: 'Vytvořit a archivovat odkaz',
+    labelName: 'Jméno / Přezdívka (volitelné)',
+    labelMessage: 'Archivní Vstup (max 300 znaků)',
+    labelSearch: 'Přehled a třídění Archivu',
+    listTitle: 'Archivní Vstupy',
+    statsTitle: 'Metadata Archivu',
+    topTitle: 'Nejvíce Uznávané Dědictví',
+    payLinkText: '🔒 ZAPLAŤ 1€ — ARCHIV DĚDICTVÍ (Trvalé Uložení)',
     saveFree: 'Uložit DOČASNĚ (48 hodin)',
+    placeholderMsg: 'Zanechej stopu pro budoucnost, než tvá věta zanikne...',
     paidTag: 'DĚDICTVÍ 📜',
     temporaryTag: (time) => `Zánik za ${time} 🕯️`,
     anonymous: 'Neznámý Autor',
+    noResults: 'Žádné vstupy v archivu',
+    alertMessage: 'Archivní vstup nemůže být prázdný!',
+    alertMaxChars: 'Vstup je příliš rozsáhlý. Max 300 znaků.',
+    alertPayError: 'PLATEBNÍ LINK není reálný. Chcete SIMULOVAT TRVALÉ ULOŽENÍ? (OK = placené, Zrušit = dočasné)',
+    rank: 'Odznak Uchování',
+    shareText: 'Sdílet Vstup',
+    ctaStickyText: '⌛ Váš odkaz je jen **Přechodný**. Uchovejte své Dědictví natrvalo za **jen 1€**!',
+    ctaStickyBtn: 'ZABEZPEČ ARCHIV DĚDICTVÍ (1€)',
     dailyLimitText: (remaining) => remaining > 0 
       ? `🗝️ KURÁTOROVANÝ SLOT DNE: Získej TRVALÝ ARCHIV ZDARMA! Zbývá **${remaining} Exkluzivních Slotů**!`
       : `🚫 Dnešní limit (${DAILY_FREE_LIMIT}) byl vyčerpán. Archiv Dědictví (Trvalé uložení) je k dispozici za symbolické 1€!`,
@@ -379,31 +412,26 @@ const I18N = {
 
 
 /* -----------------------
-   LOGIKA NAČÍTANIA STAVU (Opravené)
+   LOGIKA NAČÍTANIA STAVU
    ----------------------- */
 function now(){ return Date.now(); }
+function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,10); }
 
 function loadDailyLimit() {
     try {
         const raw = localStorage.getItem(DAILY_LIMIT_KEY);
         const state = raw ? JSON.parse(raw) : { count: 0, date: now() };
-        
         const msPerDay = 24 * 60 * 60 * 1000;
         if (now() - state.date > msPerDay) {
             return { count: 0, date: now() }; 
         }
         return state;
     } catch (e) {
-        console.error("Chyba pri načítaní denného limitu:", e);
         return { count: 0, date: now() };
     }
 }
 function saveDailyLimit() {
-    try {
-        localStorage.setItem(DAILY_LIMIT_KEY, JSON.stringify(dailyLimitState));
-    } catch (e) {
-        console.error("Chyba pri ukladaní denného limitu:", e);
-    }
+    try { localStorage.setItem(DAILY_LIMIT_KEY, JSON.stringify(dailyLimitState)); } catch (e) {}
 }
 function useFreeSlot() {
     if (dailyLimitState.count < DAILY_FREE_LIMIT) {
@@ -419,22 +447,16 @@ function getRemainingFreeSlots() {
     return DAILY_FREE_LIMIT - dailyLimitState.count;
 }
 
-
 function loadUserLikes() {
     try {
         const raw = localStorage.getItem(LIKES_KEY);
         return raw ? new Set(JSON.parse(raw)) : new Set();
     } catch (e) {
-        console.error("Chyba pri načítaní lajkov:", e);
         return new Set();
     }
 }
 function saveUserLikes() {
-    try {
-        localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(userLikes)));
-    } catch (e) {
-        console.error("Chyba pri ukladaní lajkov:", e);
-    }
+    try { localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(userLikes))); } catch (e) {}
 }
 
 function generateAvatar(author) {
@@ -455,20 +477,25 @@ function generateAvatar(author) {
 const el = id => document.getElementById(id);
 
 // DOM REFS
-const authorEl = el('author');
-const messageEl = el('message');
-const payLinkBtn = el('payLinkBtn');
-const saveFree = el('saveFree');
-const dailyLimitInfoEl = el('dailyLimitInfo');
-const stickyPayBtn = el('stickyPayBtn');
-const listEl = el('list');
-const statTotal = el('statTotal');
-const statPaid = el('statPaid');
-const statTemporary = el('statTemporary');
-const statViews = el('statViews');
-const statLikes = el('statLikes');
-const topList = el('topList');
-const statSavedValue = el('statSavedValue'); 
+let authorEl, messageEl, payLinkBtn, saveFree, dailyLimitInfoEl, stickyPayBtn, listEl, statTotal, statPaid, statTemporary, statViews, statLikes, topList, statSavedValue; 
+
+function setupDOMRefs() {
+    authorEl = el('author');
+    messageEl = el('message');
+    payLinkBtn = el('payLinkBtn');
+    saveFree = el('saveFree');
+    dailyLimitInfoEl = el('dailyLimitInfo');
+    stickyPayBtn = el('stickyPayBtn');
+    listEl = el('list');
+    statTotal = el('statTotal');
+    statPaid = el('statPaid');
+    statTemporary = el('statTemporary');
+    statViews = el('statViews');
+    statLikes = el('statLikes');
+    topList = el('topList');
+    statSavedValue = el('statSavedValue'); 
+}
+
 
 let LANG = localStorage.getItem('op_lang') || 'sk';
 
@@ -476,8 +503,6 @@ let LANG = localStorage.getItem('op_lang') || 'sk';
 /* -----------------------
    Utils
    ----------------------- */
-function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,10); }
-
 function getRemainingTime(ts){
     const remaining = (ts + TEMP_DURATION_MS) - now();
     if(remaining <= 0) return null;
@@ -512,62 +537,57 @@ function loadEntries(){
         saveEntries();
     }
     return filtered;
-  }catch(e){ console.error("Chyba pri načítaní archívu:", e); return []; }
+  }catch(e){ return []; }
 }
 function saveEntries(){ 
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
-    } catch (e) {
-        console.error("Chyba pri ukladaní archívu:", e);
-    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch (e) {}
 }
 
 
 /* -----------------------
-   i18n & UI (Opravené, aby sa zabezpečil preklad denného limitu)
+   i18n & UI
    ----------------------- */
 function applyLang(lang){
   LANG = lang;
   localStorage.setItem('op_lang', lang);
   const T = I18N[lang];
   
-  // Oprava: Načítať limit pred jeho použitím v i18n
   const remaining = getRemainingFreeSlots();
-  dailyLimitInfoEl.innerHTML = T.dailyLimitText(remaining).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  if (dailyLimitInfoEl) dailyLimitInfoEl.innerHTML = T.dailyLimitText(remaining).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   
   if (remaining > 0) {
-      saveFree.textContent = `🍀 ZÍSKAJ KURÁTOROVANÝ SLOT! (${remaining} ostáva)`;
-      saveFree.classList.add('free-slot-btn'); 
-      saveFree.classList.remove('ghost');
+      if(saveFree) {
+          saveFree.textContent = `🍀 ZÍSKAJ KURÁTOROVANÝ SLOT! (${remaining} ostáva)`;
+          saveFree.classList.add('free-slot-btn'); 
+          saveFree.classList.remove('ghost');
+      }
   } else {
-      saveFree.textContent = T.saveFree;
-      saveFree.classList.remove('free-slot-btn');
-      saveFree.classList.add('ghost');
+      if(saveFree) {
+          saveFree.textContent = T.saveFree;
+          saveFree.classList.remove('free-slot-btn');
+          saveFree.classList.add('ghost');
+      }
   }
 
   const ctaPrice = LANG === 'cs' ? '25 Kč' : '1€';
-  payLinkBtn.textContent = T.payLinkText.replace('1€', ctaPrice);
-  stickyPayBtn.textContent = T.ctaStickyBtn.replace('1€', ctaPrice);
-  el('ctaText').innerHTML = T.ctaStickyText.replace('1€', ctaPrice).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  if(payLinkBtn) payLinkBtn.textContent = T.payLinkText.replace('1€', ctaPrice);
+  if(stickyPayBtn) stickyPayBtn.textContent = T.ctaStickyBtn.replace('1€', ctaPrice);
+  if(el('ctaText')) el('ctaText').innerHTML = T.ctaStickyText.replace('1€', ctaPrice).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-
-  el('title').textContent = T.title;
-  el('subtitle').textContent = T.subtitle;
-  el('formTitle').textContent = T.formTitle;
-  el('labelName').textContent = T.labelName;
-  // Dôležité: Aktualizácia počtu znakov, aj keď je pole prázdne
-  el('labelMessage').textContent = T.labelMessage + ` (${messageEl.value.length}/300)`; 
-  el('labelSearch').textContent = T.labelSearch;
-  el('listTitle').textContent = T.listTitle;
-  el('statsTitle').textContent = T.statsTitle;
-  el('topTitle').textContent = T.topTitle;
-  el('helpTitle').textContent = T.helpTitle;
-  el('helpText').innerHTML = I18N['sk']['helpText']; // Nechám SK text, ak nie je preložený
+  if(el('title')) el('title').textContent = T.title;
+  if(el('subtitle')) el('subtitle').textContent = T.subtitle;
+  if(el('formTitle')) el('formTitle').textContent = T.formTitle;
+  if(el('labelName')) el('labelName').textContent = T.labelName;
+  if(el('labelMessage')) el('labelMessage').textContent = T.labelMessage + ` (${messageEl.value.length}/300)`; 
+  if(el('labelSearch')) el('labelSearch').textContent = T.labelSearch;
+  if(el('listTitle')) el('listTitle').textContent = T.listTitle;
+  if(el('statsTitle')) el('statsTitle').textContent = T.statsTitle;
+  if(el('topTitle')) el('topTitle').textContent = T.topTitle;
+  if(el('helpTitle')) el('helpTitle').textContent = T.helpTitle;
+  // if(el('helpText')) el('helpText').innerHTML = I18N['sk']['helpText']; // Nechám SK text pre jednoduchosť
 
   document.querySelectorAll('.lang-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.lang===lang);
-    b.removeEventListener('click', changeLangHandler); // Odstránim starý, aby som nepridal duplikát
-    b.addEventListener('click', changeLangHandler);
   });
   render();
 }
@@ -581,6 +601,9 @@ function changeLangHandler(e) {
    Render
    ----------------------- */
 function render(){
+  // Ak ešte neboli nastavené DOM referencie, ukončíme to. (Ochrana)
+  if (!listEl) return; 
+
   const T = I18N[LANG];
   
   const q = (el('search').value || '').trim().toLowerCase();
@@ -648,168 +671,8 @@ function render(){
   const tempCount = entries.filter(e=>!e.paid).length;
   const savedValue = paidCount * MESSAGE_PRICE; 
   
-  statTotal.textContent = entries.length;
-  statPaid.textContent = paidCount;
-  statTemporary.textContent = tempCount;
-  statViews.textContent = entries.reduce((s,e)=>s+(e.views||0),0);
-  statLikes.textContent = entries.reduce((s,e)=>s+(e.likes||0),0);
-  statSavedValue.textContent = `${savedValue.toFixed(2)} €`; 
-  el('count').textContent = list.length + ' ' + (LANG==='sk' || LANG==='cs' ? 'vstupov' : 'entries');
-
-  const top = entries.slice().sort((a,b)=>b.likes-a.likes).slice(0,5);
-  topList.innerHTML = '';
-  if(top.length===0) topList.innerHTML = '<div class="small">—</div>'
-  else top.forEach(t=>{
-    const d = document.createElement('div'); d.className='small';
-    d.innerHTML = `<strong>#${t.rank} ${escapeHtml(t.author||T.anonymous)}</strong>: ${escapeHtml(truncate(t.text,60))} — <span style="font-weight:700;color:var(--gold-light)">❤ ${t.likes}</span>`;
-    topList.appendChild(d);
-  });
-}
-
-
-/* -----------------------
-   Actions & Payment 
-   ----------------------- */
-function addEntry(asPaid, isFreeSlot = false){
-  const T = I18N[LANG];
-  const author = authorEl.value.trim() || null;
-  const text = messageEl.value.trim();
-
-  if(!text) return alert(T.alertMessage);
-  if(text.length>300) return alert(T.alertMaxChars);
-
-  const entry = {
-    id: uid('o_'),
-    author,
-    text,
-    ts: now(),
-    likes: 0,
-    views: 0,
-    paid: Boolean(asPaid || isFreeSlot),
-    avatarInitials: generateAvatar(author || T.anonymous) 
-  };
-  entries.unshift(entry);
-  saveEntries(); 
-  
-  authorEl.value=''; 
-  messageEl.value='';
-  el('charCount').textContent = `0/300`;
-  applyLang(LANG); 
-  
-  if (isFreeSlot) {
-      const savedValue = LANG === 'cs' ? '25 Kč' : '1.00'; 
-      alert(T.alertThanksFree(savedValue));
-  } else if (asPaid) {
-      alert(T.alertThanksFree('1.00')); 
-  } else {
-      alert(T.alertThanksTemporary);
-  }
-}
-
-function handlePaymentAction(){
-    const T = I18N[LANG];
-    if(!messageEl.value.trim()) return alert(T.alertMessage);
-
-    // KRYPTO IMPLEMENTÁCIA ALEBO BEŽNÁ BRÁNA
-    // Ak nebol reálny link zadaný, spustíme simuláciu s overením
-    if(PAYMENT_LINK === '' || PAYMENT_LINK.includes('simulacia')){
-        // Ak je link fiktívny/chybný, ponúkneme simuláciu uloženia
-        if(confirm(T.alertPayError)){
-            addEntry(true); 
-        }
-        return;
-    }
-    
-    // 1. Presmerovanie na platobnú bránu
-    window.open(PAYMENT_LINK, '_blank');
-
-    // 2. Potvrdenie po platbe
-    setTimeout(() => {
-        if(confirm("Po dokončení platby v novom okne/karte stlač OK pre TRVALÉ UCHOVANIE ARCHÍVNEHO VSTUPU. (Toto nahrádza automatickú notifikáciu!)")){
-            addEntry(true);
-        }
-    }, 1500); 
-}
-
-function handleFreeAction(){
-    const T = I18N[LANG];
-    if(!messageEl.value.trim()) return alert(T.alertMessage);
-
-    const remaining = getRemainingFreeSlots();
-    if (remaining > 0) {
-        if (confirm(`GRATULUJEME! Váš vstup môže byť KURÁTOROVANÝ ZDARMA. Chcete využiť jeden z ${remaining} Exkluzívnych Slotov?`)) {
-             useFreeSlot();
-             addEntry(false, true); 
-        }
-    } else {
-        if (confirm(`Limit (${DAILY_FREE_LIMIT}) pre Kurátorované Slot bol vyčerpaný. Uložiť len PRECHODNE (48h) a riskovať Zánik Dedičstva?`)) {
-            addEntry(false);
-        }
-    }
-}
-
-
-/* -----------------------
-   Interaction Handler (Lajky/Zdieľanie)
-   ----------------------- */
-function handleInteraction(event) {
-    const target = event.target.closest('[data-action]');
-    if (!target) return;
-    const action = target.dataset.action;
-    const id = target.dataset.id;
-    const entry = entries.find(e => e.id === id);
-
-    if (!entry) {
-        console.error("Lajk/Zdieľanie zlyhalo: Vstup nebol nájdený.", id);
-        return;
-    }
-
-    if (action === 'like') {
-        if (userLikes.has(id)) {
-            // console.log("Uznanie už bolo udelené.");
-            return;
-        } else {
-            entry.likes = (entry.likes || 0) + 1;
-            userLikes.add(id);
-            saveUserLikes(); 
-            saveEntries();
-            render(); 
-        }
-    } else if (action === 'share') {
-        // ... (Zdieľanie)
-    }
-}
-
-
-/* -----------------------
-   Init a Event Listeners
-   ----------------------- */
-function init() {
-    // 1. Načítať stav (MUSÍ byť prvý)
-    dailyLimitState = loadDailyLimit();
-    entries = loadEntries();
-    userLikes = loadUserLikes(); 
-
-    // 2. Bindovanie tlačidiel
-    payLinkBtn.addEventListener('click', handlePaymentAction);
-    stickyPayBtn.addEventListener('click', handlePaymentAction);
-    saveFree.addEventListener('click', handleFreeAction);
-    el('message').addEventListener('input', ()=> el('charCount').textContent = `${el('message').value.length}/300`);
-    el('sort').addEventListener('change', render);
-    el('search').addEventListener('input', render);
-
-    // 3. Delegovaný listener pre lajky a zdieľanie
-    listEl.addEventListener('click', handleInteraction);
-    
-    // 4. Nastaviť jazyk a spustiť prvotný render
-    applyLang(LANG); 
-
-    // 5. Opakované úlohy (zánik)
-    setInterval(loadEntries, DELETE_INTERVAL_MS); 
-}
-
-// Spustíme inicializáciu až po definovaní všetkých funkcií
-init();
-</script>
-</body>
-</html>
+  if(statTotal) statTotal.textContent = entries.length;
+  if(statPaid) statPaid.textContent = paidCount;
+  if(statTemporary) statTemporary.textContent = tempCount;
+  if(statViews) statViews.textContent = entries.reduce((s,e)=>s+(e.views||0),0);
+  if(statLikes) statLikes.textContent = entries.reduce((s,e)=>s
