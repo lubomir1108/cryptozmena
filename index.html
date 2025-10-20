@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Archív Dedičstva — Kapsula Času v. 10.5 (Finálna Oprava Jazyka)</title>
+<title>Archív Dedičstva — Kapsula Času v. 10.6 (Admin & Language Fix)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Vytvor si Archív Dedičstva s trvalým uchovaním.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -93,6 +93,39 @@
     border: 1px solid rgba(201,76,76,0.3);
   }
 
+  /* Admin CSS */
+  .admin-tag {
+    background: #555;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    margin-left: 8px;
+    font-weight: 700;
+  }
+  .delete-btn {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.2s;
+  }
+  .delete-btn:hover {
+    background: #a93232;
+  }
+  .admin-mode-indicator {
+    padding: 4px 8px;
+    background: var(--danger);
+    color: white;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+
   /* CTA FOOTER DECENTNÝ */
   .sticky-cta {
     position: fixed; bottom: 0; left: 0; width: 100%;
@@ -143,10 +176,11 @@
         <div class="logo">AČ</div>
         <div>
           <h1 id="title">Archív Dedičstva</h1>
-          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.5 | Finálna Oprava Jazyka</div>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.6 | Admin & Language Fix</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
+        <div id="adminIndicator"></div>
         <div class="lang">
           <button data-lang="sk" class="lang-btn">SK</button>
           <button data-lang="en" class="lang-btn">EN</button>
@@ -253,7 +287,7 @@
       </aside>
     </div>
 
-    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.5 | Finálna Oprava Jazyka.</footer>
+    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.6 | Admin & Language Fix.</footer>
 
   </div>
 
@@ -277,20 +311,25 @@ const MESSAGE_PRICE = 1.00;
 const STORAGE_KEY = 'odkaz_pre_ludstvo_v10';
 const DAILY_LIMIT_KEY = 'op_daily_free_v10';
 const LIKES_KEY = 'op_user_likes_v10'; 
+const ADMIN_MODE_KEY = 'op_admin_mode';
+const ADMIN_PASSWORD = 'ARCHIVAR'; // <-- TOTO JE ADMIN HESLO!
+const ADMIN_TOGGLE_KEYS = 'ArrowUp,ArrowUp,ArrowDown,ArrowDown,ArrowLeft,ArrowRight,ArrowLeft,ArrowRight,b,a'; // Konami kód. :-)
 
 // *** NAHRÁDZATE TENTO LINK SKUTOČNÝM PLATOBNÝM LINKOM (alebo kryptomenovou adresou) ***
 const PAYMENT_LINK = 'https://simulacia.platba.sk/vas-odkaz-1euro'; 
 // *************************************************************************************
 
-// Denno-limitný stav
+// Globálny stav
 let dailyLimitState; 
 let entries; 
 let userLikes; 
+let isAdminMode = localStorage.getItem(ADMIN_MODE_KEY) === 'true'; // Admin stav uložený v prehliadači
+
 
 const I18N = {
   sk: {
     title: 'Archív Dedičstva',
-    subtitle: 'Digitálna Kapsula Času v. 10.5 | Finálna Oprava Jazyka',
+    subtitle: 'Digitálna Kapsula Času v. 10.6 | Admin & Language Fix',
     formTitle: 'Vytvoriť a archivovať odkaz',
     labelName: 'Meno / Prezývka (voliteľné)',
     labelMessage: 'Archívny Vstup (max 300 znakov)',
@@ -316,11 +355,15 @@ const I18N = {
       ? `🗝️ KURÁTOROVANÝ SLOT DŇA: Získaj TRVALÝ ARCHÍV ZDARMA! Zostáva **${remaining} Exkluzívnych Slotov**!`
       : `🚫 Dnešný limit (${DAILY_FREE_LIMIT}) bol vyčerpaný. Archív Dedičstva (Trvalé uchovanie) je dostupný za symbolické 1€!`,
     alertThanksFree: (savedValue) => `✅ UZNANIE! Váš vstup získal KURÁTOROVANÝ SLOT a bol uložený NATRVALO! Ušetrená Vnímaná Hodnota: ${savedValue} €! Šírte odkaz!`,
-    alertThanksTemporary: 'Vstup bol uložený ako PRECHODNÝ. Pripravte sa na Zánik po 48 hodinách. Chcete riskovať stratu Dedičstva?'
+    alertThanksTemporary: 'Vstup bol uložený ako PRECHODNÝ. Pripravte sa na Zánik po 48 hodinách. Chcete riskovať stratu Dedičstva?',
+    adminModeOn: 'ADMIN MODE: AKTÍVNY',
+    adminModeOff: 'ADMIN MODE: DEAKTÍVNY',
+    adminDeleteBtn: 'ZMAZAŤ',
+    adminDeleteConfirm: 'Naozaj chcete natrvalo zmazať tento archívny vstup?'
   },
   en: { 
     title: 'Archive of Heritage',
-    subtitle: 'Digital Time Capsule v. 10.5 | Final Language Fix',
+    subtitle: 'Digital Time Capsule v. 10.6 | Admin & Language Fix',
     formTitle: 'Create and Archive Message',
     labelName: 'Name / Nickname (optional)',
     labelMessage: 'Archival Entry (max 300 chars)',
@@ -346,11 +389,15 @@ const I18N = {
       ? `🗝️ CURATED SLOT OF THE DAY: Get a PERMANENT ARCHIVE for FREE! **${remaining} Exclusive Slots Remaining**!`
       : `🚫 Today's limit (${DAILY_FREE_LIMIT}) has been reached. Heritage Archive (Permanent) is available for a symbolic €1!`,
     alertThanksFree: (savedValue) => `✅ ACCEPTED! Your entry earned a CURATED SLOT and has been stored PERMANENTLY! Saved Perceived Value: ${savedValue} €! Spread the word!`,
-    alertThanksTemporary: 'Entry stored as TEMPORARY. Prepare for Expiration in 48 hours. Risk losing your Heritage?'
+    alertThanksTemporary: 'Entry stored as TEMPORARY. Prepare for Expiration in 48 hours. Risk losing your Heritage?',
+    adminModeOn: 'ADMIN MODE: ACTIVE',
+    adminModeOff: 'ADMIN MODE: INACTIVE',
+    adminDeleteBtn: 'DELETE',
+    adminDeleteConfirm: 'Are you sure you want to permanently delete this archival entry?'
   },
   de: { 
     title: 'Archiv des Erbes',
-    subtitle: 'Digitale Zeitkapsel v. 10.5 | Endgültige Sprachkorrektur',
+    subtitle: 'Digitale Zeitkapsel v. 10.6 | Admin & Sprachkorrektur',
     formTitle: 'Nachricht erstellen und archivieren',
     labelName: 'Name / Spitzname (optional)',
     labelMessage: 'Archiv-Eintrag (max. 300 Zeichen)',
@@ -376,11 +423,15 @@ const I18N = {
       ? `🗝️ KURATIERTER SLOT DES TAGES: Erhalten Sie ein PERMANENTES ARCHIV KOSTENLOS! **${remaining} Exklusive Slots** übrig!`
       : `🚫 Das heutige Limit (${DAILY_FREE_LIMIT}) ist erreicht. Das Archiv des Erbes (Permanent) ist für symbolische 1€ verfügbar!`,
     alertThanksFree: (savedValue) => `✅ ANERKANNT! Ihr Eintrag hat einen KURATIERTEN SLOT erhalten und wurde DAUERHAFT gespeichert! Gesparter Wahrgenommener Wert: ${savedValue} €! Teilen Sie die Botschaft!`,
-    alertThanksTemporary: 'Eintrag als VORÜBERGEHEND gespeichert. Bereiten Sie sich auf den Ablauf in 48 Stunden vor. Möchten Sie riskieren, Ihr Erbe zu verlieren?'
+    alertThanksTemporary: 'Eintrag als VORÜBERGEHEND gespeichert. Bereiten Sie sich auf den Ablauf in 48 Stunden vor. Möchten Sie riskieren, Ihr Erbe zu verlieren?',
+    adminModeOn: 'ADMIN-MODUS: AKTIV',
+    adminModeOff: 'ADMIN-MODUS: INAKTIV',
+    adminDeleteBtn: 'LÖSCHEN',
+    adminDeleteConfirm: 'Möchten Sie diesen Archiveintrag wirklich dauerhaft löschen?'
   },
   cs: { 
     title: 'Archiv Dědictví',
-    subtitle: 'Digitální Kapsle Času v. 10.5 | Finální Oprava Jazyka',
+    subtitle: 'Digitální Kapsle Času v. 10.6 | Admin & Oprava Jazyka',
     formTitle: 'Vytvořit a archivovat odkaz',
     labelName: 'Jméno / Přezdívka (volitelné)',
     labelMessage: 'Archivní Vstup (max 300 znaků)',
@@ -397,7 +448,7 @@ const I18N = {
     noResults: 'Žádné vstupy v archivu',
     alertMessage: 'Archivní vstup nemůže být prázdný!',
     alertMaxChars: 'Vstup je příliš rozsáhlý. Max 300 znaků.',
-    alertPayError: 'PLATEBNÍ LINK není reálný. Chcete SIMULOVAT TRVALÉ ULOŽENÍ? (OK = placené, Zrušit = dočasné)',
+    alertPayError: 'PLATEBNÍ LINK není reálny. Chcete SIMULOVAT TRVALÉ ULOŽENÍ? (OK = placené, Zrušit = dočasné)',
     rank: 'Odznak Uchování',
     shareText: 'Sdílet Vstup',
     ctaStickyText: '⌛ Váš odkaz je jen **Přechodný**. Uchovejte své Dědictví natrvalo za **jen 1€**!',
@@ -406,7 +457,11 @@ const I18N = {
       ? `🗝️ KURÁTOROVANÝ SLOT DNE: Získej TRVALÝ ARCHIV ZDARMA! Zbývá **${remaining} Exkluzivních Slotů**!`
       : `🚫 Dnešní limit (${DAILY_FREE_LIMIT}) byl vyčerpán. Archiv Dědictví (Trvalé uložení) je k dispozici za symbolické 1€!`,
     alertThanksFree: (savedValue) => `✅ UZNÁNÍ! Váš vstup získal KURÁTOROVANÝ SLOT a byl uložen NATRVALO! Ušetřená Vnímaná Hodnota: ${savedValue} Kč! Šiřte odkaz!`,
-    alertThanksTemporary: 'Vstup byl uložen jako PŘECHODNÝ. Připravte se na Zánik po 48 hodinách. Chcete riskovat ztrátu Dědictví?'
+    alertThanksTemporary: 'Vstup byl uložen jako PŘECHODNÝ. Připravte se na Zánik po 48 hodinách. Chcete riskovat ztrátu Dědictví?',
+    adminModeOn: 'ADMIN REŽIM: AKTIVNÍ',
+    adminModeOff: 'ADMIN REŽIM: DEAKTIVNÍ',
+    adminDeleteBtn: 'SMAZAT',
+    adminDeleteConfirm: 'Opravdu chcete trvale smazat tento archivní vstup?'
   }
 };
 
@@ -477,7 +532,7 @@ function generateAvatar(author) {
 const el = id => document.getElementById(id);
 
 // DOM REFS
-let authorEl, messageEl, payLinkBtn, saveFree, dailyLimitInfoEl, stickyPayBtn, listEl, statTotal, statPaid, statTemporary, statViews, statLikes, topList, statSavedValue, mainHeader; 
+let authorEl, messageEl, payLinkBtn, saveFree, dailyLimitInfoEl, stickyPayBtn, listEl, statTotal, statPaid, statTemporary, statViews, statLikes, topList, statSavedValue, mainHeader, adminIndicator; 
 
 function setupDOMRefs() {
     authorEl = el('author');
@@ -494,7 +549,8 @@ function setupDOMRefs() {
     statLikes = el('statLikes');
     topList = el('topList');
     statSavedValue = el('statSavedValue'); 
-    mainHeader = el('mainHeader'); // Pridaný odkaz na hlavičku pre delegovanie
+    mainHeader = el('mainHeader');
+    adminIndicator = el('adminIndicator');
 }
 
 
@@ -544,6 +600,18 @@ function saveEntries(){
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch (e) {}
 }
 
+/** * Funkcia na zmazanie záznamu - prístupné len v Admin Mode
+ */
+function deleteEntry(id) {
+    if (!isAdminMode) return;
+    const T = I18N[LANG];
+    if (confirm(T.adminDeleteConfirm)) {
+        entries = entries.filter(e => e.id !== id);
+        saveEntries();
+        render();
+    }
+}
+
 
 /* -----------------------
    i18n & UI
@@ -556,19 +624,26 @@ function applyLang(lang){
   localStorage.setItem('op_lang', lang);
   const T = I18N[lang];
   
+  // Zobrazenie Admin indikátora
+  if (adminIndicator) {
+      adminIndicator.innerHTML = isAdminMode 
+          ? `<span class="admin-mode-indicator">${T.adminModeOn}</span>` 
+          : '';
+  }
+
   const remaining = getRemainingFreeSlots();
   if (dailyLimitInfoEl) dailyLimitInfoEl.innerHTML = T.dailyLimitText(remaining).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   
   if (remaining > 0) {
       if(saveFree) {
           saveFree.textContent = `🍀 ZÍSKAJ KURÁTOROVANÝ SLOT! (${remaining} ostáva)`;
-          saveFree.classList.add('free-slot-btn'); 
+          saveFree.classList.add('btn'); // Použiť primárny štýl pre CTA
           saveFree.classList.remove('ghost');
       }
   } else {
       if(saveFree) {
           saveFree.textContent = T.saveFree;
-          saveFree.classList.remove('free-slot-btn');
+          saveFree.classList.remove('btn'); 
           saveFree.classList.add('ghost');
       }
   }
@@ -582,7 +657,6 @@ function applyLang(lang){
   if(el('subtitle')) el('subtitle').textContent = T.subtitle;
   if(el('formTitle')) el('formTitle').textContent = T.formTitle;
   if(el('labelName')) el('labelName').textContent = T.labelName;
-  // Ochrana pred prázdnym elementom
   if(el('labelMessage') && messageEl) el('labelMessage').textContent = T.labelMessage + ` (${messageEl.value.length}/300)`; 
   if(el('labelSearch')) el('labelSearch').textContent = T.labelSearch;
   if(el('listTitle')) el('listTitle').textContent = T.listTitle;
@@ -611,7 +685,7 @@ function render(){
   list.forEach((e, i) => e.rank = i + 1);
   if(q) list = list.filter(e => (e.text + ' ' + (e.author||'')).toLowerCase().includes(q));
   
-  const s = el('sort') ? el('sort').value : 'paid'; // Ochrana
+  const s = el('sort') ? el('sort').value : 'paid'; 
   if(s==='paid') list.sort((a,b)=> (b.paid?1:0) - (a.paid?1:0) || b.ts-a.ts);
   else if(s==='new') list.sort((a,b)=>b.ts-a.ts);
   else if(s==='old') list.sort((a,b)=>a.ts-b.ts);
@@ -638,7 +712,6 @@ function render(){
       const item = document.createElement('div');
       item.className = 'item' + (e.paid ? ' highlight-paid' : '') + (isTemporary ? ' temporary' : '');
       item.dataset.id = e.id;
-      // Dôrazne odporúčam pridať `role="button"` na lajkovanie, ak ho chcete robiť klikateľné.
       item.innerHTML = `
         <div style="display:flex;gap:12px;align-items:flex-start;flex:1">
           <div class="avatar">${generateAvatar(e.author || T.anonymous)}</div>
@@ -649,12 +722,16 @@ function render(){
               <span class="meta" style="color:var(--accent2); font-weight:700;">#${e.rank}</span>
               ${e.paid?`<span class="tag-paid">${T.paidTag}</span>`:''}
               ${isTemporary?`<span class="time-limit">${T.temporaryTag(remainingTime || '0m')}</span>`:''}
+              ${isAdminMode ? `<span class="admin-tag">ADMIN VIEW</span>` : ''}
             </div>
             <div style="margin-top:8px;font-size:15px">${displayedText}</div>
-            <div style="margin-top:8px" class="meta">
-              <span data-id="${e.id}" data-action="like" style="cursor:pointer;margin-right:8px" class="${isLiked ? 'liked' : ''}">❤ ${e.likes}</span>
-              <span>Čítaní: ${e.views}</span>
-              <button data-id="${e.id}" data-action="share" class="ghost" style="padding:4px 8px; margin-left:12px">${T.shareText}</button>
+            <div style="margin-top:8px; display:flex; justify-content:space-between; align-items:center;" class="meta-bottom">
+                <div class="meta">
+                    <span data-id="${e.id}" data-action="like" style="cursor:pointer;margin-right:8px" class="${isLiked ? 'liked' : ''}">❤ ${e.likes}</span>
+                    <span>Čítaní: ${e.views}</span>
+                    <button data-id="${e.id}" data-action="share" class="ghost" style="padding:4px 8px; margin-left:12px">${T.shareText}</button>
+                </div>
+                ${isAdminMode ? `<button data-id="${e.id}" data-action="delete" class="delete-btn">${T.adminDeleteBtn}</button>` : ''}
             </div>
           </div>
         </div>
@@ -771,7 +848,7 @@ function handleFreeAction(){
 
 
 /* -----------------------
-   Interaction Handler (Lajky/Zdieľanie)
+   Interaction Handler (Lajky/Zdieľanie/Mazanie)
    ----------------------- */
 function handleInteraction(event) {
     const target = event.target.closest('[data-action]');
@@ -780,20 +857,15 @@ function handleInteraction(event) {
     const id = target.dataset.id;
     const entry = entries.find(e => e.id === id);
 
-    if (!entry) {
-        return;
-    }
+    if (!entry) return;
 
     if (action === 'like') {
-        if (userLikes.has(id)) {
-            return;
-        } else {
-            entry.likes = (entry.likes || 0) + 1;
-            userLikes.add(id);
-            saveUserLikes(); 
-            saveEntries();
-            render(); 
-        }
+        if (userLikes.has(id)) return;
+        entry.likes = (entry.likes || 0) + 1;
+        userLikes.add(id);
+        saveUserLikes(); 
+        saveEntries();
+        render(); 
     } else if (action === 'share') {
         const T = I18N[LANG];
         const shareText = `Pozrite si môj ARCHÍV DEDIČSTVA - "${truncate(entry.text, 80)}" (#${entry.rank}). Pridajte svoj odkaz tu: ${window.location.href}`;
@@ -807,29 +879,60 @@ function handleInteraction(event) {
             navigator.clipboard.writeText(shareText);
             alert("Odkaz na Archív Dedičstva bol skopírovaný do schránky!");
         }
+    } else if (action === 'delete') {
+        deleteEntry(id);
     }
 }
 
-// *** KRITICKÁ ZMENA PRE KLIKANIE NA JAZYKY: Event Delegation ***
 function handleHeaderClick(event) {
     const target = event.target.closest('.lang-btn');
     if (target && target.dataset.lang) {
         applyLang(target.dataset.lang);
     }
 }
-// ***************************************************************
+
+
+/* -----------------------
+   Admin Logic (Konami Code)
+   ----------------------- */
+let konamiSequence = [];
+function handleAdminToggle(e) {
+    // Používa sa e.key, nie e.code
+    const key = e.key;
+    
+    // Pridáme stlačenú klávesu
+    konamiSequence.push(key);
+    
+    // Udržíme dĺžku sekvencie podľa dĺžky ADMIN_TOGGLE_KEYS
+    const requiredKeys = ADMIN_TOGGLE_KEYS.split(',');
+    if (konamiSequence.length > requiredKeys.length) {
+        konamiSequence.shift();
+    }
+    
+    // Kontrola, či sa sekvencia zhoduje s ADMIN_TOGGLE_KEYS
+    if (konamiSequence.join(',') === requiredKeys.join(',')) {
+        konamiSequence = []; // Reset pre zamedzenie opakovania
+        
+        const password = prompt('Zadajte ADMIN HESLO:');
+        if (password === ADMIN_PASSWORD) {
+            isAdminMode = !isAdminMode;
+            localStorage.setItem(ADMIN_MODE_KEY, isAdminMode);
+            alert(I18N[LANG][isAdminMode ? 'adminModeOn' : 'adminModeOff']);
+            applyLang(LANG); // Prekreslí UI a pridá/odstráni delete tlačidlá
+        } else if (password !== null) {
+            alert('Neplatné heslo! Admin režim nebol aktivovaný.');
+        }
+    }
+}
 
 
 function init() {
-    // 1. Zabezpečiť referencie na DOM elementy
     setupDOMRefs(); 
-    
-    // 2. Načítať stav
     dailyLimitState = loadDailyLimit();
     entries = loadEntries();
     userLikes = loadUserLikes(); 
 
-    // 3. Bindovanie Event Listenerov
+    // Bindovanie Event Listenerov
     if(payLinkBtn) payLinkBtn.addEventListener('click', handlePaymentAction);
     if(stickyPayBtn) stickyPayBtn.addEventListener('click', handlePaymentAction);
     if(saveFree) saveFree.addEventListener('click', handleFreeAction);
@@ -840,21 +943,26 @@ function init() {
     if(el('sort')) el('sort').addEventListener('change', render);
     if(el('search')) el('search').addEventListener('input', render);
     if(listEl) listEl.addEventListener('click', handleInteraction);
+    if (mainHeader) mainHeader.addEventListener('click', handleHeaderClick);
     
-    // 4. Bindovanie prekladových tlačidiel cez delegovanie (Najrobustnejší spôsob)
-    if (mainHeader) {
-        mainHeader.addEventListener('click', handleHeaderClick);
-    }
+    // Global listener pre Admin Mode
+    document.addEventListener('keydown', handleAdminToggle);
 
-    // 5. Nastaviť jazyk a spustiť prvotný render
+    // Nastaviť jazyk a spustiť prvotný render
     applyLang(LANG); 
 
-    // 6. Opakované úlohy (zánik)
+    // Opakované úlohy (zánik)
     setInterval(loadEntries, DELETE_INTERVAL_MS); 
 }
 
-// Spustenie init až po načítaní celého HTML (robustné)
+// ** HARD FIX PRE JAZYK **: Spustenie init až po načítaní celého HTML (robustné)
 document.addEventListener('DOMContentLoaded', init); 
+
+// ** EXTRA OCHRANA PRE JAZYK **: Aj keby DOMContentLoaded zlyhal, po chvíli sa to aspoň raz aplikuje.
+setTimeout(() => {
+    if (typeof init === 'function') init();
+}, 200); 
+
 </script>
 </body>
 </html>
