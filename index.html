@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Archív Dedičstva — Kapsula Času v. 10.7 (Fix Jazyka a Mobilný Admin)</title>
+<title>Archív Dedičstva — Kapsula Času v. 10.8 (Autoload a Simple Admin)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Vytvor si Archív Dedičstva s trvalým uchovaním.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -32,8 +32,8 @@
   *{box-sizing:border-box}
   body{margin:0;font-family:Inter,system-ui,Arial;background:radial-gradient(ellipse at 10% 10%, rgba(184,134,11,0.1), transparent 10%), linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--text);min-height:100vh; padding-bottom: 80px;}
   .wrap{max-width:1000px;margin:0 auto;padding:20px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px; flex-wrap: wrap;} /* Flex-wrap pre Admin pole */
-  .brand{display:flex;align-items:center;gap:12px; cursor: pointer;} /* Cursor pre admin klik */
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px; flex-wrap: wrap;} 
+  .brand{display:flex;align-items:center;gap:12px; cursor: pointer;} 
   .logo{width:50px;height:50px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--bg1);font-size:20px;box-shadow:0 0 10px rgba(184,134,11,0.5); transition: transform 0.2s;}
   .logo:hover {transform: scale(1.05);}
   h1{margin:0;font-size:28px}
@@ -183,10 +183,11 @@
 <body>
   <div class="wrap">
     <header id="mainHeader">
-      <div class="brand" id="brandLogo"> <div class="logo">AČ</div>
+      <div class="brand" id="brandLogo"> 
+        <div class="logo">AČ</div>
         <div>
           <h1 id="title">Archív Dedičstva</h1>
-          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.7 | Fix Jazyka a Mobilný Admin</div>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.8 | Autoload a Simple Admin</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -298,7 +299,7 @@
       </aside>
     </div>
 
-    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.7 | Fix Jazyka a Mobilný Admin.</footer>
+    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.8 | Autoload a Simple Admin.</footer>
 
   </div>
 
@@ -311,7 +312,7 @@
     </button>
   </div>
 
-<script>
+<script defer> 
 /* -----------------------
    KONŠTANTY A GLOBÁLNY STAV
    ----------------------- */
@@ -336,15 +337,10 @@ let entries;
 let userLikes; 
 let isAdminMode = localStorage.getItem(ADMIN_MODE_KEY) === 'true'; 
 
-// Mobilný Admin pomocník pre 3 kliky
-let lastClick = 0;
-let clickCount = 0;
-
-
 const I18N = {
   sk: {
     title: 'Archív Dedičstva',
-    subtitle: 'Digitálna Kapsula Času v. 10.7 | Fix Jazyka a Mobilný Admin',
+    subtitle: 'Digitálna Kapsula Času v. 10.8 | Autoload a Simple Admin',
     formTitle: 'Vytvoriť a archivovať odkaz',
     labelName: 'Meno / Prezývka (voliteľné)',
     labelMessage: 'Archívny Vstup (max 300 znakov)',
@@ -378,7 +374,7 @@ const I18N = {
   },
   en: { 
     title: 'Archive of Heritage',
-    subtitle: 'Digital Time Capsule v. 10.7 | Language Fix and Mobile Admin',
+    subtitle: 'Digital Time Capsule v. 10.8 | Autoload and Simple Admin',
     formTitle: 'Create and Archive Message',
     labelName: 'Name / Nickname (optional)',
     labelMessage: 'Archival Entry (max 300 chars)',
@@ -412,7 +408,7 @@ const I18N = {
   },
   de: { 
     title: 'Archiv des Erbes',
-    subtitle: 'Digitale Zeitkapsel v. 10.7 | Sprachkorrektur und Mobiler Admin',
+    subtitle: 'Digitale Zeitkapsel v. 10.8 | Autoload und Einfacher Admin',
     formTitle: 'Nachricht erstellen und archivieren',
     labelName: 'Name / Spitzname (optional)',
     labelMessage: 'Archiv-Eintrag (max. 300 Zeichen)',
@@ -446,7 +442,7 @@ const I18N = {
   },
   cs: { 
     title: 'Archiv Dědictví',
-    subtitle: 'Digitální Kapsle Času v. 10.7 | Oprava Jazyka a Mobilní Admin',
+    subtitle: 'Digitální Kapsle Času v. 10.8 | Autoload a Jednoduchý Admin',
     formTitle: 'Vytvořit a archivovat odkaz',
     labelName: 'Jméno / Přezdívka (volitelné)',
     labelMessage: 'Archivní Vstup (max 300 znaků)',
@@ -462,11 +458,11 @@ const I18N = {
     anonymous: 'Neznámý Autor',
     noResults: 'Žádné vstupy v archivu',
     alertMessage: 'Archivní vstup nemůže být prázdný!',
-    alertMaxChars: 'Vstup je příliš rozsáhlý. Max 300 znaků.',
+    alertMaxChars: 'Vstup je příliš rozsáhlý. Max 300 znakov.',
     alertPayError: 'PLATEBNÍ LINK není reálny. Chcete SIMULOVAT TRVALÉ ULOŽENÍ? (OK = placené, Zrušit = dočasné)',
     rank: 'Odznak Uchování',
     shareText: 'Sdílet Vstup',
-    ctaStickyText: '⌛ Váš odkaz je jen **Přechodný**. Uchovejte své Dědictví natrvalo za **jen 1€**!',
+    ctaStickyText: '⌛ Váš odkaz je len **Přechodný**. Uchovejte své Dědictví natrvalo za **jen 1€**!',
     ctaStickyBtn: 'ZABEZPEČ ARCHIV DĚDICTVÍ (1€)',
     dailyLimitText: (remaining) => remaining > 0 
       ? `🗝️ KURÁTOROVANÝ SLOT DNE: Získej TRVALÝ ARCHIV ZDARMA! Zbývá **${remaining} Exkluzivních Slotů**!`
@@ -567,7 +563,7 @@ function setupDOMRefs() {
     mainHeader = el('mainHeader');
     adminIndicator = el('adminIndicator');
     adminToggleInput = el('adminToggleInput');
-    brandLogo = el('brandLogo'); // Nová ref
+    brandLogo = el('brandLogo'); 
 }
 
 
@@ -903,7 +899,7 @@ function handleInteraction(event) {
 
 
 /* -----------------------
-   Admin Logic (Konami Code + Mobile Click)
+   Admin Logic (Konami Code + Simple Click)
    ----------------------- */
 let konamiSequence = [];
 function handleAdminToggle(e) {
@@ -911,43 +907,45 @@ function handleAdminToggle(e) {
     const key = e.key;
     const requiredKeys = ADMIN_TOGGLE_KEYS.split(',');
     
-    // len pre PC klávesnicu
-    if (e.type === 'keydown' && key.includes('Arrow')) {
+    if (e.type === 'keydown') {
+         // Kontrola Konami kódu
          konamiSequence.push(key);
          if (konamiSequence.length > requiredKeys.length) konamiSequence.shift();
          
          if (konamiSequence.join(',') === requiredKeys.join(',')) {
              konamiSequence = []; 
              e.preventDefault(); 
-             attemptAdminToggle(prompt('Zadajte ADMIN HESLO:'));
-             return;
+             
+             // Ak je input skrytý, zobrazíme ho a necháme používateľa zadať heslo
+             if (adminToggleInput.style.display === 'none') {
+                 adminToggleInput.style.display = 'block';
+                 adminToggleInput.focus();
+                 return;
+             } else {
+                 // Ak je input už zobrazený a zadávame konami kód, ignorujeme to a čakáme na Enter v inpute
+                 return;
+             }
          }
-    }
-    
-    // 2. Mobile / Input Enter
-    if (e.target.id === 'adminToggleInput' && e.key === 'Enter') {
-        attemptAdminToggle(adminToggleInput.value.trim());
-        adminToggleInput.value = ''; // Vymaže pole po pokuse
+         
+         // 2. Input Enter (spoločné pre PC aj Mobile/Input)
+         if (e.target.id === 'adminToggleInput' && e.key === 'Enter') {
+             attemptAdminToggle(adminToggleInput.value.trim());
+             adminToggleInput.value = ''; 
+         }
     }
 }
 
 function handleMobileAdminClick() {
-    const now = Date.now();
-    const clickDelay = 500; // 500ms limit pre multi-klik
-    
-    if (now - lastClick < clickDelay) {
-        clickCount++;
-    } else {
-        clickCount = 1;
-    }
-    lastClick = now;
-
-    if (clickCount >= 3) {
-        // Zobrazíme input pole pre zadanie hesla
-        if (adminToggleInput) {
+    // Mobilný Admin: Stačí 1 klik na logo AČ pre zobrazenie poľa
+    if (adminToggleInput) {
+        // Skryté -> Zobraziť
+        if (adminToggleInput.style.display === 'none') {
             adminToggleInput.style.display = 'block';
             adminToggleInput.focus();
-            clickCount = 0; // Reset
+        } else {
+            // Zobrazené -> Skúsiť Heslo (kliknutím na logo s už zobrazeným inputom)
+            attemptAdminToggle(adminToggleInput.value.trim());
+            adminToggleInput.value = ''; 
         }
     }
 }
@@ -960,7 +958,6 @@ function attemptAdminToggle(password) {
         localStorage.setItem(ADMIN_MODE_KEY, isAdminMode);
         alert(T[isAdminMode ? 'adminModeOn' : 'adminModeOff']);
         
-        // Skryť input po úspechu
         if (adminToggleInput) adminToggleInput.style.display = 'none';
         
         applyLang(LANG); 
@@ -990,4 +987,18 @@ function init() {
     
     // Admin Toggle Bindings
     document.addEventListener('keydown', handleAdminToggle);
-    if (adminToggleInput) adminToggleInput.addEventListener('keydown', handleAdminToggle
+    if (brandLogo) brandLogo.addEventListener('click', handleMobileAdminClick); 
+
+    // 1. Nastaviť jazyk a spustiť prvotný render
+    applyLang(LANG); 
+    
+    // 2. Opakované úlohy (zánik)
+    setInterval(loadEntries, DELETE_INTERVAL_MS); 
+}
+
+// Spustenie init už nie je v DOMContentLoaded, ale automaticky vďaka <script defer>
+init(); 
+
+</script>
+</body>
+</html>
