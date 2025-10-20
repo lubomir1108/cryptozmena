@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Archív Dedičstva — Kapsula Času v. 10.4 (Najrobustnejšie Vydanie)</title>
+<title>Archív Dedičstva — Kapsula Času v. 10.5 (Finálna Oprava Jazyka)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Vytvor si Archív Dedičstva s trvalým uchovaním.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -138,12 +138,12 @@
 </head>
 <body>
   <div class="wrap">
-    <header>
+    <header id="mainHeader">
       <div class="brand">
         <div class="logo">AČ</div>
         <div>
           <h1 id="title">Archív Dedičstva</h1>
-          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.4 | Najrobustnejšie Vydanie</div>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.5 | Finálna Oprava Jazyka</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -253,7 +253,7 @@
       </aside>
     </div>
 
-    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.4 | Najrobustnejšie Vydanie.</footer>
+    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.5 | Finálna Oprava Jazyka.</footer>
 
   </div>
 
@@ -290,7 +290,7 @@ let userLikes;
 const I18N = {
   sk: {
     title: 'Archív Dedičstva',
-    subtitle: 'Digitálna Kapsula Času v. 10.4 | Najrobustnejšie Vydanie',
+    subtitle: 'Digitálna Kapsula Času v. 10.5 | Finálna Oprava Jazyka',
     formTitle: 'Vytvoriť a archivovať odkaz',
     labelName: 'Meno / Prezývka (voliteľné)',
     labelMessage: 'Archívny Vstup (max 300 znakov)',
@@ -320,7 +320,7 @@ const I18N = {
   },
   en: { 
     title: 'Archive of Heritage',
-    subtitle: 'Digital Time Capsule v. 10.4 | Most Robust Edition',
+    subtitle: 'Digital Time Capsule v. 10.5 | Final Language Fix',
     formTitle: 'Create and Archive Message',
     labelName: 'Name / Nickname (optional)',
     labelMessage: 'Archival Entry (max 300 chars)',
@@ -350,7 +350,7 @@ const I18N = {
   },
   de: { 
     title: 'Archiv des Erbes',
-    subtitle: 'Digitale Zeitkapsel v. 10.4 | Robusteste Ausgabe',
+    subtitle: 'Digitale Zeitkapsel v. 10.5 | Endgültige Sprachkorrektur',
     formTitle: 'Nachricht erstellen und archivieren',
     labelName: 'Name / Spitzname (optional)',
     labelMessage: 'Archiv-Eintrag (max. 300 Zeichen)',
@@ -380,7 +380,7 @@ const I18N = {
   },
   cs: { 
     title: 'Archiv Dědictví',
-    subtitle: 'Digitální Kapsle Času v. 10.4 | Nejrobustnější Vydání',
+    subtitle: 'Digitální Kapsle Času v. 10.5 | Finální Oprava Jazyka',
     formTitle: 'Vytvořit a archivovat odkaz',
     labelName: 'Jméno / Přezdívka (volitelné)',
     labelMessage: 'Archivní Vstup (max 300 znaků)',
@@ -477,7 +477,7 @@ function generateAvatar(author) {
 const el = id => document.getElementById(id);
 
 // DOM REFS
-let authorEl, messageEl, payLinkBtn, saveFree, dailyLimitInfoEl, stickyPayBtn, listEl, statTotal, statPaid, statTemporary, statViews, statLikes, topList, statSavedValue; 
+let authorEl, messageEl, payLinkBtn, saveFree, dailyLimitInfoEl, stickyPayBtn, listEl, statTotal, statPaid, statTemporary, statViews, statLikes, topList, statSavedValue, mainHeader; 
 
 function setupDOMRefs() {
     authorEl = el('author');
@@ -494,6 +494,7 @@ function setupDOMRefs() {
     statLikes = el('statLikes');
     topList = el('topList');
     statSavedValue = el('statSavedValue'); 
+    mainHeader = el('mainHeader'); // Pridaný odkaz na hlavičku pre delegovanie
 }
 
 
@@ -548,6 +549,9 @@ function saveEntries(){
    i18n & UI
    ----------------------- */
 function applyLang(lang){
+  // Ochrana pred neexistujúcim jazykom
+  if (!I18N[lang]) lang = 'sk';
+  
   LANG = lang;
   localStorage.setItem('op_lang', lang);
   const T = I18N[lang];
@@ -578,22 +582,19 @@ function applyLang(lang){
   if(el('subtitle')) el('subtitle').textContent = T.subtitle;
   if(el('formTitle')) el('formTitle').textContent = T.formTitle;
   if(el('labelName')) el('labelName').textContent = T.labelName;
-  if(el('labelMessage')) el('labelMessage').textContent = T.labelMessage + ` (${messageEl.value.length}/300)`; 
+  // Ochrana pred prázdnym elementom
+  if(el('labelMessage') && messageEl) el('labelMessage').textContent = T.labelMessage + ` (${messageEl.value.length}/300)`; 
   if(el('labelSearch')) el('labelSearch').textContent = T.labelSearch;
   if(el('listTitle')) el('listTitle').textContent = T.listTitle;
   if(el('statsTitle')) el('statsTitle').textContent = T.statsTitle;
   if(el('topTitle')) el('topTitle').textContent = T.topTitle;
   if(el('helpTitle')) el('helpTitle').textContent = T.helpTitle;
-  // if(el('helpText')) el('helpText').innerHTML = I18N['sk']['helpText']; // Nechám SK text pre jednoduchosť
 
+  // Nastavenie aktívneho tlačidla
   document.querySelectorAll('.lang-btn').forEach(b=>{
     b.classList.toggle('active', b.dataset.lang===lang);
   });
   render();
-}
-
-function changeLangHandler(e) {
-    applyLang(e.target.dataset.lang);
 }
 
 
@@ -601,7 +602,6 @@ function changeLangHandler(e) {
    Render
    ----------------------- */
 function render(){
-  // Ak ešte neboli nastavené DOM referencie, ukončíme to. (Ochrana)
   if (!listEl) return; 
 
   const T = I18N[LANG];
@@ -611,7 +611,7 @@ function render(){
   list.forEach((e, i) => e.rank = i + 1);
   if(q) list = list.filter(e => (e.text + ' ' + (e.author||'')).toLowerCase().includes(q));
   
-  const s = el('sort').value;
+  const s = el('sort') ? el('sort').value : 'paid'; // Ochrana
   if(s==='paid') list.sort((a,b)=> (b.paid?1:0) - (a.paid?1:0) || b.ts-a.ts);
   else if(s==='new') list.sort((a,b)=>b.ts-a.ts);
   else if(s==='old') list.sort((a,b)=>a.ts-b.ts);
@@ -638,6 +638,7 @@ function render(){
       const item = document.createElement('div');
       item.className = 'item' + (e.paid ? ' highlight-paid' : '') + (isTemporary ? ' temporary' : '');
       item.dataset.id = e.id;
+      // Dôrazne odporúčam pridať `role="button"` na lajkovanie, ak ho chcete robiť klikateľné.
       item.innerHTML = `
         <div style="display:flex;gap:12px;align-items:flex-start;flex:1">
           <div class="avatar">${generateAvatar(e.author || T.anonymous)}</div>
@@ -675,4 +676,185 @@ function render(){
   if(statPaid) statPaid.textContent = paidCount;
   if(statTemporary) statTemporary.textContent = tempCount;
   if(statViews) statViews.textContent = entries.reduce((s,e)=>s+(e.views||0),0);
-  if(statLikes) statLikes.textContent = entries.reduce((s,e)=>s
+  if(statLikes) statLikes.textContent = entries.reduce((s,e)=>s+(e.likes||0),0);
+  if(statSavedValue) statSavedValue.textContent = `${savedValue.toFixed(2)} €`; 
+  if(el('count')) el('count').textContent = list.length + ' ' + (LANG==='sk' || LANG==='cs' ? 'vstupov' : 'entries');
+
+  const top = entries.slice().sort((a,b)=>b.likes-a.likes).slice(0,5);
+  if(topList) topList.innerHTML = '';
+  if(topList) {
+      if(top.length===0) topList.innerHTML = '<div class="small">—</div>'
+      else top.forEach(t=>{
+        const d = document.createElement('div'); d.className='small';
+        d.innerHTML = `<strong>#${t.rank} ${escapeHtml(t.author||T.anonymous)}</strong>: ${escapeHtml(truncate(t.text,60))} — <span style="font-weight:700;color:var(--gold-light)">❤ ${t.likes}</span>`;
+        topList.appendChild(d);
+      });
+  }
+}
+
+
+/* -----------------------
+   Actions & Payment 
+   ----------------------- */
+function addEntry(asPaid, isFreeSlot = false){
+  const T = I18N[LANG];
+  const author = authorEl.value.trim() || null;
+  const text = messageEl.value.trim();
+
+  if(!text) return alert(T.alertMessage);
+  if(text.length>300) return alert(T.alertMaxChars);
+
+  const entry = {
+    id: uid('o_'),
+    author,
+    text,
+    ts: now(),
+    likes: 0,
+    views: 0,
+    paid: Boolean(asPaid || isFreeSlot),
+    avatarInitials: generateAvatar(author || T.anonymous) 
+  };
+  entries.unshift(entry);
+  saveEntries(); 
+  
+  authorEl.value=''; 
+  messageEl.value='';
+  if(el('charCount')) el('charCount').textContent = `0/300`;
+  applyLang(LANG); 
+  
+  if (isFreeSlot) {
+      const savedValue = LANG === 'cs' ? '25 Kč' : '1.00'; 
+      alert(T.alertThanksFree(savedValue));
+  } else if (asPaid) {
+      alert(T.alertThanksFree('1.00')); 
+  } else {
+      alert(T.alertThanksTemporary);
+  }
+}
+
+function handlePaymentAction(){
+    const T = I18N[LANG];
+    if(!messageEl.value.trim()) return alert(T.alertMessage);
+
+    if(PAYMENT_LINK === '' || PAYMENT_LINK.includes('simulacia')){
+        if(confirm(T.alertPayError)){
+            addEntry(true); 
+        }
+        return;
+    }
+    
+    window.open(PAYMENT_LINK, '_blank');
+
+    setTimeout(() => {
+        if(confirm("Po dokončení platby v novom okne/karte stlač OK pre TRVALÉ UCHOVANIE ARCHÍVNEHO VSTUPU. (Toto nahrádza automatickú notifikáciu!)")){
+            addEntry(true);
+        }
+    }, 1500); 
+}
+
+function handleFreeAction(){
+    const T = I18N[LANG];
+    if(!messageEl.value.trim()) return alert(T.alertMessage);
+
+    const remaining = getRemainingFreeSlots();
+    if (remaining > 0) {
+        if (confirm(`GRATULUJEME! Váš vstup môže byť KURÁTOROVANÝ ZDARMA. Chcete využiť jeden z ${remaining} Exkluzívnych Slotov?`)) {
+             useFreeSlot();
+             addEntry(false, true); 
+        }
+    } else {
+        if (confirm(`Limit (${DAILY_FREE_LIMIT}) pre Kurátorované Slot bol vyčerpaný. Uložiť len PRECHODNE (48h) a riskovať Zánik Dedičstva?`)) {
+            addEntry(false);
+        }
+    }
+}
+
+
+/* -----------------------
+   Interaction Handler (Lajky/Zdieľanie)
+   ----------------------- */
+function handleInteraction(event) {
+    const target = event.target.closest('[data-action]');
+    if (!target) return;
+    const action = target.dataset.action;
+    const id = target.dataset.id;
+    const entry = entries.find(e => e.id === id);
+
+    if (!entry) {
+        return;
+    }
+
+    if (action === 'like') {
+        if (userLikes.has(id)) {
+            return;
+        } else {
+            entry.likes = (entry.likes || 0) + 1;
+            userLikes.add(id);
+            saveUserLikes(); 
+            saveEntries();
+            render(); 
+        }
+    } else if (action === 'share') {
+        const T = I18N[LANG];
+        const shareText = `Pozrite si môj ARCHÍV DEDIČSTVA - "${truncate(entry.text, 80)}" (#${entry.rank}). Pridajte svoj odkaz tu: ${window.location.href}`;
+        if (navigator.share) {
+            navigator.share({
+                title: T.title,
+                text: shareText,
+                url: window.location.href,
+            }).catch(error => console.log('Zdieľanie zrušené/zlyhalo', error));
+        } else {
+            navigator.clipboard.writeText(shareText);
+            alert("Odkaz na Archív Dedičstva bol skopírovaný do schránky!");
+        }
+    }
+}
+
+// *** KRITICKÁ ZMENA PRE KLIKANIE NA JAZYKY: Event Delegation ***
+function handleHeaderClick(event) {
+    const target = event.target.closest('.lang-btn');
+    if (target && target.dataset.lang) {
+        applyLang(target.dataset.lang);
+    }
+}
+// ***************************************************************
+
+
+function init() {
+    // 1. Zabezpečiť referencie na DOM elementy
+    setupDOMRefs(); 
+    
+    // 2. Načítať stav
+    dailyLimitState = loadDailyLimit();
+    entries = loadEntries();
+    userLikes = loadUserLikes(); 
+
+    // 3. Bindovanie Event Listenerov
+    if(payLinkBtn) payLinkBtn.addEventListener('click', handlePaymentAction);
+    if(stickyPayBtn) stickyPayBtn.addEventListener('click', handlePaymentAction);
+    if(saveFree) saveFree.addEventListener('click', handleFreeAction);
+    if(messageEl) messageEl.addEventListener('input', ()=> {
+        const charCountEl = el('charCount');
+        if(charCountEl) charCountEl.textContent = `${messageEl.value.length}/300`;
+    });
+    if(el('sort')) el('sort').addEventListener('change', render);
+    if(el('search')) el('search').addEventListener('input', render);
+    if(listEl) listEl.addEventListener('click', handleInteraction);
+    
+    // 4. Bindovanie prekladových tlačidiel cez delegovanie (Najrobustnejší spôsob)
+    if (mainHeader) {
+        mainHeader.addEventListener('click', handleHeaderClick);
+    }
+
+    // 5. Nastaviť jazyk a spustiť prvotný render
+    applyLang(LANG); 
+
+    // 6. Opakované úlohy (zánik)
+    setInterval(loadEntries, DELETE_INTERVAL_MS); 
+}
+
+// Spustenie init až po načítaní celého HTML (robustné)
+document.addEventListener('DOMContentLoaded', init); 
+</script>
+</body>
+</html>
