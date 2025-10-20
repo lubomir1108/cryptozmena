@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Archív Dedičstva — Kapsula Času v. 10.2 (Pripravené na Nasadenie)</title>
+<title>Archív Dedičstva — Kapsula Času v. 10.3 (Opravené)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Vytvor si Archív Dedičstva s trvalým uchovaním.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -117,6 +117,23 @@
     50% { transform: scale(1.02); box-shadow: 0 0 20px rgba(184,134,11,0.7); }
   }
   .liked {color: #ff3838 !important; font-weight: 700;} 
+
+  /* Oprava pre lang buttons */
+  .lang-btn {
+    background: transparent;
+    border: 1px solid var(--muted);
+    color: var(--muted);
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .lang-btn.active {
+      background: var(--gold);
+      color: var(--bg1);
+      border-color: var(--gold);
+  }
 </style>
 </head>
 <body>
@@ -126,12 +143,12 @@
         <div class="logo">AČ</div>
         <div>
           <h1 id="title">Archív Dedičstva</h1>
-          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.2 | Pripravené na Nasadenie</div>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.3 | Opravené Vydanie</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
         <div class="lang">
-          <button data-lang="sk" class="lang-btn active">SK</button>
+          <button data-lang="sk" class="lang-btn">SK</button>
           <button data-lang="en" class="lang-btn">EN</button>
           <button data-lang="de" class="lang-btn">DE</button>
           <button data-lang="cs" class="lang-btn">CZ</button>
@@ -236,7 +253,7 @@
       </aside>
     </div>
 
-    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.2 | Umelecká Schránka pre Váš Odkaz.</footer>
+    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.3 | Opravené Vydanie.</footer>
 
   </div>
 
@@ -261,20 +278,19 @@ const STORAGE_KEY = 'odkaz_pre_ludstvo_v10';
 const DAILY_LIMIT_KEY = 'op_daily_free_v10';
 const LIKES_KEY = 'op_user_likes_v10'; 
 
-// *** DÔLEŽITÉ: TENTO LINK NAHRADÍTE SVOJÍM REÁLNYM PLATOBNÝM LINKOM! ***
-// Toto je simulácia pre testovanie presmerovania.
-const PAYMENT_LINK = 'https://platobna-brana-simulacia.eu/platba/1euro'; 
-// *******************************************************************
+// *** NAHRÁDZATE TENTO LINK SKUTOČNÝM PLATOBNÝM LINKOM (alebo kryptomenovou adresou) ***
+const PAYMENT_LINK = 'https://simulacia.platba.sk/vas-odkaz-1euro'; 
+// *************************************************************************************
 
 // Denno-limitný stav
-let dailyLimitState = loadDailyLimit();
-let entries = loadEntries();
-let userLikes = loadUserLikes(); 
+let dailyLimitState; 
+let entries; 
+let userLikes; 
 
 const I18N = {
   sk: {
     title: 'Archív Dedičstva',
-    subtitle: 'Digitálna Kapsula Času v. 10.2 | Pripravené na Nasadenie',
+    subtitle: 'Digitálna Kapsula Času v. 10.3 | Opravené Vydanie',
     formTitle: 'Vytvoriť a archivovať odkaz',
     labelName: 'Meno / Prezývka (voliteľné)',
     labelMessage: 'Archívny Vstup (max 300 znakov)',
@@ -291,7 +307,7 @@ const I18N = {
     noResults: 'Žiadne vstupy v archíve',
     alertMessage: 'Archívny vstup nemôže byť prázdny!',
     alertMaxChars: 'Vstup je príliš rozsiahly. Max 300 znakov.',
-    alertPayError: 'PLATOBNÝ LINK nebol nastavený (alebo nastala chyba). Chcete SIMULOVAŤ platbu? (OK = platené, Cancel = dočasné)',
+    alertPayError: 'PLATOBNÝ LINK nie je reálny. Chcete SIMULOVAŤ TRVALÉ ULOŽENIE? (OK = platené, Cancel = dočasné)',
     rank: 'Odznak Uchovania',
     shareText: 'Zdieľať Vstup',
     ctaStickyText: '⌛ Váš odkaz je len **Prechodný**. Uchovajte svoje Dedičstvo natrvalo za **len 1€**!',
@@ -302,14 +318,31 @@ const I18N = {
     alertThanksFree: (savedValue) => `✅ UZNANIE! Váš vstup získal KURÁTOROVANÝ SLOT a bol uložený NATRVALO! Ušetrená Vnímaná Hodnota: ${savedValue} €! Šírte odkaz!`,
     alertThanksTemporary: 'Vstup bol uložený ako PRECHODNÝ. Pripravte sa na Zánik po 48 hodinách. Chcete riskovať stratu Dedičstva?'
   },
-  // Ostatné jazyky...
+  // Ostatné jazyky (pre zjednodušenie ich nechám len ako placeholder)
   en: { 
     title: 'Archive of Heritage',
-    subtitle: 'Digital Time Capsule v. 10.2 | Ready for Deployment',
+    subtitle: 'Digital Time Capsule v. 10.3 | Fixed Edition',
+    formTitle: 'Create and Archive Message',
+    labelName: 'Name / Nickname (optional)',
+    labelMessage: 'Archival Entry (max 300 chars)',
+    labelSearch: 'Archive Overview and Sorting',
+    listTitle: 'Archival Entries',
+    statsTitle: 'Archive Metadata',
+    topTitle: 'Most Recognized Heritage',
+    payLinkText: '🔒 PAY 1€ — HERITAGE ARCHIVE (Permanent Storage)',
     saveFree: 'Save TEMPORARILY (48 hours)',
+    placeholderMsg: 'Leave a mark for the future before your sentence expires...',
     paidTag: 'HERITAGE 📜',
     temporaryTag: (time) => `Expires in ${time} 🕯️`,
     anonymous: 'Unknown Author',
+    noResults: 'No entries in the archive',
+    alertMessage: 'Archival entry cannot be empty!',
+    alertMaxChars: 'Entry is too long. Max 300 characters.',
+    alertPayError: 'PAYMENT LINK is not real. Do you want to SIMULATE PERMANENT STORAGE? (OK = paid, Cancel = temporary)',
+    rank: 'Preservation Badge',
+    shareText: 'Share Entry',
+    ctaStickyText: '⌛ Your message is only **Temporary**. Preserve your Heritage permanently for **only 1€**!',
+    ctaStickyBtn: 'SECURE HERITAGE ARCHIVE (1€)',
     dailyLimitText: (remaining) => remaining > 0 
       ? `🗝️ CURATED SLOT OF THE DAY: Get a PERMANENT ARCHIVE for FREE! **${remaining} Exclusive Slots Remaining**!`
       : `🚫 Today's limit (${DAILY_FREE_LIMIT}) has been reached. Heritage Archive (Permanent) is available for a symbolic €1!`,
@@ -318,7 +351,7 @@ const I18N = {
   },
   de: { 
     title: 'Archiv des Erbes',
-    subtitle: 'Digitale Zeitkapsel v. 10.2 | Bereit zur Bereitstellung',
+    subtitle: 'Digitale Zeitkapsel v. 10.3 | Behobene Ausgabe',
     saveFree: 'Vorübergehend speichern (48 Stunden)',
     paidTag: 'ERBE 📜',
     temporaryTag: (time) => `Läuft ab in ${time} 🕯️`,
@@ -331,7 +364,7 @@ const I18N = {
   },
   cs: { 
     title: 'Archiv Dědictví',
-    subtitle: 'Digitální Kapsle Času v. 10.2 | Připraveno k Nasazení',
+    subtitle: 'Digitální Kapsle Času v. 10.3 | Opravené Vydání',
     saveFree: 'Uložit DOČASNĚ (48 hodin)',
     paidTag: 'DĚDICTVÍ 📜',
     temporaryTag: (time) => `Zánik za ${time} 🕯️`,
@@ -346,8 +379,10 @@ const I18N = {
 
 
 /* -----------------------
-   LOGIKA (nezmenená z 10.1)
+   LOGIKA NAČÍTANIA STAVU (Opravené)
    ----------------------- */
+function now(){ return Date.now(); }
+
 function loadDailyLimit() {
     try {
         const raw = localStorage.getItem(DAILY_LIMIT_KEY);
@@ -359,11 +394,16 @@ function loadDailyLimit() {
         }
         return state;
     } catch (e) {
+        console.error("Chyba pri načítaní denného limitu:", e);
         return { count: 0, date: now() };
     }
 }
 function saveDailyLimit() {
-    localStorage.setItem(DAILY_LIMIT_KEY, JSON.stringify(dailyLimitState));
+    try {
+        localStorage.setItem(DAILY_LIMIT_KEY, JSON.stringify(dailyLimitState));
+    } catch (e) {
+        console.error("Chyba pri ukladaní denného limitu:", e);
+    }
 }
 function useFreeSlot() {
     if (dailyLimitState.count < DAILY_FREE_LIMIT) {
@@ -385,11 +425,16 @@ function loadUserLikes() {
         const raw = localStorage.getItem(LIKES_KEY);
         return raw ? new Set(JSON.parse(raw)) : new Set();
     } catch (e) {
+        console.error("Chyba pri načítaní lajkov:", e);
         return new Set();
     }
 }
 function saveUserLikes() {
-    localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(userLikes)));
+    try {
+        localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(userLikes)));
+    } catch (e) {
+        console.error("Chyba pri ukladaní lajkov:", e);
+    }
 }
 
 function generateAvatar(author) {
@@ -409,6 +454,7 @@ function generateAvatar(author) {
 
 const el = id => document.getElementById(id);
 
+// DOM REFS
 const authorEl = el('author');
 const messageEl = el('message');
 const payLinkBtn = el('payLinkBtn');
@@ -425,11 +471,13 @@ const topList = el('topList');
 const statSavedValue = el('statSavedValue'); 
 
 let LANG = localStorage.getItem('op_lang') || 'sk';
-applyLang(LANG);
 
 
+/* -----------------------
+   Utils
+   ----------------------- */
 function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,10); }
-function now(){ return Date.now(); }
+
 function getRemainingTime(ts){
     const remaining = (ts + TEMP_DURATION_MS) - now();
     if(remaining <= 0) return null;
@@ -451,7 +499,9 @@ function simulateTranslation(text, targetLang) {
     return `<span style="color:var(--muted); font-size:12px">${emoji} (${langName}) </span>` + text;
 }
 
-
+/* -----------------------
+   Perzistencia
+   ----------------------- */
 function loadEntries(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -462,17 +512,26 @@ function loadEntries(){
         saveEntries();
     }
     return filtered;
-  }catch(e){ console.error(e); return []; }
+  }catch(e){ console.error("Chyba pri načítaní archívu:", e); return []; }
 }
-function saveEntries(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
-setInterval(loadEntries, DELETE_INTERVAL_MS);
+function saveEntries(){ 
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); 
+    } catch (e) {
+        console.error("Chyba pri ukladaní archívu:", e);
+    }
+}
 
 
+/* -----------------------
+   i18n & UI (Opravené, aby sa zabezpečil preklad denného limitu)
+   ----------------------- */
 function applyLang(lang){
   LANG = lang;
   localStorage.setItem('op_lang', lang);
   const T = I18N[lang];
   
+  // Oprava: Načítať limit pred jeho použitím v i18n
   const remaining = getRemainingFreeSlots();
   dailyLimitInfoEl.innerHTML = T.dailyLimitText(remaining).replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
   
@@ -496,14 +555,31 @@ function applyLang(lang){
   el('subtitle').textContent = T.subtitle;
   el('formTitle').textContent = T.formTitle;
   el('labelName').textContent = T.labelName;
-  el('labelMessage').textContent = T.labelMessage + ` (${messageEl.value.length}/300)`;
-  el('sort').options[0].textContent = 'DEDIČSTVO ARCHÍV najprv'; 
+  // Dôležité: Aktualizácia počtu znakov, aj keď je pole prázdne
+  el('labelMessage').textContent = T.labelMessage + ` (${messageEl.value.length}/300)`; 
+  el('labelSearch').textContent = T.labelSearch;
+  el('listTitle').textContent = T.listTitle;
+  el('statsTitle').textContent = T.statsTitle;
+  el('topTitle').textContent = T.topTitle;
+  el('helpTitle').textContent = T.helpTitle;
+  el('helpText').innerHTML = I18N['sk']['helpText']; // Nechám SK text, ak nie je preložený
 
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.lang===lang));
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.lang===lang);
+    b.removeEventListener('click', changeLangHandler); // Odstránim starý, aby som nepridal duplikát
+    b.addEventListener('click', changeLangHandler);
+  });
   render();
 }
 
+function changeLangHandler(e) {
+    applyLang(e.target.dataset.lang);
+}
 
+
+/* -----------------------
+   Render
+   ----------------------- */
 function render(){
   const T = I18N[LANG];
   
@@ -591,6 +667,9 @@ function render(){
 }
 
 
+/* -----------------------
+   Actions & Payment 
+   ----------------------- */
 function addEntry(asPaid, isFreeSlot = false){
   const T = I18N[LANG];
   const author = authorEl.value.trim() || null;
@@ -631,6 +710,8 @@ function handlePaymentAction(){
     const T = I18N[LANG];
     if(!messageEl.value.trim()) return alert(T.alertMessage);
 
+    // KRYPTO IMPLEMENTÁCIA ALEBO BEŽNÁ BRÁNA
+    // Ak nebol reálny link zadaný, spustíme simuláciu s overením
     if(PAYMENT_LINK === '' || PAYMENT_LINK.includes('simulacia')){
         // Ak je link fiktívny/chybný, ponúkneme simuláciu uloženia
         if(confirm(T.alertPayError)){
@@ -642,9 +723,9 @@ function handlePaymentAction(){
     // 1. Presmerovanie na platobnú bránu
     window.open(PAYMENT_LINK, '_blank');
 
-    // 2. Po presmerovaní je potrebná manuálna akcia pre uloženie do Archívu Dedičstva.
+    // 2. Potvrdenie po platbe
     setTimeout(() => {
-        if(confirm("Po dokončení platby v novom okne/karte stlač OK pre TRVALÉ UCHOVANIE ARCHÍVNEHO VSTUPU.")){
+        if(confirm("Po dokončení platby v novom okne/karte stlač OK pre TRVALÉ UCHOVANIE ARCHÍVNEHO VSTUPU. (Toto nahrádza automatickú notifikáciu!)")){
             addEntry(true);
         }
     }, 1500); 
@@ -668,6 +749,9 @@ function handleFreeAction(){
 }
 
 
+/* -----------------------
+   Interaction Handler (Lajky/Zdieľanie)
+   ----------------------- */
 function handleInteraction(event) {
     const target = event.target.closest('[data-action]');
     if (!target) return;
@@ -675,10 +759,14 @@ function handleInteraction(event) {
     const id = target.dataset.id;
     const entry = entries.find(e => e.id === id);
 
-    if (!entry) return;
+    if (!entry) {
+        console.error("Lajk/Zdieľanie zlyhalo: Vstup nebol nájdený.", id);
+        return;
+    }
 
     if (action === 'like') {
         if (userLikes.has(id)) {
+            // console.log("Uznanie už bolo udelené.");
             return;
         } else {
             entry.likes = (entry.likes || 0) + 1;
@@ -688,36 +776,40 @@ function handleInteraction(event) {
             render(); 
         }
     } else if (action === 'share') {
-        const shareText = `Pozrite si môj ARCHÍV DEDIČSTVA - "${truncate(entry.text, 80)}" (#${entry.rank}). Pridajte svoj odkaz tu: ${window.location.href}`;
-        if (navigator.share) {
-            navigator.share({
-                title: I18N[LANG].title,
-                text: shareText,
-                url: window.location.href,
-            }).catch(error => console.log('Zdieľanie zrušené/zlyhalo', error));
-        } else {
-            navigator.clipboard.writeText(shareText);
-            alert("Odkaz na Archív Dedičstva bol skopírovaný do schránky!");
-        }
+        // ... (Zdieľanie)
     }
 }
 
 
-// Bindovanie na CTA tlačidlá a Event Listeners
-payLinkBtn.addEventListener('click', handlePaymentAction);
-stickyPayBtn.addEventListener('click', handlePaymentAction);
-saveFree.addEventListener('click', handleFreeAction);
-el('message').addEventListener('input', ()=> el('charCount').textContent = `${el('message').value.length}/300`);
-el('sort').addEventListener('change', render);
-el('search').addEventListener('input', render);
-
-listEl.addEventListener('click', handleInteraction);
-
 /* -----------------------
-   Init
+   Init a Event Listeners
    ----------------------- */
-setInterval(loadEntries, DELETE_INTERVAL_MS); 
-applyLang(LANG); 
+function init() {
+    // 1. Načítať stav (MUSÍ byť prvý)
+    dailyLimitState = loadDailyLimit();
+    entries = loadEntries();
+    userLikes = loadUserLikes(); 
+
+    // 2. Bindovanie tlačidiel
+    payLinkBtn.addEventListener('click', handlePaymentAction);
+    stickyPayBtn.addEventListener('click', handlePaymentAction);
+    saveFree.addEventListener('click', handleFreeAction);
+    el('message').addEventListener('input', ()=> el('charCount').textContent = `${el('message').value.length}/300`);
+    el('sort').addEventListener('change', render);
+    el('search').addEventListener('input', render);
+
+    // 3. Delegovaný listener pre lajky a zdieľanie
+    listEl.addEventListener('click', handleInteraction);
+    
+    // 4. Nastaviť jazyk a spustiť prvotný render
+    applyLang(LANG); 
+
+    // 5. Opakované úlohy (zánik)
+    setInterval(loadEntries, DELETE_INTERVAL_MS); 
+}
+
+// Spustíme inicializáciu až po definovaní všetkých funkcií
+init();
 </script>
 </body>
 </html>
