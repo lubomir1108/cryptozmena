@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Archív Dedičstva — Kapsula Času v. 10.8 (Autoload a Simple Admin)</title>
+<title>Archív Dedičstva — Kapsula Času v. 10.7 (Fix Jazyka a Mobilný Admin)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Vytvor si Archív Dedičstva s trvalým uchovaním.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -187,7 +187,7 @@
         <div class="logo">AČ</div>
         <div>
           <h1 id="title">Archív Dedičstva</h1>
-          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.8 | Autoload a Simple Admin</div>
+          <div id="subtitle" class="subtitle">Digitálna Kapsula Času v. 10.7 | Fix Jazyka a Mobilný Admin</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:center">
@@ -299,7 +299,7 @@
       </aside>
     </div>
 
-    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.8 | Autoload a Simple Admin.</footer>
+    <footer>© 2025 Archív Dedičstva — Kapsula Času v. 10.7 | Fix Jazyka a Mobilný Admin.</footer>
 
   </div>
 
@@ -337,10 +337,15 @@ let entries;
 let userLikes; 
 let isAdminMode = localStorage.getItem(ADMIN_MODE_KEY) === 'true'; 
 
+// Mobilný Admin pomocník
+let lastClick = 0;
+let clickCount = 0;
+
+
 const I18N = {
   sk: {
     title: 'Archív Dedičstva',
-    subtitle: 'Digitálna Kapsula Času v. 10.8 | Autoload a Simple Admin',
+    subtitle: 'Digitálna Kapsula Času v. 10.7 | Fix Jazyka a Mobilný Admin',
     formTitle: 'Vytvoriť a archivovať odkaz',
     labelName: 'Meno / Prezývka (voliteľné)',
     labelMessage: 'Archívny Vstup (max 300 znakov)',
@@ -374,7 +379,7 @@ const I18N = {
   },
   en: { 
     title: 'Archive of Heritage',
-    subtitle: 'Digital Time Capsule v. 10.8 | Autoload and Simple Admin',
+    subtitle: 'Digital Time Capsule v. 10.7 | Language Fix and Mobile Admin',
     formTitle: 'Create and Archive Message',
     labelName: 'Name / Nickname (optional)',
     labelMessage: 'Archival Entry (max 300 chars)',
@@ -408,7 +413,7 @@ const I18N = {
   },
   de: { 
     title: 'Archiv des Erbes',
-    subtitle: 'Digitale Zeitkapsel v. 10.8 | Autoload und Einfacher Admin',
+    subtitle: 'Digitale Zeitkapsel v. 10.7 | Sprachkorrektur und Mobiler Admin',
     formTitle: 'Nachricht erstellen und archivieren',
     labelName: 'Name / Spitzname (optional)',
     labelMessage: 'Archiv-Eintrag (max. 300 Zeichen)',
@@ -442,13 +447,13 @@ const I18N = {
   },
   cs: { 
     title: 'Archiv Dědictví',
-    subtitle: 'Digitální Kapsle Času v. 10.8 | Autoload a Jednoduchý Admin',
+    subtitle: 'Digitální Kapsle Času v. 10.7 | Oprava Jazyka a Mobilní Admin',
     formTitle: 'Vytvořit a archivovat odkaz',
     labelName: 'Jméno / Přezdívka (volitelné)',
     labelMessage: 'Archivní Vstup (max 300 znaků)',
     labelSearch: 'Přehled a třídění Archivu',
     listTitle: 'Archivní Vstupy',
-    statsTitle: 'Metadata Archivu',
+    statsTitle: 'Metadata Archívu',
     topTitle: 'Nejvíce Uznávané Dědictví',
     payLinkText: '🔒 ZAPLAŤ 1€ — ARCHIV DĚDICTVÍ (Trvalé Uložení)',
     saveFree: 'Uložit DOČASNĚ (48 hodin)',
@@ -462,17 +467,13 @@ const I18N = {
     alertPayError: 'PLATEBNÍ LINK není reálny. Chcete SIMULOVAT TRVALÉ ULOŽENÍ? (OK = placené, Zrušit = dočasné)',
     rank: 'Odznak Uchování',
     shareText: 'Sdílet Vstup',
-    ctaStickyText: '⌛ Váš odkaz je len **Přechodný**. Uchovejte své Dědictví natrvalo za **jen 1€**!',
+    ctaStickyText: '⌛ Váš odkaz je jen **Přechodný**. Uchovajte své Dědictví natrvalo za **jen 1€**!',
     ctaStickyBtn: 'ZABEZPEČ ARCHIV DĚDICTVÍ (1€)',
     dailyLimitText: (remaining) => remaining > 0 
       ? `🗝️ KURÁTOROVANÝ SLOT DNE: Získej TRVALÝ ARCHIV ZDARMA! Zbývá **${remaining} Exkluzivních Slotů**!`
       : `🚫 Dnešní limit (${DAILY_FREE_LIMIT}) byl vyčerpán. Archiv Dědictví (Trvalé uložení) je k dispozici za symbolické 1€!`,
     alertThanksFree: (savedValue) => `✅ UZNÁNÍ! Váš vstup získal KURÁTOROVANÝ SLOT a byl uložen NATRVALO! Ušetřená Vnímaná Hodnota: ${savedValue} Kč! Šiřte odkaz!`,
-    alertThanksTemporary: 'Vstup byl uložen jako PŘECHODNÝ. Připravte se na Zánik po 48 hodinách. Chcete riskovat ztrátu Dědictví?',
-    adminModeOn: 'ADMIN REŽIM: AKTIVNÍ',
-    adminModeOff: 'ADMIN REŽIM: DEAKTIVNÍ',
-    adminDeleteBtn: 'SMAZAT',
-    adminDeleteConfirm: 'Opravdu chcete trvale smazat tento archivní vstup?'
+    alertThanksTemporary: 'Vstup byl uložen jako PŘECHODNÝ. Připravte se na Zánik po 48 hodinách. Chcete riskovat ztrátu Dědictví?'
   }
 };
 
@@ -916,13 +917,12 @@ function handleAdminToggle(e) {
              konamiSequence = []; 
              e.preventDefault(); 
              
-             // Ak je input skrytý, zobrazíme ho a necháme používateľa zadať heslo
+             // Ak je input skrytý, zobrazíme ho pre zadanie hesla
              if (adminToggleInput.style.display === 'none') {
                  adminToggleInput.style.display = 'block';
                  adminToggleInput.focus();
                  return;
              } else {
-                 // Ak je input už zobrazený a zadávame konami kód, ignorujeme to a čakáme na Enter v inpute
                  return;
              }
          }
@@ -943,7 +943,7 @@ function handleMobileAdminClick() {
             adminToggleInput.style.display = 'block';
             adminToggleInput.focus();
         } else {
-            // Zobrazené -> Skúsiť Heslo (kliknutím na logo s už zobrazeným inputom)
+            // Zobrazené -> Skúsiť Heslo (kliknutím na logo)
             attemptAdminToggle(adminToggleInput.value.trim());
             adminToggleInput.value = ''; 
         }
@@ -987,6 +987,7 @@ function init() {
     
     // Admin Toggle Bindings
     document.addEventListener('keydown', handleAdminToggle);
+    if (adminToggleInput) adminToggleInput.addEventListener('keydown', handleAdminToggle); 
     if (brandLogo) brandLogo.addEventListener('click', handleMobileAdminClick); 
 
     // 1. Nastaviť jazyk a spustiť prvotný render
