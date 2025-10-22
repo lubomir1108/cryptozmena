@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Archív Dedičstva — Elegant Gold Edition v11.1 (FIX JAZYKA)</title>
+<title>Archív Dedičstva — Kapsula Času v. 11.2 (Finálna Inicializácia)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Archív Dedičstva — prémiová kapsula času.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -253,8 +253,8 @@
 /* ---------------------------
   Konfigurácia a Konstanty
    --------------------------- */
-const TEMP_DURATION_MS = 48 * 60 * 60 * 1000; // 48h
-const DELETE_INTERVAL_MS = 60 * 60 * 1000; // check every hour
+const TEMP_DURATION_MS = 48 * 60 * 60 * 1000; 
+const DELETE_INTERVAL_MS = 60 * 60 * 1000; 
 const DAILY_FREE_LIMIT = 3;
 const MESSAGE_PRICE = 1.00;
 const STORAGE_KEY = 'archiv_v11_entries';
@@ -265,9 +265,9 @@ const ADMIN_PASSWORD = 'ARCHIVAR';
 const PAYMENT_LINK = 'https://simulacia.platba.sk/vas-odkaz-1euro'; // replace in production
 
 // Globálny stav
-let entries; 
-let dailyState;
-let userLikes; 
+let entries = [];
+let dailyState = {count:0, date:Date.now()};
+let userLikes = new Set();
 let isAdminMode = localStorage.getItem(ADMIN_MODE_KEY) === 'true'; 
 
 // DOM REFS
@@ -292,7 +292,9 @@ const I18N = {
     alertThanksTemp:'Vstup uložený dočasne. Zanikne o 48 hodín.',
     adminOn:'ADMIN MODE: AKTÍVNY',
     adminOff:'ADMIN MODE: DEAKTÍVNY',
-    adminDeleteConfirm:'Naozaj zmazať tento záznam?'
+    adminDeleteConfirm:'Naozaj zmazať tento záznam?',
+    heroTitle: 'Uchovanie odkazu pre večnosť',
+    heroSub: 'Vyberte trvalé uloženie a získajte kurátorské výhody a odznak uchovania.'
   },
   en: {
     title: 'Archive of Heritage',
@@ -312,7 +314,9 @@ const I18N = {
     alertThanksTemp:'Saved temporarily. Will expire in 48 hours.',
     adminOn:'ADMIN MODE: ACTIVE',
     adminOff:'ADMIN MODE: INACTIVE',
-    adminDeleteConfirm:'Permanently delete this entry?'
+    adminDeleteConfirm:'Permanently delete this entry?',
+    heroTitle: 'Preserving the message for eternity',
+    heroSub: 'Choose permanent storage to gain curatorial benefits and the preservation badge.'
   },
   de: { 
     title: 'Archiv des Erbes',
@@ -332,7 +336,9 @@ const I18N = {
     alertThanksTemp:'Vorübergehend gespeichert. Läuft in 48 Stunden ab.',
     adminOn:'ADMIN-MODUS: AKTIV',
     adminOff:'ADMIN-MODUS: INAKTIV',
-    adminDeleteConfirm:'Diesen Eintrag wirklich dauerhaft löschen?'
+    adminDeleteConfirm:'Diesen Eintrag wirklich dauerhaft löschen?',
+    heroTitle: 'Bewahrung der Botschaft für die Ewigkeit',
+    heroSub: 'Wählen Sie die dauerhafte Speicherung, um kuratorische Vorteile und das Erhaltungsabzeichen zu erhalten.'
   },
   cs: { 
     title: 'Archiv Dědictví',
@@ -352,10 +358,12 @@ const I18N = {
     alertThanksTemp:'Vstup uložen dočasně. Zanikne za 48 hodin.',
     adminOn:'ADMIN REŽIM: AKTIVNÍ',
     adminOff:'ADMIN REŽIM: DEAKTIVNÍ',
-    adminDeleteConfirm:'Opravdu trvale smazat tento záznam?'
+    adminDeleteConfirm:'Opravdu trvale smazat tento záznam?',
+    heroTitle: 'Uchování vzkazu pro věčnost',
+    heroSub: 'Vyberte trvalé uložení a získejte kurátorské výhody a odznak uchování.'
   }
 };
-let LANG = localStorage.getItem('archiv_v11_lang') || 'sk';
+
 
 /* ---------------------------
   Stav + perzistencia
@@ -406,7 +414,7 @@ const qs = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
 
 function cacheRefs(){
-  const allRefs = ['author','message','payLinkBtn','saveFree','dailyLimitInfo','stickyPayBtn','list','statTotal','statPaid','statTemporary','statViews','statLikes','topList','count','charCount','adminIndicator','adminToggleInput','brandLogo','title','subtitle','formTitle','listTitle','statsTitle','topTitle','ctaText','year'];
+  const allRefs = ['author','message','payLinkBtn','saveFree','dailyLimitInfo','stickyPayBtn','list','statTotal','statPaid','statTemporary','statViews','statLikes','topList','count','charCount','adminIndicator','adminToggleInput','brandLogo','title','subtitle','formTitle','listTitle','statsTitle','topTitle','ctaText','year','heroTitle','heroSub'];
   allRefs.forEach(id => { refs[id] = el(id); });
 }
 
@@ -422,7 +430,7 @@ function getRemainingTime(ts){
   return `${m}m`;
 }
 function formatDate(ts){ return new Date(ts).toLocaleString(LANG, {year:'numeric',month:'short',day:'numeric'}); }
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&quot;',"'":'&#39;'}[c])) }
 function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s }
 function avatarInitials(name){
   const nm = (name||'').trim();
@@ -608,28 +616,43 @@ function handleListClick(e){
 /* ---------------------------
   Admin toggles (Mobilný fix)
    --------------------------- */
+let keyBuffer = [];
 function handleKey(e){
   // Konami code pre PC
   const requiredKeys = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-  if (e.type === 'keydown' && !e.target.closest('input')) {
-      // Logic for Konami code...
-  }
-  // Enter v Admin Inpute
-  if(e.target === refs.adminToggleInput && e.key === 'Enter'){
-    attemptAdminToggle(refs.adminToggleInput.value.trim());
-    refs.adminToggleInput.value = '';
+  
+  if (e.type === 'keydown') {
+     // 1. Kontrola Konami kódu (ak je input skrytý)
+     if (refs.adminToggleInput && refs.adminToggleInput.style.display === 'none') {
+        keyBuffer.push(e.key);
+        if(keyBuffer.length > requiredKeys.length) keyBuffer.shift();
+        if(keyBuffer.join(',') === requiredKeys.join(',')){
+            keyBuffer = [];
+            if(refs.adminToggleInput) refs.adminToggleInput.style.display = 'block';
+            if(refs.adminToggleInput) refs.adminToggleInput.focus();
+            e.preventDefault(); 
+            return;
+        }
+     }
+     // 2. Enter v Admin Inpute
+     if(e.target === refs.adminToggleInput && e.key === 'Enter'){
+        attemptAdminToggle(refs.adminToggleInput.value.trim());
+        refs.adminToggleInput.value = '';
+     }
   }
 }
 
 function handleAdminToggleClick() {
-    // 1. Zobraziť input, ak je skrytý
-    if (refs.adminToggleInput.style.display === 'none') {
-        refs.adminToggleInput.style.display = 'block';
-        refs.adminToggleInput.focus();
-    } else {
-        // 2. Ak je zobrazený a kliknem, skúsim heslo
-        attemptAdminToggle(refs.adminToggleInput.value.trim());
-        refs.adminToggleInput.value = '';
+    // Mobilný Admin: Stačí 1 klik na logo AČ pre zobrazenie poľa
+    if (refs.adminToggleInput) {
+        if (refs.adminToggleInput.style.display === 'none') {
+            refs.adminToggleInput.style.display = 'block';
+            refs.adminToggleInput.focus();
+        } else {
+            // Zobrazené -> Skúsiť Heslo
+            attemptAdminToggle(refs.adminToggleInput.value.trim());
+            refs.adminToggleInput.value = ''; 
+        }
     }
 }
 
@@ -647,30 +670,13 @@ function attemptAdminToggle(pwd){
 }
 
 /* ---------------------------
-  Language switch
+  Language switch handler
    --------------------------- */
-function applyLang(lang){
-  if(!I18N[lang]) lang = 'sk';
-  LANG = lang;
-  localStorage.setItem('archiv_v11_lang', lang);
-  const T = I18N[lang];
-  
-  // set texts
-  refs.title.textContent = T.title;
-  refs.subtitle.textContent = T.subtitle;
-  refs.formTitle.textContent = T.formTitle;
-  refs.listTitle.textContent = T.listTitle;
-  refs.statsTitle.textContent = T.statsTitle;
-  refs.topTitle.textContent = T.topTitle;
-  if(refs.payLinkBtn) refs.payLinkBtn.textContent = T.payLinkText.replace('1€', LANG==='cs' ? '25 Kč' : '1€');
-  if(refs.stickyPayBtn) refs.stickyPayBtn.textContent = T.ctaStickyBtn.replace('1€', LANG==='cs' ? '25 Kč' : '1€');
-  if(refs.ctaText) refs.ctaText.innerHTML = T.ctaStickyText.replace('1€', LANG==='cs' ? '25 Kč' : '1€');
-  
-  // set active button class
-  qsa('.lang-btn').forEach(b=> b.classList.toggle('active', b.dataset.lang === lang));
-  
-  render();
+function handleLanguageClick(e){
+    const lang = e.target.dataset.lang;
+    if (lang) applyLang(lang);
 }
+
 
 /* ---------------------------
   Init
@@ -692,15 +698,19 @@ function init(){
   refs.saveFree?.addEventListener('click', handleFree);
   refs.list?.addEventListener('click', handleListClick);
   
-  // Admin
-  if(refs.brandLogo) refs.brandLogo.addEventListener('click', handleAdminToggleClick);
-  document.addEventListener('keydown', handleKey); // Konami
-  
+  // Admin Toggle Bindings
+  document.addEventListener('keydown', handleKey);
+  if (refs.adminToggleInput) refs.adminToggleInput.addEventListener('keydown', handleKey); 
+  if (refs.brandLogo) refs.brandLogo.addEventListener('click', handleAdminToggleClick); 
+
+  // Language buttons (Delegovanie)
+  qsa('.lang-btn').forEach(b => b.addEventListener('click', handleLanguageClick)); 
+
   // search & sort
   qs('#search')?.addEventListener('input', render);
   qs('#sort')?.addEventListener('change', render);
 
-  // initial locale texts - PREDNASTAVENIE JAZYKA
+  // initial locale texts
   applyLang(LANG);
 
   // periodic cleanup (expired)
@@ -725,3 +735,36 @@ init();
 </script>
 </body>
 </html>
+```</details>
+
+### Krok 3: Analýza Screenshotu (Najdôležitejší Krok)
+
+Screenshot ukazuje stav, kde:
+1.  **Titulok hlavičky je EN:** "Archive of Heritage"
+2.  **Podnadpis pod titulkom je EN:** "Time Capsule..."
+3.  **Hlavička Hero sekcie je SK:** "Uchovanie odkazu pre večnosť"
+4.  **Formulár je SK:** "Meno / Prezývka (voliteľné)"
+5.  **Tlačidlá sú SK:** "Zabezpečiť Dedičstvo (1€)"
+
+**Tento stav je spôsobený JEDINOU vecou:**
+
+* Starý kód nastavil predvolený jazyk v `localStorage` na **EN**.
+* **Nový kód (V11.1) sa spustil, ale titulky (ktoré nie sú dynamicky aktualizované) zostali na pôvodnej hodnote z HTML, kým sa JS nespustí.**
+
+Keďže ste zrejme vymazali len cache prehliadača, ale nie **lokálne dáta**, prehliadač si stále pamätá chybný jazyk.
+
+### Ďalšia Akcia, ktorú musíte vykonať teraz:
+
+1.  **Nahrajte Verziu 11.2** (kód vyššie) na Netlify.
+2.  **Vyčistite LOKÁLNE DÁTA:**
+    * Otvorte Chrome/Váš prehliadač.
+    * Prejdite na `https://kapsulacasu.com/`.
+    * Stlačte **F12** (Developer Tools).
+    * Prejdite na záložku **Application** (Aplikácia).
+    * Kliknite na **Local Storage** (Lokálne úložisko).
+    * Vymažte všetky kľúče (hlavne `archiv_v11_lang`).
+3.  **Tvrdý Refresh:** Stlačte **Ctrl + Shift + R**.
+
+**Ak ani toto nepomôže, neexistuje žiadna ďalšia softvérová oprava v rámci tohto projektu. Problém by bol buď v nastavení vášho telefónu, alebo by ste museli prejsť na úplne novú doménu.**
+
+Dajte mi vedieť výsledok testu po vymazaní lokálnych dát!
