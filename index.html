@@ -1,770 +1,437 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sk">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Archív Dedičstva — Kapsula Času v. 11.2 (Finálna Inicializácia)</title>
-<meta name="description" content="Zanechaj vetu pre budúce generácie. Archív Dedičstva — prémiová kapsula času.">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --bg-900:#070707;
-    --bg-800:#0f0f10;
-    --card:#0f1214;
-    --glass: rgba(255,255,255,0.04);
-    --gold: #c89b2e;
-    --gold-2:#e0b230;
-    --muted:#bdbdbd;
-    --danger:#c95252;
-    --round:14px;
-    --max-width:1100px;
-    --text:#f6f6f6;
-    --glass-blur: 8px;
-  }
-
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    background: radial-gradient(600px 300px at 10% 10%, rgba(200,155,46,0.04), transparent),
-                linear-gradient(180deg,var(--bg-900),var(--bg-800));
-    color:var(--text);
-    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    line-height:1.45;
-    padding:28px 18px 120px;
-  }
-
-  .wrap{max-width:var(--max-width);margin:0 auto;}
-  header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
-  .brand{display:flex;align-items:center;gap:14px;cursor:pointer}
-  .logo{
-    width:60px;height:60px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-2));
-    display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--bg-900);font-family: 'Playfair Display', serif;
-    font-size:20px; box-shadow:0 6px 20px rgba(200,155,46,0.12);
-    transition:transform .15s ease, box-shadow .15s;
-  }
-  .logo:hover{transform:translateY(-3px); box-shadow:0 10px 30px rgba(200,155,46,0.18)}
-  .brand-info h1{margin:0;font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
-  .brand-info p{margin:2px 0 0;color:var(--muted);font-size:13px}
-
-  /* Header right controls */
-  .controls{display:flex;gap:8px;align-items:center}
-  .lang-btn{background:transparent;border:1px solid rgba(255,255,255,0.05);color:var(--muted);padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:600}
-  .lang-btn.active{background:var(--gold);color:var(--bg-900);border-color:var(--gold)}
-  .admin-indicator{font-size:12px;padding:6px 8px;border-radius:8px;background:rgba(201,76,76,0.12);color:var(--text);font-weight:700;display:inline-block}
-
-  /* Layout */
-  .hero{
-    display:flex;gap:22px;align-items:center;padding:22px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-    border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(var(--glass-blur));box-shadow:0 8px 30px rgba(0,0,0,0.5);
-  }
-  .hero-left{flex:1;min-width:220px}
-  .hero-title{font-family:'Playfair Display',serif;font-size:26px;margin:0;color:var(--text)}
-  .hero-sub{color:var(--muted);margin-top:8px}
-  .hero-cta{margin-top:14px;display:flex;gap:12px;align-items:center}
-
-  .gold-btn{
-    background:linear-gradient(90deg,var(--gold),var(--gold-2));
-    color:var(--bg-900); border:0;padding:12px 18px;border-radius:12px;font-weight:800;cursor:pointer;font-size:15px;
-    box-shadow:0 8px 20px rgba(200,155,46,0.12);transition:transform .12s, box-shadow .12s;
-  }
-  .gold-btn:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(200,155,46,0.16)}
-  .ghost-btn{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.06);padding:10px 14px;border-radius:10px;cursor:pointer}
-
-  /* Grid */
-  .grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:18px}
-  @media(max-width:980px){.grid{grid-template-columns:1fr;padding:0}}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 8px 30px rgba(0,0,0,0.45)}
-  .card h3{margin:0 0 8px 0;font-size:18px;font-family:'Playfair Display',serif}
-
-  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-  input[type="text"], textarea, select{
-    width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
-    background: rgba(255,255,255,0.02); color:var(--text); font-size:14px;
-  }
-  textarea{min-height:110px;resize:vertical}
-  .row{display:flex;gap:10px;align-items:center}
-  .small{font-size:13px;color:var(--muted)}
-
-  /* List */
-  .list{display:flex;flex-direction:column;gap:12px;max-height:520px;overflow:auto;padding-right:6px}
-  .item{
-    padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02);
-    display:flex;gap:12px;align-items:flex-start;transition:transform .12s, box-shadow .12s;
-  }
-  .item:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.5)}
-  .avatar{width:54px;height:54px;border-radius:10px;background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted);font-size:16px}
-  .meta{font-size:12px;color:var(--muted)}
-  .tag-paid{background:linear-gradient(90deg,var(--gold),var(--gold-2));color:var(--bg-900);padding:6px 8px;border-radius:8px;font-weight:800;font-size:12px}
-  .time-limit{background:rgba(201,76,76,0.08);color:var(--danger);padding:6px 8px;border-radius:8px;font-weight:700;font-size:12px}
-
-  /* admin */
-  .delete-btn{background:var(--danger);color:white;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px}
-  .admin-mode-indicator{font-size:12px;padding:6px 8px;border-radius:8px;background:rgba(201,76,76,0.12);color:var(--text);font-weight:700;display:inline-block}
-
-  /* sticky CTA */
-  .sticky-cta{
-    position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-    border-radius:999px;padding:10px 16px;display:flex;gap:12px;align-items:center;box-shadow:0 12px 40px rgba(0,0,0,0.6);backdrop-filter: blur(var(--glass-blur));
-    border:1px solid rgba(200,155,46,0.12);z-index:1200;
-  }
-  .cta-text{color:var(--muted);font-weight:600}
-  .pulse{animation:pulse 3s infinite}
-  @keyframes pulse{0%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.02)}100%{transform:translateX(-50%) scale(1)}}
-
-  footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
-
-  /* utility */
-  .flex-between{display:flex;justify-content:space-between;align-items:center}
-  .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700}
-  .liked{color:#ff6b6b;font-weight:800}
-
-  /* Admin input */
-  #adminToggleInput{
-    width: 100%;
-    margin-top: 10px;
-    padding: 8px;
-    display: none;
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Archív Dedičstva — Zanechaj odkaz navždy</title>
+  <meta name="description" content="Zanechaj krátky odkaz pre budúce generácie — navždy za 1 € alebo skúsiť zdarma 48h.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#060407; --panel:#0f1216; --muted:#bdbdbd; --gold:#c89b2e; --gold-2:#e0b230; --accent:#10b981; --round:14px; --text:#f5f5f5;
+      --glass: rgba(255,255,255,0.03);
+      --max-width:1000px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+      color:var(--text);
+      background:linear-gradient(180deg,#040405 0%, #0a0a0b 100%);
+      padding:28px;display:flex;justify-content:center;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    }
+    .wrap{max-width:var(--max-width);width:100%}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#0b0b0b;font-family:'Playfair Display',serif}
+    h1{font-family:'Playfair Display',serif;margin:0;font-size:20px}
+    .sub{color:var(--muted);font-size:13px}
+    .lang-switch{display:flex;gap:8px}
+    .lang-btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;color:var(--muted);cursor:pointer}
+    .lang-btn.active{background:var(--gold);color:#0b0b0b;border-color:var(--gold)}
+    .hero{display:grid;grid-template-columns:1fr 380px;gap:22px;align-items:center;padding:22px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border:1px solid rgba(255,255,255,0.03);backdrop-filter: blur(6px)}
+    @media(max-width:920px){.hero{grid-template-columns:1fr;padding:18px}}
+    .h-eyebrow{font-weight:700;color:var(--gold);font-size:13px}
+    .h-title{font-family:'Playfair Display',serif;font-size:34px;margin:8px 0}
+    .h-sub{color:var(--muted);margin-bottom:14px}
+    .cta-row{display:flex;gap:12px;align-items:center}
+    .primary{background:linear-gradient(90deg,var(--gold),var(--gold-2));border:0;padding:14px 18px;border-radius:12px;font-weight:800;color:#081018;cursor:pointer;box-shadow:0 14px 40px rgba(200,155,46,0.12)}
+    .secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:12px 16px;border-radius:10px;color:var(--muted);cursor:pointer}
+    .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    label{display:block;color:var(--muted);font-size:13px;margin-bottom:8px}
+    input[type=text], textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text)}
+    textarea{min-height:120px;resize:vertical}
+    .meta-row{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-top:12px}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700}
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:20px;margin-top:18px}
+    @media(max-width:920px){.grid{grid-template-columns:1fr}}
+    .list{display:flex;flex-direction:column;gap:12px;max-height:520px;overflow:auto;padding-right:6px}
+    .item{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02)}
+    .avatar{width:48px;height:48px;border-radius:10px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--muted)}
+    footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
+    .social-proof{display:flex;gap:12px;align-items:center;margin-top:12px}
+    .proof-card{background:rgba(255,255,255,0.02);padding:10px;border-radius:10px;font-weight:700}
+    .badge{display:inline-block;padding:6px 8px;border-radius:10px;background:linear-gradient(90deg,var(--gold),var(--gold-2));color:#0b0b0b;font-weight:800}
+    .small{font-size:13px;color:var(--muted)}
+    .sticky{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);display:flex;gap:12px;align-items:center;z-index:1200}
+    button:focus, input:focus, textarea:focus{outline:3px solid rgba(200,155,46,0.12);outline-offset:2px}
+  </style>
 </head>
 <body>
-<div class="wrap" id="app">
-  <header>
-    <div class="brand" id="brandLogo" tabindex="0" title="Otvoriť admin pole (mobil)">
-      <div class="logo">AČ</div>
-      <div class="brand-info">
-        <h1 id="title">Archív Dedičstva</h1>
-        <p id="subtitle">Kapsula Času — Uložte svoj hlas pre budúce generácie</p>
-      </div>
-    </div>
-
-    <div class="controls">
-      <div id="adminIndicator" aria-hidden="true"></div>
-      <div role="navigation" aria-label="Jazyk">
-        <button class="lang-btn" data-lang="sk" onclick="applyLang('sk')">SK</button>
-        <button class="lang-btn" data-lang="en" onclick="applyLang('en')">EN</button>
-        <button class="lang-btn" data-lang="de" onclick="applyLang('de')">DE</button>
-        <button class="lang-btn" data-lang="cs" onclick="applyLang('cs')">CZ</button>
-      </div>
-    </div>
-    <input id="adminToggleInput" type="text" placeholder="Zadajte ADMIN HESLO: ARCHIVAR" aria-label="Admin heslo" style="display:none;"/>
-  </header>
-
-  <section class="hero">
-    <div class="hero-left">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:28px">📜</div>
+  <div class="wrap" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo">AČ</div>
         <div>
-          <div class="hero-title" id="heroTitle">Uchovanie odkazu pre večnosť</div>
-          <div class="hero-sub">Vyberte trvalé uloženie a získajte kurátorské výhody a odznak uchovania.</div>
+          <h1 id="brandTitle">Archív Dedičstva</h1>
+          <div class="sub" id="brandSub">Kapsula Času — Zanechaj odkaz, ktorý prežije</div>
         </div>
       </div>
 
-      <div class="hero-cta">
-        <button id="heroCTABtn" class="gold-btn">Zabezpečiť Dedičstvo (1€)</button>
-        <button id="heroSecondary" class="ghost-btn">Prečítať viac</button>
+      <div class="lang-switch" role="tablist" aria-label="Jazyk">
+        <button class="lang-btn active" data-lang="sk">SK</button>
+        <button class="lang-btn" data-lang="en">EN</button>
       </div>
+    </header>
+
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="hero-left">
+        <div class="h-eyebrow" id="eyebrow">PREDAJNÉ</div>
+        <div class="h-title" id="heroTitle">Čas pominie. Odkaz zostane.</div>
+        <div class="h-sub" id="heroSub">Zanechaj krátku myšlienku, spomienku alebo odkaz, ktorý si zachováš navždy — alebo vyskúšaj zadarmo na 48 hodín.</div>
+
+        <div class="cta-row">
+          <button class="primary" id="ctaPrimary">Zanechať odkaz</button>
+          <button class="secondary" id="ctaSecondary">Viac informácií</button>
+        </div>
+
+        <div class="social-proof" aria-hidden="true">
+          <div class="proof-card">👁 <span id="totalViews">0</span> čítaní</div>
+          <div class="proof-card">🌍 <span id="countries">14</span> krajín</div>
+          <div class="proof-card">💌 <span id="totalSaved">0</span> odkazov</div>
+        </div>
+      </div>
+
+      <div class="panel" aria-labelledby="formTitle">
+        <h3 id="formTitle">Zanechaj odkaz</h3>
+        <label id="labelName">Meno / prezývka (nepovinné)</label>
+        <input id="author" type="text" placeholder="Ako chcete byť zaznamenaný?" aria-label="Meno alebo prezývka" />
+
+        <label style="margin-top:10px">Tvoj odkaz <span class="small" id="charCount">0/300</span></label>
+        <textarea id="message" maxlength="300" placeholder="Napíš niečo, čo by si chcel, aby budúce generácie vedeli..."></textarea>
+
+        <div class="meta-row">
+          <div class="pill" id="dailyInfo">Zostáva 3 bezplatné uloženia</div>
+          <div style="display:flex;gap:8px">
+            <!-- PayPal container will render here -->
+            <div id="paypal-button-container"></div>
+            <button class="secondary" id="freeBtn">Skúsiť zdarma (48h)</button>
+          </div>
+        </div>
+        <div class="small" style="margin-top:10px;color:var(--muted)">*Dočasné odkazy zaniknú po 48 hodinách. Trvalé odkazy získajú odznak uchovania.</div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <main>
+        <div class="panel">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3 id="listTitle">Najnovšie odkazy</h3>
+            <div class="small">Zobrazené <span id="listCount">0</span></div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <input id="search" type="text" placeholder="Hľadať..." aria-label="Hľadať odkazy" />
+            <select id="sort">
+              <option value="paid">Trvalé najprv</option>
+              <option value="new">Najnovšie</option>
+              <option value="likes">Najviac uznávané</option>
+            </select>
+          </div>
+
+          <div id="list" class="list" style="margin-top:14px">
+            <div class="small">Zatiaľ žiadne odkazy — buď ten prvý.</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px">
+          <h3>FAQ</h3>
+          <div class="small" style="margin-top:8px">
+            <strong>Je to bezpečné?</strong>
+            <div>Áno — v demo verzii je platba simulovaná. Pri nasadení nahraj reálny PayPal Client ID.</div>
+            <div style="margin-top:8px"><strong>Prečo 1 €?</strong> Nízka vstupná cena pomáha zabezpečiť dôstojné uloženie a údržbu obsahu.</div>
+          </div>
+        </div>
+      </main>
+
+      <aside>
+        <div class="panel">
+          <h3>Štatistiky</h3>
+          <div class="small" style="margin-top:8px">Celkovo uložené: <strong id="statTotal">0</strong></div>
+          <div class="small">Trvalé: <strong id="statPaid">0</strong></div>
+          <div class="small">Dočasné: <strong id="statTemp">0</strong></div>
+          <div class="small">Príjmy: <strong id="statRevenue">0 €</strong></div>
+          <div style="margin-top:12px"><button class="secondary" id="exportBtn">Exportovať (demo)</button></div>
+        </div>
+
+        <div class="panel" style="margin-top:14px">
+          <h3>Top</h3>
+          <div id="topList" class="small" style="margin-top:8px">—</div>
+        </div>
+      </aside>
     </div>
 
-    <div style="width:320px">
-      <div class="card">
-        <h3 id="formTitle">Vytvoriť odkaz</h3>
-        <label id="labelName">Meno / Prezývka (voliteľné)</label>
-        <input id="author" type="text" placeholder="Ako chcete byť zaznamenaný?" />
-
-        <label id="labelMessage" style="margin-top:10px">Archívny vstup <span id="charCount" class="small" style="float:right">0/300</span></label>
-        <textarea id="message" maxlength="300" placeholder="Zanechajte odkaz pre budúcnosť..."></textarea>
-
-        <div style="margin-top:12px" id="dailyLimitInfo"></div>
-
-        <div style="display:flex;gap:10px;margin-top:12px">
-          <button id="payLinkBtn" class="gold-btn" style="flex:1">🔒 Zaplať 1€ — Trvalé</button>
-          <button id="saveFree" class="ghost-btn" style="flex:1">Uložiť dočasne</button>
-        </div>
-        <div class="small" style="margin-top:10px;color:var(--muted)">*Dočasné vstupy zanikajú po 48 hodinách.</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="grid" style="margin-top:18px">
-    <main>
-      <div class="card">
-        <div class="flex-between">
-          <h3 id="listTitle">Archívne vstupy</h3>
-          <div class="small" id="count">0 odkazov</div>
-        </div>
-
-        <div style="margin-top:12px;display:flex;gap:8px">
-          <input id="search" type="text" placeholder="Hľadať..." />
-          <select id="sort" aria-label="Triediť">
-            <option value="paid">Dedičstvo (najprv)</option>
-            <option value="new">Najnovšie</option>
-            <option value="likes">Najviac uznávané</option>
-            <option value="old">Najstaršie</option>
-            <option value="random">Náhodné</option>
-          </select>
-        </div>
-
-        <div id="list" class="list" style="margin-top:14px">
-          <div class="small">Žiadne odkazy</div>
-        </div>
-      </div>
-
-      <div class="card" style="margin-top:14px">
-        <h3>FAQ — Často kladené otázky</h3>
-        <div class="small" style="margin-top:10px">
-          <strong>Čo znamená trvalé uloženie?</strong>
-          <div>Trvalé uloženie (DEDIČSTVO) zabezpečí, že váš odkaz nebude odstránený automaticky — bude mať kurátorský status.</div>
-          <div style="margin-top:8px"><strong>Je platba skutočná?</strong> Demo verzia stránky používa simulovaný platobný link. Pri nasadení zameníte `PAYMENT_LINK` za reálny.</div>
-        </div>
-      </div>
-    </main>
-
-    <aside>
-      <div class="card">
-        <h3 id="statsTitle">Metadáta</h3>
-        <div style="margin-top:8px" class="small">Celkom: <strong id="statTotal">0</strong></div>
-        <div class="small">Trvalé: <strong id="statPaid" style="color:var(--gold)"></strong></div>
-        <div class="small">Prechodné: <strong id="statTemporary" style="color:var(--danger)"></strong></div>
-        <div class="small">Ušetrená hodnota: <strong id="statSavedValue" style="color:#10b981">0 €</strong></div>
-        <div style="margin-top:8px" class="small">Čítaní: <strong id="statViews">0</strong></div>
-        <div class="small">Uznaní: <strong id="statLikes">0</strong></div>
-      </div>
-
-      <div class="card" style="margin-top:14px">
-        <h3 id="topTitle">Top</h3>
-        <div id="topList" style="margin-top:10px"></div>
-      </div>
-    </aside>
+    <footer>© <span id="year"></span> Archív Dedičstva — Premium v12</footer>
   </div>
 
-  <footer>© <span id="year"></span> Archív Dedičstva — Elegant Gold Edition v11.1</footer>
-</div>
+  <div class="sticky" role="region" aria-label="Rýchla akcia">
+    <div class="small">Chráň svoj odkaz</div>
+    <button class="primary" id="stickyPay">Zachovať — 1 €</button>
+  </div>
 
-<div class="sticky-cta" id="stickyCta" role="region" aria-label="Akcia">
-  <div class="cta-text" id="ctaText">⌛ Váš odkaz je len dočasný. Zabezpečte ho trvalo za <strong>1€</strong>!</div>
-  <button id="stickyPayBtn" class="gold-btn pulse">Zabezpečiť (1€)</button>
-</div>
+  <!-- PayPal SDK: replace YOUR_PAYPAL_CLIENT_ID with your real client id BEFORE go-live -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=EUR" async></script>
 
-<script defer> 
-/* ---------------------------
-  Konfigurácia a Konstanty
-   --------------------------- */
-const TEMP_DURATION_MS = 48 * 60 * 60 * 1000; 
-const DELETE_INTERVAL_MS = 60 * 60 * 1000; 
-const DAILY_FREE_LIMIT = 3;
-const MESSAGE_PRICE = 1.00;
-const STORAGE_KEY = 'archiv_v11_entries';
-const DAILY_LIMIT_KEY = 'archiv_v11_daily';
-const LIKES_KEY = 'archiv_v11_likes';
-const ADMIN_MODE_KEY = 'archiv_v11_admin';
-const ADMIN_PASSWORD = 'ARCHIVAR'; 
-const PAYMENT_LINK = 'https://simulacia.platba.sk/vas-odkaz-1euro'; // replace in production
+  <script>
+    /* --- CONFIG --- */
+    const STORAGE_KEY = 'archiv_v12_entries';
+    const DAILY_KEY = 'archiv_v12_daily';
+    const LIKES_KEY = 'archiv_v12_likes';
+    const TEMP_MS = 48*60*60*1000;
+    const DAILY_LIMIT = 3;
+    const PRICE = '1.00';
+    const CURRENCY = 'EUR';
+    const LANGS = { sk: 'sk', en: 'en' };
+    let LANG = 'sk';
 
-// Globálny stav
-let entries = [];
-let dailyState = {count:0, date:Date.now()};
-let userLikes = new Set();
-let isAdminMode = localStorage.getItem(ADMIN_MODE_KEY) === 'true'; 
-
-// DOM REFS
-let refs = {};
-
-const I18N = {
-  sk: {
-    title: 'Archív Dedičstva',
-    subtitle: 'Kapsula Času — Uložte svoj hlas pre budúce generácie',
-    formTitle: 'Vytvoriť odkaz',
-    payLinkText: '🔒 Zaplať 1€ — Trvalé',
-    saveFree: 'Uložiť dočasne (48h)',
-    placeholderMsg: 'Zanechajte odkaz pre budúcnosť...',
-    paidTag: 'DEDIČSTVO 📜',
-    temporaryTag: (t)=>`Zánik za ${t}`,
-    anonymous:'Neznámy Autor',
-    noResults:'Žiadne vstupy v archíve',
-    alertEmpty:'Vstup nemôže byť prázdny!',
-    alertLong:'Maximálne 300 znakov.',
-    alertPaySim:'PLATOBNÝ LINK je simulovaný. Simulovať platbu? (OK = áno)',
-    alertThanksPaid:'Ďakujeme! Váš vstup bol uložený trvalo.',
-    alertThanksTemp:'Vstup uložený dočasne. Zanikne o 48 hodín.',
-    adminOn:'ADMIN MODE: AKTÍVNY',
-    adminOff:'ADMIN MODE: DEAKTÍVNY',
-    adminDeleteConfirm:'Naozaj zmazať tento záznam?',
-    heroTitle: 'Uchovanie odkazu pre večnosť',
-    heroSub: 'Vyberte trvalé uloženie a získajte kurátorské výhody a odznak uchovania.'
-  },
-  en: {
-    title: 'Archive of Heritage',
-    subtitle: 'Time Capsule — Secure your message for future generations',
-    formTitle: 'Create message',
-    payLinkText: '🔒 Pay €1 — Permanent',
-    saveFree: 'Save temporarily (48h)',
-    placeholderMsg: 'Leave a message for the future...',
-    paidTag: 'HERITAGE 📜',
-    temporaryTag: (t)=>`Expires in ${t}`,
-    anonymous:'Unknown Author',
-    noResults:'No entries',
-    alertEmpty:'Entry cannot be empty!',
-    alertLong:'Max 300 characters.',
-    alertPaySim:'Payment link is simulated. Simulate payment? (OK = yes)',
-    alertThanksPaid:'Thanks! Your entry is permanently stored.',
-    alertThanksTemp:'Saved temporarily. Will expire in 48 hours.',
-    adminOn:'ADMIN MODE: ACTIVE',
-    adminOff:'ADMIN MODE: INACTIVE',
-    adminDeleteConfirm:'Permanently delete this entry?',
-    heroTitle: 'Preserving the message for eternity',
-    heroSub: 'Choose permanent storage to gain curatorial benefits and the preservation badge.'
-  },
-  de: { 
-    title: 'Archiv des Erbes',
-    subtitle: 'Zeitkapsel — Sichern Sie Ihre Botschaft für zukünftige Generationen',
-    formTitle: 'Nachricht erstellen',
-    payLinkText: '🔒 Zahlen 1€ — Dauerhaft',
-    saveFree: 'Vorübergehend speichern (48h)',
-    placeholderMsg: 'Hinterlassen Sie eine Nachricht für die Zukunft...',
-    paidTag: 'ERBE 📜',
-    temporaryTag: (t)=>`Läuft ab in ${t}`,
-    anonymous:'Unbekannter Autor',
-    noResults:'Keine Einträge',
-    alertEmpty:'Eintrag darf nicht leer sein!',
-    alertLong:'Max 300 Zeichen.',
-    alertPaySim:'Zahlungslink ist simuliert. Zahlung simulieren? (OK = ja)',
-    alertThanksPaid:'Danke! Ihr Eintrag ist dauerhaft gespeichert.',
-    alertThanksTemp:'Vorübergehend gespeichert. Läuft in 48 Stunden ab.',
-    adminOn:'ADMIN-MODUS: AKTIV',
-    adminOff:'ADMIN-MODUS: INAKTIV',
-    adminDeleteConfirm:'Diesen Eintrag wirklich dauerhaft löschen?',
-    heroTitle: 'Bewahrung der Botschaft für die Ewigkeit',
-    heroSub: 'Wählen Sie die dauerhafte Speicherung, um kuratorische Vorteile und das Erhaltungsabzeichen zu erhalten.'
-  },
-  cs: { 
-    title: 'Archiv Dědictví',
-    subtitle: 'Kapsle Času — Uložte svůj hlas pro budoucí generace',
-    formTitle: 'Vytvořit vzkaz',
-    payLinkText: '🔒 Zaplatit 1€ — Trvalé',
-    saveFree: 'Uložit dočasně (48h)',
-    placeholderMsg: 'Zanechte vzkaz pro budoucnost...',
-    paidTag: 'DĚDICTVÍ 📜',
-    temporaryTag: (t)=>`Zánik za ${t}`,
-    anonymous:'Neznámý Autor',
-    noResults:'Žádné vstupy v archivu',
-    alertEmpty:'Vstup nemůže být prázdný!',
-    alertLong:'Max 300 znaků.',
-    alertPaySim:'Platební link je simulovaný. Simulovat platbu? (OK = ano)',
-    alertThanksPaid:'Děkujeme! Váš vstup byl uložen trvale.',
-    alertThanksTemp:'Vstup uložen dočasně. Zanikne za 48 hodin.',
-    adminOn:'ADMIN REŽIM: AKTIVNÍ',
-    adminOff:'ADMIN REŽIM: DEAKTIVNÍ',
-    adminDeleteConfirm:'Opravdu trvale smazat tento záznam?',
-    heroTitle: 'Uchování vzkazu pro věčnost',
-    heroSub: 'Vyberte trvalé uložení a získejte kurátorské výhody a odznak uchování.'
-  }
-};
-
-
-/* ---------------------------
-  Stav + perzistencia
-   --------------------------- */
-function now(){ return Date.now(); }
-function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,9); }
-
-function loadEntries(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    const filtered = parsed.filter(e => e.paid || (e.ts + TEMP_DURATION_MS > now()));
-    entries = filtered;
-    saveEntries();
-  }catch(e){ entries = []; }
-}
-
-function saveEntries(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }catch(e){} }
-
-function loadDaily(){
-  try{
-    const raw = localStorage.getItem(DAILY_LIMIT_KEY);
-    dailyState = raw ? JSON.parse(raw) : {count:0, date:now()};
-    if(now() - dailyState.date > 24*60*60*1000) dailyState = {count:0, date:now()};
-  }catch(e){ dailyState = {count:0, date:now()}; }
-}
-function saveDaily(){ try{ localStorage.setItem(DAILY_LIMIT_KEY, JSON.stringify(dailyState)); }catch(e){} }
-function remainingFree(){ loadDaily(); return Math.max(0, DAILY_FREE_LIMIT - (dailyState.count||0)); }
-function useFreeSlot(){ loadDaily(); if(dailyState.count < DAILY_FREE_LIMIT){ dailyState.count++; dailyState.date = now(); saveDaily(); return true } return false }
-
-function loadLikes(){ try{ const raw = localStorage.getItem(LIKES_KEY); userLikes = raw ? new Set(JSON.parse(raw)) : new Set(); }catch(e){ userLikes = new Set(); } }
-function saveLikes(){ try{ localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(userLikes))); }catch(e){} }
-
-function deleteEntry(id) {
-    if (!isAdminMode) return;
-    if (confirm(t('adminDeleteConfirm'))) {
-        entries = entries.filter(e => e.id !== id);
-        saveEntries();
-        render();
-    }
-}
-
-/* ---------------------------
-  DOM refs
-   --------------------------- */
-const el = id => document.getElementById(id);
-const qs = sel => document.querySelector(sel);
-const qsa = sel => Array.from(document.querySelectorAll(sel));
-
-function cacheRefs(){
-  const allRefs = ['author','message','payLinkBtn','saveFree','dailyLimitInfo','stickyPayBtn','list','statTotal','statPaid','statTemporary','statViews','statLikes','topList','count','charCount','adminIndicator','adminToggleInput','brandLogo','title','subtitle','formTitle','listTitle','statsTitle','topTitle','ctaText','year','heroTitle','heroSub'];
-  allRefs.forEach(id => { refs[id] = el(id); });
-}
-
-/* ---------------------------
-  Helpers
-   --------------------------- */
-function getRemainingTime(ts){
-  const r = (ts + TEMP_DURATION_MS) - now();
-  if(r <= 0) return null;
-  const h = Math.floor(r / (1000*60*60));
-  const m = Math.floor((r % (1000*60*60)) / (1000*60));
-  if(h>0) return `${h}h ${m}m`;
-  return `${m}m`;
-}
-function formatDate(ts){ return new Date(ts).toLocaleString(LANG, {year:'numeric',month:'short',day:'numeric'}); }
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&quot;',"'":'&#39;'}[c])) }
-function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s }
-function avatarInitials(name){
-  const nm = (name||'').trim();
-  if(!nm) return 'NA';
-  const parts = nm.split(' ').filter(Boolean);
-  if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
-  return (parts[0][0]+parts[parts.length-1][0]).toUpperCase();
-}
-function t(key, ...args){ return I18N[LANG][key] && typeof I18N[LANG][key] === 'function' ? I18N[LANG][key](...args) : I18N[LANG][key] }
-
-/* ---------------------------
-  Render
-   --------------------------- */
-function render(){
-  if(!refs.list) return;
-  const T = I18N[LANG];
-  // filter & sort
-  const q = (qs('#search')?.value || '').trim().toLowerCase();
-  let list = entries.slice();
-  list.forEach((e,i)=> e.rank = i+1);
-  if(q) list = list.filter(e => (e.text + ' ' + (e.author||'')).toLowerCase().includes(q));
-  const sort = qs('#sort')?.value || 'paid';
-  if(sort==='paid') list.sort((a,b)=> (b.paid?1:0)-(a.paid?1:0) || b.ts-a.ts);
-  else if(sort==='new') list.sort((a,b)=>b.ts-a.ts);
-  else if(sort==='old') list.sort((a,b)=>a.ts-b.ts);
-  else if(sort==='likes') list.sort((a,b)=>b.likes - a.likes || b.ts - a.ts);
-  else if(sort==='random') list.sort(()=>Math.random()-0.5);
-
-  refs.list.innerHTML = '';
-  if(list.length === 0){
-    refs.list.innerHTML = `<div class="small">${t('noResults')}</div>`;
-  } else {
-    list.forEach((e)=>{
-      const isTemp = !e.paid;
-      const rem = isTemp ? getRemainingTime(e.ts) : null;
-      const liked = userLikes.has(e.id);
-      const item = document.createElement('div');
-      item.className = 'item';
-      item.dataset.id = e.id;
-      item.innerHTML = `
-        <div class="avatar" aria-hidden="true">${avatarInitials(e.author||t('anonymous'))}</div>
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="font-weight:700">${escapeHtml(e.author||t('anonymous'))}</div>
-            <div class="meta">${formatDate(e.ts)}</div>
-            <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-              ${e.paid ? `<span class="tag-paid">${t('paidTag')||'DEDIČSTVO'}</span>` : ''}
-              ${isTemp ? `<span class="time-limit">${t('temporaryTag', rem||'0m')}</span>` : ''}
-              ${isAdminMode ? `<span class="admin-tag">${t('adminOn')}</span>` : ''}
-            </div>
-          </div>
-          <div style="margin-top:8px;font-size:15px">${escapeHtml(e.text)}</div>
-          <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between">
-            <div class="meta">
-              <span data-action="like" data-id="${e.id}" style="cursor:pointer;margin-right:12px" class="${liked ? 'liked' : ''}">❤ ${e.likes||0}</span>
-              <span class="meta">Čítaní: ${e.views||0}</span>
-              <button data-action="share" data-id="${e.id}" class="ghost-btn" style="margin-left:10px">Zdieľať</button>
-            </div>
-            ${isAdminMode ? `<button data-action="delete" data-id="${e.id}" class="delete-btn">${t('adminDeleteBtn')}</button>` : ''}
-          </div>
-        </div>
-      `;
-      refs.list.appendChild(item);
-
-      if(!e.viewedInSession){
-        e.views = (e.views||0) + 1;
-        e.viewedInSession = true;
+    /* --- I18N --- */
+    const I18N = {
+      sk: {
+        heroTitle: 'Čas pominie. Odkaz zostane.',
+        heroSub: 'Zanechaj krátku myšlienku, spomienku alebo odkaz, ktorý prežije — navždy za 1 € alebo zdarma 48h.',
+        cta: 'Zanechať odkaz',
+        more: 'Viac informácií',
+        formTitle: 'Zanechaj odkaz',
+        placeholder: 'Napíš niečo, čo by si chcel, aby budúce generácie vedeli...',
+        freeBtn: 'Skúsiť zdarma (48h)',
+        dailyFree: (n)=>`Zostáva ${n} bezplatných uložení`,
+        noResults: 'Zatiaľ žiadne odkazy — buď ten prvý.',
+        alertEmpty: 'Odkaz nesmie byť prázdny.',
+        alertLong: 'Maximálne 300 znakov.',
+        thanksPaid: 'Ďakujeme — tvoj odkaz je uložený navždy.',
+        thanksTemp: 'Odkaz uložený dočasne (48h).'
+      },
+      en: {
+        heroTitle: 'Time will pass. The message remains.',
+        heroSub: 'Leave a short thought, memory or message that will survive — forever for €1 or free 48h trial.',
+        cta: 'Leave a message',
+        more: 'More info',
+        formTitle: 'Leave a message',
+        placeholder: 'Write something you wish future generations to know...',
+        freeBtn: 'Try free (48h)',
+        dailyFree: (n)=>`${n} free saves remaining`,
+        noResults: 'No messages yet — be the first.',
+        alertEmpty: 'Message cannot be empty.',
+        alertLong: 'Max 300 characters.',
+        thanksPaid: 'Thanks — your message is saved forever.',
+        thanksTemp: 'Message saved temporarily (48h).'
       }
-    });
-    saveEntries();
-  }
+    };
 
-  // stats
-  const paidCount = entries.filter(e=>e.paid).length;
-  const tempCount = entries.filter(e=>!e.paid).length;
-  const savedVal = (paidCount * MESSAGE_PRICE).toFixed(2);
+    /* --- State --- */
+    let entries = [];
+    let daily = {count:0, date:Date.now()};
+    let likes = new Set();
 
-  refs.statTotal.textContent = entries.length;
-  refs.statPaid.textContent = paidCount;
-  refs.statTemporary.textContent = tempCount;
-  refs.statViews.textContent = entries.reduce((s,e)=>s+(e.views||0),0);
-  refs.statLikes.textContent = entries.reduce((s,e)=>s+(e.likes||0),0);
-  refs.statSavedValue.textContent = `${savedVal} €`;
-  refs.count.textContent = `${list.length} ${LANG==='sk' ? 'vstupov' : 'entries'}`;
-
-  // top list
-  const top = entries.slice().sort((a,b)=> (b.likes||0) - (a.likes||0)).slice(0,5);
-  refs.topList.innerHTML = '';
-  if(top.length===0) refs.topList.innerHTML = '<div class="small">—</div>';
-  else top.forEach((tE,i)=>{
-    const d = document.createElement('div'); d.className = 'small'; d.innerHTML = `<strong>#${i+1} ${escapeHtml(tE.author||t('anonymous'))}</strong>: ${escapeHtml(truncate(tE.text,60))} — <span style="font-weight:700;color:var(--gold-2)">❤ ${tE.likes||0}</span>`;
-    refs.topList.appendChild(d);
-  });
-
-  // daily info & CTAs
-  const remSlots = remainingFree();
-  refs.dailyLimitInfo.innerHTML = remSlots > 0 ? `<div class="pill">🍀 Zostáva ${remSlots} kurátorských slotov zadarmo</div>` : `<div class="pill">🚫 Dnes žiadne bezplatné sloty</div>`;
-}
-
-/* ---------------------------
-  Actions: Add / Payment / Free
-   --------------------------- */
-function addEntry({paid=false, isFree=false} = {}){
-  const text = refs.message.value.trim();
-  const author = refs.author.value.trim() || null;
-  if(!text) return alert(t('alertEmpty'));
-  if(text.length > 300) return alert(t('alertLong'));
-  const entry = {
-    id: uid('o_'),
-    author,
-    text,
-    ts: now(),
-    likes: 0,
-    views: 0,
-    paid: Boolean(paid || isFree)
-  };
-  entries.unshift(entry);
-  saveEntries();
-  refs.author.value = '';
-  refs.message.value = '';
-  refs.charCount.textContent = '0/300';
-  // messages
-  if(isFree) alert(t('alertThanksPaid') || t('alertThanksTemp'));
-  else if(paid) alert(t('alertThanksPaid'));
-  else alert(t('alertThanksTemp'));
-  render();
-}
-
-function handlePayment(){
-  if(!refs.message.value.trim()) return alert(t('alertEmpty'));
-  if(!PAYMENT_LINK || PAYMENT_LINK.includes('simulacia')){
-    if(confirm(t('alertPaySim'))){
-      addEntry({paid:true});
+    /* --- Utils --- */
+    const el = id => document.getElementById(id);
+    const now = ()=>Date.now();
+    function uid(p='id'){ return p + Math.random().toString(36).slice(2,9) }
+    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        entries = raw ? JSON.parse(raw) : [];
+        // remove expired temps
+        entries = entries.filter(e => e.paid || (e.ts + TEMP_MS > now()));
+        save();
+      }catch(e){ entries = [] }
     }
-    return;
-  }
-  window.open(PAYMENT_LINK, '_blank');
-  setTimeout(()=>{
-    if(confirm('Po dokončení platby stlač OK pre potvrdenie platby.')) addEntry({paid:true});
-  }, 1500);
-}
-
-function handleFree(){
-  if(!refs.message.value.trim()) return alert(t('alertEmpty'));
-  const rem = remainingFree();
-  if(rem > 0){
-    if(confirm(`Chcete využiť jeden z ${rem} bezplatných slotov?`)){
-      useFreeSlot();
-      addEntry({isFree:true});
+    function loadDaily(){
+      try{
+        const raw = localStorage.getItem(DAILY_KEY);
+        daily = raw ? JSON.parse(raw) : {count:0,date:now()};
+        if(now() - daily.date > 24*60*60*1000) daily = {count:0,date:now()};
+      }catch(e){ daily = {count:0,date:now()} }
     }
-  } else {
-    if(confirm('Dnešný bezplatný limit je vyčerpaný. Uložiť len ako dočasné?')) addEntry({paid:false});
-  }
-}
+    function saveDaily(){ localStorage.setItem(DAILY_KEY, JSON.stringify(daily)) }
+    function remainingFree(){ loadDaily(); return Math.max(0, DAILY_LIMIT - (daily.count||0)) }
+    function useFree(){ loadDaily(); if(daily.count < DAILY_LIMIT){ daily.count++; daily.date = now(); saveDaily(); return true } return false }
+    function loadLikes(){ try{ const raw = localStorage.getItem(LIKES_KEY); likes = raw ? new Set(JSON.parse(raw)) : new Set(); }catch(e){ likes = new Set(); } }
+    function saveLikes(){ localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(likes))) }
+    function formatDate(ts){ return new Date(ts).toLocaleString(LANG==='sk' ? 'sk-SK' : 'en-GB', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) }
 
-/* ---------------------------
-  Interactions: like/share/delete
-   --------------------------- */
-function handleListClick(e){
-  const target = e.target.closest('[data-action]');
-  if(!target) return;
-  const action = target.dataset.action;
-  const id = target.dataset.id;
-  const entry = entries.find(x=>x.id===id);
-  if(!entry) return;
-  if(action === 'like'){
-    if(userLikes.has(id)) return;
-    entry.likes = (entry.likes||0) + 1;
-    userLikes.add(id);
-    saveLikes(); saveEntries(); render();
-  } else if(action === 'share'){
-    const shareText = `${I18N[LANG].title}: "${truncate(entry.text,80)}" — ${window.location.href}`;
-    if(navigator.share){
-      navigator.share({title:I18N[LANG].title,text:shareText,url:window.location.href}).catch(()=>{});
-    } else {
-      navigator.clipboard.writeText(shareText).then(()=> alert('Odkaz skopírovaný do schránky!'));
+    /* --- Render --- */
+    function applyLang(l){
+      LANG = l;
+      // update texts
+      el('heroTitle').textContent = I18N[LANG].heroTitle;
+      el('heroSub').textContent = I18N[LANG].heroSub;
+      el('ctaPrimary').textContent = I18N[LANG].cta;
+      el('ctaSecondary').textContent = I18N[LANG].more;
+      el('formTitle').textContent = I18N[LANG].formTitle;
+      el('freeBtn').textContent = I18N[LANG].freeBtn;
+      el('message').placeholder = I18N[LANG].placeholder;
+      // lang UI
+      document.querySelectorAll('.lang-btn').forEach(b=> b.classList.toggle('active', b.dataset.lang===LANG));
+      render();
     }
-  } else if(action === 'delete'){
-    deleteEntry(id);
-  }
-}
 
-/* ---------------------------
-  Admin toggles (Mobilný fix)
-   --------------------------- */
-let keyBuffer = [];
-function handleKey(e){
-  // Konami code pre PC
-  const requiredKeys = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
-  
-  if (e.type === 'keydown') {
-     // 1. Kontrola Konami kódu (ak je input skrytý)
-     if (refs.adminToggleInput && refs.adminToggleInput.style.display === 'none') {
-        keyBuffer.push(e.key);
-        if(keyBuffer.length > requiredKeys.length) keyBuffer.shift();
-        if(keyBuffer.join(',') === requiredKeys.join(',')){
-            keyBuffer = [];
-            if(refs.adminToggleInput) refs.adminToggleInput.style.display = 'block';
-            if(refs.adminToggleInput) refs.adminToggleInput.focus();
-            e.preventDefault(); 
-            return;
+    function render(){
+      const listEl = el('list');
+      const q = el('search').value.trim().toLowerCase();
+      let list = entries.slice();
+      list.forEach((e,i)=>e.rank=i+1);
+      if(q) list = list.filter(e => (e.text + ' ' + (e.author||'')).toLowerCase().includes(q));
+      const sort = el('sort').value;
+      if(sort==='paid') list.sort((a,b)=> (b.paid?1:0)-(a.paid?1:0) || b.ts - a.ts);
+      else if(sort==='new') list.sort((a,b)=> b.ts - a.ts);
+      else if(sort==='likes') list.sort((a,b)=> (b.likes||0) - (a.likes||0));
+
+      listEl.innerHTML = '';
+      if(list.length===0){
+        listEl.innerHTML = `<div class="small">${I18N[LANG].noResults}</div>`;
+      } else {
+        list.forEach(e=>{
+          const item = document.createElement('div'); item.className='item';
+          item.innerHTML = `
+            <div style="display:flex;gap:12px;align-items:flex-start">
+              <div class="avatar" aria-hidden="true">${(e.author||'--').slice(0,2).toUpperCase()}</div>
+              <div style="flex:1">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="font-weight:700">${escapeHtml(e.author|| (LANG==='sk' ? 'Neznámy' : 'Anonymous'))}</div>
+                  <div class="small">${formatDate(e.ts)}</div>
+                  <div style="margin-left:auto">${e.paid ? '<span class=\"badge\">DEDIČSTVO</span>' : '<span class=\"small\">48h</span>'}</div>
+                </div>
+                <div style="margin-top:8px">${escapeHtml(e.text)}</div>
+                <div style="margin-top:8px;font-size:13px;color:var(--muted)">
+                  ❤ ${e.likes||0} • Čítaní: ${e.views||0}
+                </div>
+              </div>
+            </div>
+          `;
+          listEl.appendChild(item);
+          if(!e.viewedSession){
+            e.views = (e.views||0) + 1;
+            e.viewedSession = true;
+          }
+        });
+        save();
+      }
+
+      // stats
+      el('listCount').textContent = list.length;
+      el('totalSaved').textContent = entries.length;
+      el('statTotal').textContent = entries.length;
+      el('statPaid').textContent = entries.filter(e=>e.paid).length;
+      el('statTemp').textContent = entries.filter(e=>!e.paid).length;
+      el('statRevenue').textContent = (entries.filter(e=>e.paid).length * parseFloat(PRICE)).toFixed(2) + ' €';
+      el('totalViews').textContent = entries.reduce((s,e)=>s+(e.views||0),0);
+      el('topList').innerHTML = '';
+      const top = entries.slice().sort((a,b)=> (b.likes||0) - (a.likes||0)).slice(0,5);
+      if(top.length===0) el('topList').textContent = '—';
+      else top.forEach((t,i)=> {
+        const d = document.createElement('div'); d.className='small';
+        d.innerHTML = `<strong>#${i+1} ${(t.author|| (LANG==='sk' ? 'Neznámy' : 'Anonymous'))}</strong>: ${truncate(t.text,60)} — ❤ ${t.likes||0}`;
+        el('topList').appendChild(d);
+      });
+
+      el('dailyInfo').textContent = I18N[LANG].dailyFree(remainingFree());
+    }
+
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
+    function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s }
+
+    /* --- Actions --- */
+    function addEntry({paid=false} = {}){
+      const text = el('message').value.trim();
+      const author = el('author').value.trim() || null;
+      if(!text) return alert(I18N[LANG].alertEmpty);
+      if(text.length > 300) return alert(I18N[LANG].alertLong);
+      const entry = { id: uid('e_'), author, text, ts: now(), likes:0, views:0, paid: !!paid };
+      entries.unshift(entry);
+      save();
+      el('author').value = ''; el('message').value = ''; el('charCount').textContent = '0/300';
+      if(paid) alert(I18N[LANG].thanksPaid); else alert(I18N[LANG].thanksTemp);
+      render();
+    }
+
+    function handleFree(){
+      if(!el('message').value.trim()) return alert(I18N[LANG].alertEmpty);
+      const rem = remainingFree();
+      if(rem > 0){
+        if(confirm(I18N[LANG].dailyFree(rem) + '. Pokračovať?')){
+          useFree();
+          addEntry({paid:false});
         }
-     }
-     // 2. Enter v Admin Inpute
-     if(e.target === refs.adminToggleInput && e.key === 'Enter'){
-        attemptAdminToggle(refs.adminToggleInput.value.trim());
-        refs.adminToggleInput.value = '';
-     }
-  }
-}
+      } else {
+        if(confirm('Dnešný limit je vyčerpaný. Uložiť ako dočasné?')) addEntry({paid:false});
+      }
+    }
 
-function handleAdminToggleClick() {
-    // Mobilný Admin: Stačí 1 klik na logo AČ pre zobrazenie poľa
-    if (refs.adminToggleInput) {
-        if (refs.adminToggleInput.style.display === 'none') {
-            refs.adminToggleInput.style.display = 'block';
-            refs.adminToggleInput.focus();
+    /* --- PayPal integration --- */
+    function setupPayPalButtons(){
+      // Wait for paypal sdk (global paypal) to be available
+      const tryInit = () => {
+        if(window.paypal && typeof window.paypal.Buttons === 'function'){
+          window.paypal.Buttons({
+            style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' },
+            createOrder: function(data, actions){
+              return actions.order.create({
+                purchase_units: [{ amount: { value: PRICE, currency_code: CURRENCY } }]
+              });
+            },
+            onApprove: function(data, actions){
+              return actions.order.capture().then(function(details){
+                // success
+                addEntry({paid:true});
+              });
+            },
+            onError: function(err){
+              console.error('PayPal error', err);
+              alert('PayPal error. Skúste prosím znova.');
+            }
+          }).render('#paypal-button-container');
         } else {
-            // Zobrazené -> Skúsiť Heslo
-            attemptAdminToggle(refs.adminToggleInput.value.trim());
-            refs.adminToggleInput.value = ''; 
+          // retry shortly
+          setTimeout(tryInit, 300);
         }
+      };
+      tryInit();
     }
-}
 
-function attemptAdminToggle(pwd){
-  if(!pwd) { refs.adminToggleInput.style.display='none'; return; }
-  if(pwd === ADMIN_PASSWORD){
-    isAdminMode = !isAdminMode;
-    localStorage.setItem(ADMIN_MODE_KEY, isAdminMode);
-    alert(isAdminMode ? t('adminOn') : t('adminOff'));
-    refs.adminToggleInput.style.display = 'none';
-    render();
-  } else {
-    alert('Neplatné heslo!');
-  }
-}
+    /* --- Init --- */
+    function init(){
+      // wire DOM
+      el('year').textContent = new Date().getFullYear();
+      el('charCount').textContent = '0/300';
+      el('message').addEventListener('input', ()=> el('charCount').textContent = el('message').value.length + '/300');
+      el('freeBtn').addEventListener('click', handleFree);
+      el('ctaPrimary').addEventListener('click', ()=> { el('message').focus(); window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'})});
+      el('stickyPay').addEventListener('click', ()=> { window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'}); /* or open paypal? */});
+      el('exportBtn').addEventListener('click', ()=> {
+        // simple export JSON
+        const data = JSON.stringify(entries, null, 2);
+        const blob = new Blob([data], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'archiv_entries.json'; a.click(); URL.revokeObjectURL(url);
+      });
+      el('search').addEventListener('input', render);
+      el('sort').addEventListener('change', render);
 
-/* ---------------------------
-  Language switch handler
-   --------------------------- */
-function handleLanguageClick(e){
-    const lang = e.target.dataset.lang;
-    if (lang) applyLang(lang);
-}
+      document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click', (e)=>applyLang(e.currentTarget.dataset.lang)));
 
+      load(); loadDaily(); loadLikes();
+      applyLang(LANG);
+      render();
+      setupPayPalButtons();
 
-/* ---------------------------
-  Init
-   --------------------------- */
-function init(){
-  cacheRefs();
-  loadEntries();
-  loadDaily();
-  loadLikes();
+      // render PayPal button also on sticky action: trigger click on PayPal (redirect to form)
+      el('stickyPay').addEventListener('click', ()=> {
+        // focus on PayPal container
+        window.scrollTo({top: el('paypal-button-container').offsetTop - 80, behavior:'smooth'});
+      });
 
-  // set year
-  if(refs.year) refs.year.textContent = new Date().getFullYear();
+      // simulate some social-proof numbers if none
+      if(!localStorage.getItem('archiv_v12_demo_seeded')){
+        el('countries').textContent = 14 + Math.floor(Math.random()*30);
+        localStorage.setItem('archiv_v12_demo_seeded','1');
+      }
+    }
 
-  // event bindings
-  refs.charCount.textContent = '0/300';
-  refs.message?.addEventListener('input', ()=> refs.charCount.textContent = `${refs.message.value.length}/300`);
-  refs.payLinkBtn?.addEventListener('click', handlePayment);
-  refs.stickyPayBtn?.addEventListener('click', handlePayment);
-  refs.saveFree?.addEventListener('click', handleFree);
-  refs.list?.addEventListener('click', handleListClick);
-  
-  // Admin Toggle Bindings
-  document.addEventListener('keydown', handleKey);
-  if (refs.adminToggleInput) refs.adminToggleInput.addEventListener('keydown', handleKey); 
-  if (refs.brandLogo) refs.brandLogo.addEventListener('click', handleAdminToggleClick); 
-
-  // Language buttons (Delegovanie)
-  qsa('.lang-btn').forEach(b => b.addEventListener('click', handleLanguageClick)); 
-
-  // search & sort
-  qs('#search')?.addEventListener('input', render);
-  qs('#sort')?.addEventListener('change', render);
-
-  // initial locale texts
-  applyLang(LANG);
-
-  // periodic cleanup (expired)
-  setInterval(()=>{
-    loadEntries();
-    render();
-  }, DELETE_INTERVAL_MS);
-
-  // set landing CTA focus
-  qs('#heroCTABtn')?.addEventListener('click', (e)=> {
-    e.preventDefault();
-    const cardElement = qs('.card');
-    if (cardElement) window.scrollTo({top: cardElement.offsetTop - 50, behavior:'smooth'});
-    refs.message?.focus();
-  });
-
-  render();
-}
-// Spustíme init
-init();
-
-</script>
+    // bootstrap after DOM
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
-```</details>
-
-### Krok 3: Analýza Screenshotu (Najdôležitejší Krok)
-
-Screenshot ukazuje stav, kde:
-1.  **Titulok hlavičky je EN:** "Archive of Heritage"
-2.  **Podnadpis pod titulkom je EN:** "Time Capsule..."
-3.  **Hlavička Hero sekcie je SK:** "Uchovanie odkazu pre večnosť"
-4.  **Formulár je SK:** "Meno / Prezývka (voliteľné)"
-5.  **Tlačidlá sú SK:** "Zabezpečiť Dedičstvo (1€)"
-
-**Tento stav je spôsobený JEDINOU vecou:**
-
-* Starý kód nastavil predvolený jazyk v `localStorage` na **EN**.
-* **Nový kód (V11.1) sa spustil, ale titulky (ktoré nie sú dynamicky aktualizované) zostali na pôvodnej hodnote z HTML, kým sa JS nespustí.**
-
-Keďže ste zrejme vymazali len cache prehliadača, ale nie **lokálne dáta**, prehliadač si stále pamätá chybný jazyk.
-
-### Ďalšia Akcia, ktorú musíte vykonať teraz:
-
-1.  **Nahrajte Verziu 11.2** (kód vyššie) na Netlify.
-2.  **Vyčistite LOKÁLNE DÁTA:**
-    * Otvorte Chrome/Váš prehliadač.
-    * Prejdite na `https://kapsulacasu.com/`.
-    * Stlačte **F12** (Developer Tools).
-    * Prejdite na záložku **Application** (Aplikácia).
-    * Kliknite na **Local Storage** (Lokálne úložisko).
-    * Vymažte všetky kľúče (hlavne `archiv_v11_lang`).
-3.  **Tvrdý Refresh:** Stlačte **Ctrl + Shift + R**.
-
-**Ak ani toto nepomôže, neexistuje žiadna ďalšia softvérová oprava v rámci tohto projektu. Problém by bol buď v nastavení vášho telefónu, alebo by ste museli prejsť na úplne novú doménu.**
-
-Dajte mi vedieť výsledok testu po vymazaní lokálnych dát!
