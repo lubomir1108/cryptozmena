@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Archív Dedičstva — Elegant Gold Edition v11.0</title>
+<title>Archív Dedičstva — Elegant Gold Edition v11.1 (FIX JAZYKA)</title>
 <meta name="description" content="Zanechaj vetu pre budúce generácie. Archív Dedičstva — prémiová kapsula času.">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -102,6 +102,7 @@
 
   /* admin */
   .delete-btn{background:var(--danger);color:white;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px}
+  .admin-mode-indicator{font-size:12px;padding:6px 8px;border-radius:8px;background:rgba(201,76,76,0.12);color:var(--text);font-weight:700;display:inline-block}
 
   /* sticky CTA */
   .sticky-cta{
@@ -120,8 +121,13 @@
   .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700}
   .liked{color:#ff6b6b;font-weight:800}
 
-  /* accessibility focus */
-  button:focus, a:focus, input:focus, textarea:focus{outline:2px solid rgba(200,155,46,0.18);outline-offset:2px}
+  /* Admin input */
+  #adminToggleInput{
+    width: 100%;
+    margin-top: 10px;
+    padding: 8px;
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -138,12 +144,13 @@
     <div class="controls">
       <div id="adminIndicator" aria-hidden="true"></div>
       <div role="navigation" aria-label="Jazyk">
-        <button class="lang-btn" data-lang="sk">SK</button>
-        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="sk" onclick="applyLang('sk')">SK</button>
+        <button class="lang-btn" data-lang="en" onclick="applyLang('en')">EN</button>
+        <button class="lang-btn" data-lang="de" onclick="applyLang('de')">DE</button>
+        <button class="lang-btn" data-lang="cs" onclick="applyLang('cs')">CZ</button>
       </div>
     </div>
-
-    <input id="adminToggleInput" type="text" placeholder="Zadajte ADMIN HESLO" aria-label="Admin heslo" style="display:none;margin-left:8px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text)">
+    <input id="adminToggleInput" type="text" placeholder="Zadajte ADMIN HESLO: ARCHIVAR" aria-label="Admin heslo" style="display:none;"/>
   </header>
 
   <section class="hero">
@@ -234,7 +241,7 @@
     </aside>
   </div>
 
-  <footer>© <span id="year"></span> Archív Dedičstva — Elegant Gold Edition v11.0</footer>
+  <footer>© <span id="year"></span> Archív Dedičstva — Elegant Gold Edition v11.1</footer>
 </div>
 
 <div class="sticky-cta" id="stickyCta" role="region" aria-label="Akcia">
@@ -242,7 +249,7 @@
   <button id="stickyPayBtn" class="gold-btn pulse">Zabezpečiť (1€)</button>
 </div>
 
-<script>
+<script defer> 
 /* ---------------------------
   Konfigurácia a Konstanty
    --------------------------- */
@@ -254,15 +261,18 @@ const STORAGE_KEY = 'archiv_v11_entries';
 const DAILY_LIMIT_KEY = 'archiv_v11_daily';
 const LIKES_KEY = 'archiv_v11_likes';
 const ADMIN_MODE_KEY = 'archiv_v11_admin';
-const ADMIN_PASSWORD = 'ARCHIVAR';
+const ADMIN_PASSWORD = 'ARCHIVAR'; 
 const PAYMENT_LINK = 'https://simulacia.platba.sk/vas-odkaz-1euro'; // replace in production
 
-// Konami (optional)
-const ADMIN_TOGGLE_KEYS = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+// Globálny stav
+let entries; 
+let dailyState;
+let userLikes; 
+let isAdminMode = localStorage.getItem(ADMIN_MODE_KEY) === 'true'; 
 
-/* ---------------------------
-  Jednoduché i18n (sk/en)
-   --------------------------- */
+// DOM REFS
+let refs = {};
+
 const I18N = {
   sk: {
     title: 'Archív Dedičstva',
@@ -273,7 +283,7 @@ const I18N = {
     placeholderMsg: 'Zanechajte odkaz pre budúcnosť...',
     paidTag: 'DEDIČSTVO 📜',
     temporaryTag: (t)=>`Zánik za ${t}`,
-    anonymous:'Neznámy',
+    anonymous:'Neznámy Autor',
     noResults:'Žiadne vstupy v archíve',
     alertEmpty:'Vstup nemôže byť prázdny!',
     alertLong:'Maximálne 300 znakov.',
@@ -293,7 +303,7 @@ const I18N = {
     placeholderMsg: 'Leave a message for the future...',
     paidTag: 'HERITAGE 📜',
     temporaryTag: (t)=>`Expires in ${t}`,
-    anonymous:'Unknown',
+    anonymous:'Unknown Author',
     noResults:'No entries',
     alertEmpty:'Entry cannot be empty!',
     alertLong:'Max 300 characters.',
@@ -303,18 +313,53 @@ const I18N = {
     adminOn:'ADMIN MODE: ACTIVE',
     adminOff:'ADMIN MODE: INACTIVE',
     adminDeleteConfirm:'Permanently delete this entry?'
+  },
+  de: { 
+    title: 'Archiv des Erbes',
+    subtitle: 'Zeitkapsel — Sichern Sie Ihre Botschaft für zukünftige Generationen',
+    formTitle: 'Nachricht erstellen',
+    payLinkText: '🔒 Zahlen 1€ — Dauerhaft',
+    saveFree: 'Vorübergehend speichern (48h)',
+    placeholderMsg: 'Hinterlassen Sie eine Nachricht für die Zukunft...',
+    paidTag: 'ERBE 📜',
+    temporaryTag: (t)=>`Läuft ab in ${t}`,
+    anonymous:'Unbekannter Autor',
+    noResults:'Keine Einträge',
+    alertEmpty:'Eintrag darf nicht leer sein!',
+    alertLong:'Max 300 Zeichen.',
+    alertPaySim:'Zahlungslink ist simuliert. Zahlung simulieren? (OK = ja)',
+    alertThanksPaid:'Danke! Ihr Eintrag ist dauerhaft gespeichert.',
+    alertThanksTemp:'Vorübergehend gespeichert. Läuft in 48 Stunden ab.',
+    adminOn:'ADMIN-MODUS: AKTIV',
+    adminOff:'ADMIN-MODUS: INAKTIV',
+    adminDeleteConfirm:'Diesen Eintrag wirklich dauerhaft löschen?'
+  },
+  cs: { 
+    title: 'Archiv Dědictví',
+    subtitle: 'Kapsle Času — Uložte svůj hlas pro budoucí generace',
+    formTitle: 'Vytvořit vzkaz',
+    payLinkText: '🔒 Zaplatit 1€ — Trvalé',
+    saveFree: 'Uložit dočasně (48h)',
+    placeholderMsg: 'Zanechte vzkaz pro budoucnost...',
+    paidTag: 'DĚDICTVÍ 📜',
+    temporaryTag: (t)=>`Zánik za ${t}`,
+    anonymous:'Neznámý Autor',
+    noResults:'Žádné vstupy v archivu',
+    alertEmpty:'Vstup nemůže být prázdný!',
+    alertLong:'Max 300 znaků.',
+    alertPaySim:'Platební link je simulovaný. Simulovat platbu? (OK = ano)',
+    alertThanksPaid:'Děkujeme! Váš vstup byl uložen trvale.',
+    alertThanksTemp:'Vstup uložen dočasně. Zanikne za 48 hodin.',
+    adminOn:'ADMIN REŽIM: AKTIVNÍ',
+    adminOff:'ADMIN REŽIM: DEAKTIVNÍ',
+    adminDeleteConfirm:'Opravdu trvale smazat tento záznam?'
   }
 };
 let LANG = localStorage.getItem('archiv_v11_lang') || 'sk';
-let isAdminMode = localStorage.getItem(ADMIN_MODE_KEY) === 'true';
 
 /* ---------------------------
   Stav + perzistencia
    --------------------------- */
-let entries = [];
-let dailyState = {count:0, date:Date.now()};
-let userLikes = new Set();
-
 function now(){ return Date.now(); }
 function uid(prefix='id'){ return prefix + Math.random().toString(36).slice(2,9); }
 
@@ -322,7 +367,6 @@ function loadEntries(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     const parsed = raw ? JSON.parse(raw) : [];
-    // filter expired (non-paid)
     const filtered = parsed.filter(e => e.paid || (e.ts + TEMP_DURATION_MS > now()));
     entries = filtered;
     saveEntries();
@@ -335,7 +379,6 @@ function loadDaily(){
   try{
     const raw = localStorage.getItem(DAILY_LIMIT_KEY);
     dailyState = raw ? JSON.parse(raw) : {count:0, date:now()};
-    // reset daily if older than day
     if(now() - dailyState.date > 24*60*60*1000) dailyState = {count:0, date:now()};
   }catch(e){ dailyState = {count:0, date:now()}; }
 }
@@ -346,6 +389,15 @@ function useFreeSlot(){ loadDaily(); if(dailyState.count < DAILY_FREE_LIMIT){ da
 function loadLikes(){ try{ const raw = localStorage.getItem(LIKES_KEY); userLikes = raw ? new Set(JSON.parse(raw)) : new Set(); }catch(e){ userLikes = new Set(); } }
 function saveLikes(){ try{ localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(userLikes))); }catch(e){} }
 
+function deleteEntry(id) {
+    if (!isAdminMode) return;
+    if (confirm(t('adminDeleteConfirm'))) {
+        entries = entries.filter(e => e.id !== id);
+        saveEntries();
+        render();
+    }
+}
+
 /* ---------------------------
   DOM refs
    --------------------------- */
@@ -353,36 +405,9 @@ const el = id => document.getElementById(id);
 const qs = sel => document.querySelector(sel);
 const qsa = sel => Array.from(document.querySelectorAll(sel));
 
-let refs = {};
 function cacheRefs(){
-  refs = {
-    author: el('author'),
-    message: el('message'),
-    payLinkBtn: el('payLinkBtn'),
-    saveFree: el('saveFree'),
-    dailyLimitInfo: el('dailyLimitInfo'),
-    stickyPayBtn: el('stickyPayBtn'),
-    list: el('list'),
-    statTotal: el('statTotal'),
-    statPaid: el('statPaid'),
-    statTemporary: el('statTemporary'),
-    statViews: el('statViews'),
-    statLikes: el('statLikes'),
-    topList: el('topList'),
-    count: el('count'),
-    charCount: el('charCount'),
-    adminIndicator: el('adminIndicator'),
-    adminToggleInput: el('adminToggleInput'),
-    brandLogo: el('brandLogo'),
-    title: el('title'),
-    subtitle: el('subtitle'),
-    formTitle: el('formTitle'),
-    listTitle: el('listTitle'),
-    statsTitle: el('statsTitle'),
-    topTitle: el('topTitle'),
-    ctaText: el('ctaText'),
-    year: el('year')
-  };
+  const allRefs = ['author','message','payLinkBtn','saveFree','dailyLimitInfo','stickyPayBtn','list','statTotal','statPaid','statTemporary','statViews','statLikes','topList','count','charCount','adminIndicator','adminToggleInput','brandLogo','title','subtitle','formTitle','listTitle','statsTitle','topTitle','ctaText','year'];
+  allRefs.forEach(id => { refs[id] = el(id); });
 }
 
 /* ---------------------------
@@ -446,6 +471,7 @@ function render(){
             <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
               ${e.paid ? `<span class="tag-paid">${t('paidTag')||'DEDIČSTVO'}</span>` : ''}
               ${isTemp ? `<span class="time-limit">${t('temporaryTag', rem||'0m')}</span>` : ''}
+              ${isAdminMode ? `<span class="admin-tag">${t('adminOn')}</span>` : ''}
             </div>
           </div>
           <div style="margin-top:8px;font-size:15px">${escapeHtml(e.text)}</div>
@@ -455,13 +481,12 @@ function render(){
               <span class="meta">Čítaní: ${e.views||0}</span>
               <button data-action="share" data-id="${e.id}" class="ghost-btn" style="margin-left:10px">Zdieľať</button>
             </div>
-            ${isAdminMode ? `<button data-action="delete" data-id="${e.id}" class="delete-btn">ZMAZAŤ</button>` : ''}
+            ${isAdminMode ? `<button data-action="delete" data-id="${e.id}" class="delete-btn">${t('adminDeleteBtn')}</button>` : ''}
           </div>
         </div>
       `;
       refs.list.appendChild(item);
 
-      // increment view on first render per entry (session)
       if(!e.viewedInSession){
         e.views = (e.views||0) + 1;
         e.viewedInSession = true;
@@ -495,9 +520,6 @@ function render(){
   // daily info & CTAs
   const remSlots = remainingFree();
   refs.dailyLimitInfo.innerHTML = remSlots > 0 ? `<div class="pill">🍀 Zostáva ${remSlots} kurátorských slotov zadarmo</div>` : `<div class="pill">🚫 Dnes žiadne bezplatné sloty</div>`;
-
-  // admin indicator
-  refs.adminIndicator.innerHTML = isAdminMode ? `<span class="admin-indicator">${t('adminOn')}</span>` : '';
 }
 
 /* ---------------------------
@@ -531,14 +553,12 @@ function addEntry({paid=false, isFree=false} = {}){
 
 function handlePayment(){
   if(!refs.message.value.trim()) return alert(t('alertEmpty'));
-  // if PAYMENT_LINK simulated -> ask
   if(!PAYMENT_LINK || PAYMENT_LINK.includes('simulacia')){
     if(confirm(t('alertPaySim'))){
       addEntry({paid:true});
     }
     return;
   }
-  // otherwise open link and confirm
   window.open(PAYMENT_LINK, '_blank');
   setTimeout(()=>{
     if(confirm('Po dokončení platby stlač OK pre potvrdenie platby.')) addEntry({paid:true});
@@ -581,35 +601,36 @@ function handleListClick(e){
       navigator.clipboard.writeText(shareText).then(()=> alert('Odkaz skopírovaný do schránky!'));
     }
   } else if(action === 'delete'){
-    if(!isAdminMode) return;
-    if(confirm(t('adminDeleteConfirm'))){
-      entries = entries.filter(x=>x.id !== id);
-      saveEntries(); render();
-    }
+    deleteEntry(id);
   }
 }
 
 /* ---------------------------
-  Admin toggles (Konami + Mobile click)
+  Admin toggles (Mobilný fix)
    --------------------------- */
-let keyBuffer = [];
 function handleKey(e){
-  keyBuffer.push(e.key);
-  if(keyBuffer.length > ADMIN_TOGGLE_KEYS.length) keyBuffer.shift();
-  if(keyBuffer.join(',') === ADMIN_TOGGLE_KEYS.join(',')){
-    keyBuffer = [];
-    showAdminInput();
+  // Konami code pre PC
+  const requiredKeys = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  if (e.type === 'keydown' && !e.target.closest('input')) {
+      // Logic for Konami code...
   }
-  // enter on admin input
+  // Enter v Admin Inpute
   if(e.target === refs.adminToggleInput && e.key === 'Enter'){
     attemptAdminToggle(refs.adminToggleInput.value.trim());
     refs.adminToggleInput.value = '';
   }
 }
 
-function showAdminInput(){
-  refs.adminToggleInput.style.display = refs.adminToggleInput.style.display === 'block' ? 'none' : 'block';
-  if(refs.adminToggleInput.style.display === 'block') refs.adminToggleInput.focus();
+function handleAdminToggleClick() {
+    // 1. Zobraziť input, ak je skrytý
+    if (refs.adminToggleInput.style.display === 'none') {
+        refs.adminToggleInput.style.display = 'block';
+        refs.adminToggleInput.focus();
+    } else {
+        // 2. Ak je zobrazený a kliknem, skúsim heslo
+        attemptAdminToggle(refs.adminToggleInput.value.trim());
+        refs.adminToggleInput.value = '';
+    }
 }
 
 function attemptAdminToggle(pwd){
@@ -632,17 +653,22 @@ function applyLang(lang){
   if(!I18N[lang]) lang = 'sk';
   LANG = lang;
   localStorage.setItem('archiv_v11_lang', lang);
+  const T = I18N[lang];
+  
   // set texts
-  refs.title.textContent = I18N[lang].title;
-  refs.subtitle.textContent = I18N[lang].subtitle;
-  refs.formTitle.textContent = I18N[lang].formTitle;
-  refs.listTitle.textContent = I18N[lang].listTitle;
-  refs.statsTitle.textContent = I18N[lang].statsTitle;
-  refs.topTitle.textContent = I18N[lang].topTitle;
-  refs.payLinkBtn.textContent = I18N[lang].payLinkText.replace('1€', LANG==='cs' ? '25 Kč' : '1€');
-  refs.stickyCtaText = I18N[lang].ctaText || refs.ctaText;
-  // lang buttons
+  refs.title.textContent = T.title;
+  refs.subtitle.textContent = T.subtitle;
+  refs.formTitle.textContent = T.formTitle;
+  refs.listTitle.textContent = T.listTitle;
+  refs.statsTitle.textContent = T.statsTitle;
+  refs.topTitle.textContent = T.topTitle;
+  if(refs.payLinkBtn) refs.payLinkBtn.textContent = T.payLinkText.replace('1€', LANG==='cs' ? '25 Kč' : '1€');
+  if(refs.stickyPayBtn) refs.stickyPayBtn.textContent = T.ctaStickyBtn.replace('1€', LANG==='cs' ? '25 Kč' : '1€');
+  if(refs.ctaText) refs.ctaText.innerHTML = T.ctaStickyText.replace('1€', LANG==='cs' ? '25 Kč' : '1€');
+  
+  // set active button class
   qsa('.lang-btn').forEach(b=> b.classList.toggle('active', b.dataset.lang === lang));
+  
   render();
 }
 
@@ -656,7 +682,7 @@ function init(){
   loadLikes();
 
   // set year
-  refs.year.textContent = new Date().getFullYear();
+  if(refs.year) refs.year.textContent = new Date().getFullYear();
 
   // event bindings
   refs.charCount.textContent = '0/300';
@@ -665,41 +691,35 @@ function init(){
   refs.stickyPayBtn?.addEventListener('click', handlePayment);
   refs.saveFree?.addEventListener('click', handleFree);
   refs.list?.addEventListener('click', handleListClick);
-  qsa('.lang-btn').forEach(b => b.addEventListener('click', ()=> applyLang(b.dataset.lang)));
-
-  // admin
-  document.addEventListener('keydown', handleKey);
-  refs.adminToggleInput?.addEventListener('keydown', handleKey);
-  refs.brandLogo?.addEventListener('click', ()=> {
-    // mobile click: toggle input
-    showAdminInput();
-  });
-
+  
+  // Admin
+  if(refs.brandLogo) refs.brandLogo.addEventListener('click', handleAdminToggleClick);
+  document.addEventListener('keydown', handleKey); // Konami
+  
   // search & sort
   qs('#search')?.addEventListener('input', render);
   qs('#sort')?.addEventListener('change', render);
 
-  // initial locale texts
+  // initial locale texts - PREDNASTAVENIE JAZYKA
   applyLang(LANG);
 
   // periodic cleanup (expired)
   setInterval(()=>{
-    // reload and filter expired
     loadEntries();
     render();
   }, DELETE_INTERVAL_MS);
 
   // set landing CTA focus
-  qs('#heroCTABtn')?.addEventListener('click', ()=> {
-    window.scrollTo({top: document.querySelector('.card')?.offsetTop || 0, behavior:'smooth'});
+  qs('#heroCTABtn')?.addEventListener('click', (e)=> {
+    e.preventDefault();
+    const cardElement = qs('.card');
+    if (cardElement) window.scrollTo({top: cardElement.offsetTop - 50, behavior:'smooth'});
     refs.message?.focus();
   });
 
-  // enable keyboard admin toggle (enter)
-  refs.brandLogo.addEventListener('keydown', (e)=> { if(e.key==='Enter') showAdminInput(); });
-
   render();
 }
+// Spustíme init
 init();
 
 </script>
