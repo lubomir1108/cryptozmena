@@ -70,8 +70,8 @@
       </div>
 
       <div class="lang-switch" role="tablist" aria-label="Jazyk">
-        <button class="lang-btn active" data-lang="sk">SK</button>
-        <button class="lang-btn" data-lang="en">EN</button>
+        <button type="button" class="lang-btn active" data-lang="sk" aria-pressed="true">SK</button>
+        <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
       </div>
     </header>
 
@@ -82,8 +82,8 @@
         <div class="h-sub" id="heroSub">Zanechaj krátku myšlienku, spomienku alebo odkaz, ktorý si zachováš navždy — alebo vyskúšaj zadarmo na 48 hodín.</div>
 
         <div class="cta-row">
-          <button class="primary" id="ctaPrimary">Zanechať odkaz</button>
-          <button class="secondary" id="ctaSecondary">Viac informácií</button>
+          <button type="button" class="primary" id="ctaPrimary">Zanechať odkaz</button>
+          <button type="button" class="secondary" id="ctaSecondary">Viac informácií</button>
         </div>
 
         <div class="social-proof" aria-hidden="true">
@@ -96,7 +96,7 @@
       <div class="panel" aria-labelledby="formTitle">
         <h3 id="formTitle">Zanechaj odkaz</h3>
         <label id="labelName">Meno / prezývka (nepovinné)</label>
-        <input id="author" type="text" placeholder="Ako chcete byť zaznamenaný?" aria-label="Meno alebo prezývka" />
+        <input id="author" name="author" type="text" placeholder="Ako chcete byť zaznamenaný?" aria-label="Meno alebo prezývka" />
 
         <label style="margin-top:10px">Tvoj odkaz <span class="small" id="charCount">0/300</span></label>
         <textarea id="message" maxlength="300" placeholder="Napíš niečo, čo by si chcel, aby budúce generácie vedeli..."></textarea>
@@ -106,7 +106,7 @@
           <div style="display:flex;gap:8px">
             <!-- PayPal container will render here -->
             <div id="paypal-button-container"></div>
-            <button class="secondary" id="freeBtn">Skúsiť zdarma (48h)</button>
+            <button type="button" class="secondary" id="freeBtn">Skúsiť zdarma (48h)</button>
           </div>
         </div>
         <div class="small" style="margin-top:10px;color:var(--muted)">*Dočasné odkazy zaniknú po 48 hodinách. Trvalé odkazy získajú odznak uchovania.</div>
@@ -152,7 +152,7 @@
           <div class="small">Trvalé: <strong id="statPaid">0</strong></div>
           <div class="small">Dočasné: <strong id="statTemp">0</strong></div>
           <div class="small">Príjmy: <strong id="statRevenue">0 €</strong></div>
-          <div style="margin-top:12px"><button class="secondary" id="exportBtn">Exportovať (demo)</button></div>
+          <div style="margin-top:12px"><button type="button" class="secondary" id="exportBtn">Exportovať (demo)</button></div>
         </div>
 
         <div class="panel" style="margin-top:14px">
@@ -167,7 +167,7 @@
 
   <div class="sticky" role="region" aria-label="Rýchla akcia">
     <div class="small">Chráň svoj odkaz</div>
-    <button class="primary" id="stickyPay">Zachovať — 1 €</button>
+    <button type="button" class="primary" id="stickyPay">Zachovať — 1 €</button>
   </div>
 
   <!-- PayPal SDK: replace YOUR_PAYPAL_CLIENT_ID with your real client id BEFORE go-live -->
@@ -178,11 +178,11 @@
     const STORAGE_KEY = 'archiv_v12_entries';
     const DAILY_KEY = 'archiv_v12_daily';
     const LIKES_KEY = 'archiv_v12_likes';
+    const VIEWED_SESSION_KEY = 'archiv_v12_viewed_ids'; // sessionStorage key
     const TEMP_MS = 48*60*60*1000;
     const DAILY_LIMIT = 3;
     const PRICE = '1.00';
     const CURRENCY = 'EUR';
-    const LANGS = { sk: 'sk', en: 'en' };
     let LANG = 'sk';
 
     /* --- I18N --- */
@@ -200,7 +200,9 @@
         alertEmpty: 'Odkaz nesmie byť prázdny.',
         alertLong: 'Maximálne 300 znakov.',
         thanksPaid: 'Ďakujeme — tvoj odkaz je uložený navždy.',
-        thanksTemp: 'Odkaz uložený dočasne (48h).'
+        thanksTemp: 'Odkaz uložený dočasne (48h).',
+        confirmContinue: 'Pokračovať?',
+        confirmLimitReached: 'Dnešný limit je vyčerpaný. Uložiť ako dočasné?'
       },
       en: {
         heroTitle: 'Time will pass. The message remains.',
@@ -215,7 +217,9 @@
         alertEmpty: 'Message cannot be empty.',
         alertLong: 'Max 300 characters.',
         thanksPaid: 'Thanks — your message is saved forever.',
-        thanksTemp: 'Message saved temporarily (48h).'
+        thanksTemp: 'Message saved temporarily (48h).',
+        confirmContinue: 'Continue?',
+        confirmLimitReached: "Today's free limit exhausted. Save as temporary?"
       }
     };
 
@@ -224,11 +228,27 @@
     let daily = {count:0, date:Date.now()};
     let likes = new Set();
 
+    /* --- Session-only viewed ids (fix for previous bug) --- */
+    function loadSessionViewed(){
+      try{
+        const raw = sessionStorage.getItem(VIEWED_SESSION_KEY);
+        return raw ? new Set(JSON.parse(raw)) : new Set();
+      }catch(e){ return new Set(); }
+    }
+    function saveSessionViewed(set){
+      try{ sessionStorage.setItem(VIEWED_SESSION_KEY, JSON.stringify(Array.from(set))); }catch(e){}
+    }
+    const viewedIds = loadSessionViewed();
+    function markViewed(id){
+      viewedIds.add(id);
+      saveSessionViewed(viewedIds);
+    }
+
     /* --- Utils --- */
     const el = id => document.getElementById(id);
     const now = ()=>Date.now();
     function uid(p='id'){ return p + Math.random().toString(36).slice(2,9) }
-    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }
+    function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); }catch(e){ console.error(e) } }
     function load(){
       try{
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -242,7 +262,12 @@
       try{
         const raw = localStorage.getItem(DAILY_KEY);
         daily = raw ? JSON.parse(raw) : {count:0,date:now()};
-        if(now() - daily.date > 24*60*60*1000) daily = {count:0,date:now()};
+        // keep daily reset by calendar day (safer UX than sliding 24h)
+        const dSaved = new Date(daily.date);
+        const dNow = new Date();
+        if(dSaved.getFullYear() !== dNow.getFullYear() || dSaved.getMonth() !== dNow.getMonth() || dSaved.getDate() !== dNow.getDate()){
+          daily = {count:0, date: now()};
+        }
       }catch(e){ daily = {count:0,date:now()} }
     }
     function saveDaily(){ localStorage.setItem(DAILY_KEY, JSON.stringify(daily)) }
@@ -264,7 +289,11 @@
       el('freeBtn').textContent = I18N[LANG].freeBtn;
       el('message').placeholder = I18N[LANG].placeholder;
       // lang UI
-      document.querySelectorAll('.lang-btn').forEach(b=> b.classList.toggle('active', b.dataset.lang===LANG));
+      document.querySelectorAll('.lang-btn').forEach(b=>{
+        const is = b.dataset.lang===LANG;
+        b.classList.toggle('active', is);
+        b.setAttribute('aria-pressed', String(is));
+      });
       render();
     }
 
@@ -292,7 +321,7 @@
                 <div style="display:flex;align-items:center;gap:8px">
                   <div style="font-weight:700">${escapeHtml(e.author|| (LANG==='sk' ? 'Neznámy' : 'Anonymous'))}</div>
                   <div class="small">${formatDate(e.ts)}</div>
-                  <div style="margin-left:auto">${e.paid ? '<span class=\"badge\">DEDIČSTVO</span>' : '<span class=\"small\">48h</span>'}</div>
+                  <div style="margin-left:auto">${e.paid ? '<span class="badge">DEDIČSTVO</span>' : '<span class="small">48h</span>'}</div>
                 </div>
                 <div style="margin-top:8px">${escapeHtml(e.text)}</div>
                 <div style="margin-top:8px;font-size:13px;color:var(--muted)">
@@ -302,12 +331,16 @@
             </div>
           `;
           listEl.appendChild(item);
-          if(!e.viewedSession){
+
+          // increment views once per session (option A - chosen)
+          if(!viewedIds.has(e.id)){
             e.views = (e.views||0) + 1;
-            e.viewedSession = true;
+            markViewed(e.id); // store id in sessionStorage only
+            // persist updated views count to localStorage
+            // NOTE: we do NOT add any ephemeral flag to the entry object
+            save();
           }
         });
-        save();
       }
 
       // stats
@@ -351,41 +384,57 @@
       if(!el('message').value.trim()) return alert(I18N[LANG].alertEmpty);
       const rem = remainingFree();
       if(rem > 0){
-        if(confirm(I18N[LANG].dailyFree(rem) + '. Pokračovať?')){
+        if(confirm(`${I18N[LANG].dailyFree(rem)} ${I18N[LANG].confirmContinue}`)){
           useFree();
           addEntry({paid:false});
         }
       } else {
-        if(confirm('Dnešný limit je vyčerpaný. Uložiť ako dočasné?')) addEntry({paid:false});
+        if(confirm(I18N[LANG].confirmLimitReached)) addEntry({paid:false});
       }
     }
 
-    /* --- PayPal integration --- */
+    /* --- PayPal integration (robust retry) --- */
     function setupPayPalButtons(){
-      // Wait for paypal sdk (global paypal) to be available
+      let attempts = 0;
+      const maxAttempts = 20;
       const tryInit = () => {
+        attempts++;
         if(window.paypal && typeof window.paypal.Buttons === 'function'){
-          window.paypal.Buttons({
-            style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' },
-            createOrder: function(data, actions){
-              return actions.order.create({
-                purchase_units: [{ amount: { value: PRICE, currency_code: CURRENCY } }]
-              });
-            },
-            onApprove: function(data, actions){
-              return actions.order.capture().then(function(details){
-                // success
-                addEntry({paid:true});
-              });
-            },
-            onError: function(err){
-              console.error('PayPal error', err);
-              alert('PayPal error. Skúste prosím znova.');
-            }
-          }).render('#paypal-button-container');
-        } else {
-          // retry shortly
+          try{
+            window.paypal.Buttons({
+              style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' },
+              createOrder: function(data, actions){
+                return actions.order.create({
+                  purchase_units: [{ amount: { value: PRICE, currency_code: CURRENCY } }]
+                });
+              },
+              onApprove: function(data, actions){
+                return actions.order.capture().then(function(details){
+                  addEntry({paid:true});
+                });
+              },
+              onError: function(err){
+                console.error('PayPal error', err);
+                alert('PayPal error. Skúste prosím znova.');
+              }
+            }).render('#paypal-button-container');
+          }catch(e){
+            console.error('PayPal init error', e);
+          }
+        } else if(attempts < maxAttempts){
           setTimeout(tryInit, 300);
+        } else {
+          console.warn('PayPal SDK not available after multiple attempts. Check client-id or network.');
+          // Optionally show a small message in UI
+          const p = document.createElement('div');
+          p.className = 'small';
+          p.style.marginTop = '6px';
+          p.textContent = 'PayPal tlačidlo nie je dostupné (demo).';
+          const container = el('paypal-button-container');
+          if(container && !container.querySelector('.pay-failed')) {
+            p.classList.add('pay-failed');
+            container.appendChild(p);
+          }
         }
       };
       tryInit();
@@ -399,29 +448,44 @@
       el('message').addEventListener('input', ()=> el('charCount').textContent = el('message').value.length + '/300');
       el('freeBtn').addEventListener('click', handleFree);
       el('ctaPrimary').addEventListener('click', ()=> { el('message').focus(); window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'})});
-      el('stickyPay').addEventListener('click', ()=> { window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'}); /* or open paypal? */});
-      el('exportBtn').addEventListener('click', ()=> {
-        // simple export JSON
-        const data = JSON.stringify(entries, null, 2);
-        const blob = new Blob([data], {type:'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = 'archiv_entries.json'; a.click(); URL.revokeObjectURL(url);
+
+      // single stickyPay handler (fixed duplicate listener bug)
+      el('stickyPay').addEventListener('click', ()=> {
+        const paypalEl = el('paypal-button-container');
+        if(paypalEl && paypalEl.offsetTop) {
+          window.scrollTo({top: paypalEl.offsetTop - 80, behavior:'smooth'});
+        } else {
+          window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'});
+        }
       });
+
+      el('exportBtn').addEventListener('click', ()=> {
+        try{
+          const data = JSON.stringify(entries, null, 2);
+          const blob = new Blob([data], {type:'application/json'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href = url; a.download = 'archiv_entries.json';
+          document.body.appendChild(a);
+          a.click();
+          // revoke with small delay to ensure the download has started
+          setTimeout(()=> {
+            URL.revokeObjectURL(url);
+            if(a.parentNode) a.parentNode.removeChild(a);
+          }, 1000);
+        }catch(e){ console.error('Export failed', e) }
+      });
+
       el('search').addEventListener('input', render);
       el('sort').addEventListener('change', render);
 
-      document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click', (e)=>applyLang(e.currentTarget.dataset.lang)));
+      document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click', (e)=>{
+        applyLang(e.currentTarget.dataset.lang);
+      }));
 
       load(); loadDaily(); loadLikes();
       applyLang(LANG);
       render();
       setupPayPalButtons();
-
-      // render PayPal button also on sticky action: trigger click on PayPal (redirect to form)
-      el('stickyPay').addEventListener('click', ()=> {
-        // focus on PayPal container
-        window.scrollTo({top: el('paypal-button-container').offsetTop - 80, behavior:'smooth'});
-      });
 
       // simulate some social-proof numbers if none
       if(!localStorage.getItem('archiv_v12_demo_seeded')){
