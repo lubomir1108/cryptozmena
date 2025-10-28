@@ -35,10 +35,8 @@ h1{font-family:'Playfair Display',serif;margin:0;font-size:20px}
 .h-title{font-family:'Playfair Display',serif;font-size:34px;margin:8px 0}
 .h-sub{color:var(--muted);margin-bottom:14px}
 .cta-row{display:flex;gap:12px;align-items:center}
-.primary{background:linear-gradient(90deg,var(--gold),var(--gold-2));border:0;padding:14px 18px;border-radius:12px;font-weight:800;color:#081018;cursor:pointer;box-shadow:0 14px 40px rgba(200,155,46,0.12);transition:transform .15s}
-.primary:hover{transform:translateY(-2px)}
-.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:12px 16px;border-radius:10px;color:var(--muted);cursor:pointer;transition:background .15s}
-.secondary:hover{background:rgba(255,255,255,0.02)}
+.primary{background:linear-gradient(90deg,var(--gold),var(--gold-2));border:0;padding:14px 18px;border-radius:12px;font-weight:800;color:#081018;cursor:pointer;box-shadow:0 14px 40px rgba(200,155,46,0.12)}
+.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:12px 16px;border-radius:10px;color:var(--muted);cursor:pointer}
 .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
 label{display:block;color:var(--muted);font-size:13px;margin-bottom:8px}
 input[type=text], textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:rgba(255,255,255,0.02);color:var(--text)}
@@ -57,8 +55,6 @@ footer{margin-top:26px;color:var(--muted);font-size:13px;text-align:center}
 .small{font-size:13px;color:var(--muted)}
 .sticky{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);display:flex;gap:12px;align-items:center;z-index:1200}
 button:focus, input:focus, textarea:focus{outline:3px solid rgba(200,155,46,0.12);outline-offset:2px}
-
-/* modal for simulated payment */
 .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); z-index: 2000; }
 .modal .card { width: 360px; max-width: calc(100% - 32px); background: var(--panel); padding: 18px; border-radius: 12px; border:1px solid rgba(255,255,255,0.03); }
 .modal.show { display:flex; }
@@ -66,7 +62,6 @@ button:focus, input:focus, textarea:focus{outline:3px solid rgba(200,155,46,0.12
 </head>
 <body>
 <div class="wrap" id="app">
-  <!-- HEADER + LANGUAGE SWITCH -->
   <header>
     <div class="brand">
       <div class="logo">AČ</div>
@@ -81,7 +76,6 @@ button:focus, input:focus, textarea:focus{outline:3px solid rgba(200,155,46,0.12
     </div>
   </header>
 
-  <!-- HERO + FORM PANEL -->
   <section class="hero">
     <div class="hero-left">
       <div class="h-eyebrow">PREDAJNÉ</div>
@@ -93,99 +87,4 @@ button:focus, input:focus, textarea:focus{outline:3px solid rgba(200,155,46,0.12
       </div>
       <div class="social-proof">
         <div class="proof-card">👁 <span id="totalViews">0</span> čítaní</div>
-        <div class="proof-card">🌍 <span id="countries">14</span> krajín</div>
-        <div class="proof-card">💌 <span id="totalSaved">0</span> odkazov</div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <h3>Zanechaj odkaz</h3>
-      <label>Meno / prezývka (nepovinné)</label>
-      <input id="author" type="text">
-      <label style="margin-top:10px">Tvoj odkaz <span class="small" id="charCount">0/300</span></label>
-      <textarea id="message" maxlength="300"></textarea>
-      <div class="meta-row">
-        <div class="pill" id="dailyInfo">Zostáva 3 bezplatné uloženia</div>
-        <div style="display:flex;gap:8px">
-          <button type="button" class="secondary" id="freeBtn">Skúsiť zdarma (48h)</button>
-          <button type="button" class="primary" id="payBtn">Zachovať — 1 €</button>
-        </div>
-      </div>
-      <div class="small" style="margin-top:10px;color:var(--muted)">*Dočasné odkazy zaniknú po 48 hodinách. Trvalé odkazy získajú odznak uchovania.</div>
-    </div>
-  </section>
-
-  <!-- LIST + FAQ + STATS -->
-  <div class="grid">
-    <main>
-      <div class="panel">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <h3>Najnovšie odkazy</h3>
-          <div class="small">Zobrazené <span id="listCount">0</span></div>
-        </div>
-        <div style="margin-top:12px;display:flex;gap:8px">
-          <input id="search" type="text" placeholder="Hľadať...">
-          <select id="sort">
-            <option value="paid">Trvalé najprv</option>
-            <option value="new">Najnovšie</option>
-            <option value="likes">Najviac uznávané</option>
-          </select>
-        </div>
-        <div id="list" class="list" style="margin-top:14px">
-          <div class="small">Zatiaľ žiadne odkazy — buď ten prvý.</div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <h3>FAQ</h3>
-        <div class="small" style="margin-top:8px">
-          <strong>Je to bezpečné?</strong>
-          <div>Áno — v demo verzii je platba simulovaná. Pri nasadení nahraj reálny PayPal Client ID.</div>
-          <div style="margin-top:8px"><strong>Prečo 1 €?</strong> Nízka vstupná cena pomáha zabezpečiť dôstojné uloženie a údržbu obsahu.</div>
-        </div>
-      </div>
-    </main>
-
-    <aside>
-      <div class="panel">
-        <h3>Štatistiky</h3>
-        <div class="small" style="margin-top:8px">Celkovo uložené: <strong id="statTotal">0</strong></div>
-        <div class="small">Trvalé: <strong id="statPaid">0</strong></div>
-        <div class="small">Dočasné: <strong id="statTemp">0</strong></div>
-        <div class="small">Príjmy: <strong id="statRevenue">0 €</strong></div>
-        <div style="margin-top:12px"><button type="button" class="secondary" id="exportBtn">Exportovať (demo)</button></div>
-      </div>
-
-      <div class="panel">
-        <h3>Top</h3>
-        <div id="topList" class="small" style="margin-top:8px">—</div>
-      </div>
-    </aside>
-  </div>
-
-  <footer><span id="year"></span> Archív Dedičstva — Premium v12</footer>
-</div>
-
-<div class="sticky">
-  <div class="small">Chráň svoj odkaz</div>
-  <button type="button" class="primary" id="stickyPay">Zachovať — 1 €</button>
-</div>
-
-<!-- Simulated Payment Modal -->
-<div id="simModal" class="modal">
-  <div class="card">
-    <h3>Simulovaná platba</h3>
-    <p>Stlač „Potvrdiť“ pre simuláciu úspešnej platby €1.00 (sandbox).</p>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-      <button type="button" class="secondary" id="simCancel">Zrušiť</button>
-      <button type="button" class="primary" id="simConfirm">Potvrdiť</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// --- Tu vložíme tvoj pôvodný JS kód s drobnými opravami ---
-/* ... celý JS zo starého index.html (funkčný) ... */
-</script>
-</body>
-</html>
+        <div class="proof-card">🌍 <span id="countries
