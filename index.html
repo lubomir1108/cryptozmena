@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Archív Dedičstva — Zanechaj odkaz navždy</title>
-  <meta name="description" content="Zanechaj krátky odkaz pre budúce generácie — navždy za 1 € alebo skúsiť zdarma 48h.">
+  <title data-i18n="metaTitle">Archív Dedičstva — Zanechaj odkaz navždy</title>
+  <meta name="description" data-i18n="metaDesc" content="Zanechaj krátky odkaz pre budúce generácie — navždy za 1 € alebo skúsiť zdarma 48h.">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -57,14 +57,9 @@
     .sticky{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);display:flex;gap:12px;align-items:center;z-index:1200}
     button:focus, input:focus, textarea:focus{outline:3px solid rgba(200,155,46,0.12);outline-offset:2px}
 
-    /* simple modal for simulated payment */
-    .modal {
-      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
-      background: rgba(0,0,0,0.6); z-index: 2000;
-    }
-    .modal .card {
-      width: 360px; max-width: calc(100% - 32px); background: var(--panel); padding: 18px; border-radius: 12px; border:1px solid rgba(255,255,255,0.03);
-    }
+    /* modal for simulated payment */
+    .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); z-index: 2000; }
+    .modal .card { width: 360px; max-width: calc(100% - 32px); background: var(--panel); padding: 18px; border-radius: 12px; border:1px solid rgba(255,255,255,0.03); }
     .modal.show { display:flex; }
   </style>
 </head>
@@ -74,53 +69,52 @@
       <div class="brand">
         <div class="logo">AČ</div>
         <div>
-          <h1 id="brandTitle">Archív Dedičstva</h1>
-          <div class="sub" id="brandSub">Kapsula Času — Zanechaj odkaz, ktorý prežije</div>
+          <h1 id="brandTitle" data-i18n="brandTitle">Archív Dedičstva</h1>
+          <div class="sub" id="brandSub" data-i18n="brandSub">Kapsula Času — Zanechaj odkaz, ktorý prežije</div>
         </div>
       </div>
 
       <div class="lang-switch" role="tablist" aria-label="Jazyk">
-        <button type="button" class="lang-btn active" data-lang="sk" aria-pressed="true">SK</button>
+        <button type="button" class="lang-btn" data-lang="sk" aria-pressed="false">SK</button>
         <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
       </div>
     </header>
 
     <section class="hero" aria-labelledby="heroTitle">
       <div class="hero-left">
-        <div class="h-eyebrow" id="eyebrow">PREDAJNÉ</div>
-        <div class="h-title" id="heroTitle">Čas pominie. Odkaz zostane.</div>
-        <div class="h-sub" id="heroSub">Zanechaj krátku myšlienku, spomienku alebo odkaz, ktorý si zachováš navždy — alebo vyskúšaj zadarmo na 48 hodín.</div>
+        <div class="h-eyebrow" id="eyebrow" data-i18n="eyebrow">PREDAJNÉ</div>
+        <div class="h-title" id="heroTitle" data-i18n="heroTitle">Čas pominie. Odkaz zostane.</div>
+        <div class="h-sub" id="heroSub" data-i18n="heroSub">Zanechaj krátku myšlienku, spomienku alebo odkaz, ktorý si zachováš navždy — alebo vyskúšaj zadarmo na 48 hodín.</div>
 
         <div class="cta-row">
-          <button type="button" class="primary" id="ctaPrimary">Zanechať odkaz</button>
-          <button type="button" class="secondary" id="ctaSecondary">Viac informácií</button>
+          <button type="button" class="primary" id="ctaPrimary" data-i18n="cta">Zanechať odkaz</button>
+          <button type="button" class="secondary" id="ctaSecondary" data-i18n="more">Viac informácií</button>
         </div>
 
         <div class="social-proof" aria-hidden="true">
-          <div class="proof-card">👁 <span id="totalViews">0</span> čítaní</div>
-          <div class="proof-card">🌍 <span id="countries">14</span> krajín</div>
-          <div class="proof-card">💌 <span id="totalSaved">0</span> odkazov</div>
+          <div class="proof-card">👁 <span id="totalViews">0</span> <span data-i18n="viewsLabel">čítaní</span></div>
+          <div class="proof-card">🌍 <span id="countries">14</span> <span data-i18n="countriesLabel">krajín</span></div>
+          <div class="proof-card">💌 <span id="totalSaved">0</span> <span data-i18n="savedLabel">odkazov</span></div>
         </div>
       </div>
 
       <div class="panel" aria-labelledby="formTitle">
-        <h3 id="formTitle">Zanechaj odkaz</h3>
-        <label id="labelName">Meno / prezývka (nepovinné)</label>
-        <input id="author" name="author" type="text" placeholder="Ako chcete byť zaznamenaný?" aria-label="Meno alebo prezývka" />
+        <h3 id="formTitle" data-i18n="formTitle">Zanechaj odkaz</h3>
+        <label id="labelName" data-i18n="labelName">Meno / prezývka (nepovinné)</label>
+        <input id="author" name="author" type="text" placeholder="" aria-label="Meno alebo prezývka" />
 
         <label style="margin-top:10px">Tvoj odkaz <span class="small" id="charCount">0/300</span></label>
-        <textarea id="message" maxlength="300" placeholder="Napíš niečo, čo by si chcel, aby budúce generácie vedeli..."></textarea>
+        <textarea id="message" maxlength="300" placeholder=""></textarea>
 
         <div class="meta-row">
-          <div class="pill" id="dailyInfo">Zostáva 3 bezplatné uloženia</div>
+          <div class="pill" id="dailyInfo" data-i18n="dailyInfo">Zostáva 3 bezplatné uloženia</div>
           <div style="display:flex;gap:8px">
-            <!-- Simulated Pay button -->
             <div id="sim-pay-container" aria-hidden="true"></div>
-            <button type="button" class="secondary" id="freeBtn">Skúsiť zdarma (48h)</button>
-            <button type="button" class="primary" id="payBtn" style="padding:10px 12px;font-weight:700">Zachovať — 1 €</button>
+            <button type="button" class="secondary" id="freeBtn" data-i18n="freeBtn">Skúsiť zdarma (48h)</button>
+            <button type="button" class="primary" id="payBtn" data-i18n="payBtn" style="padding:10px 12px;font-weight:700">Zachovať — 1 €</button>
           </div>
         </div>
-        <div class="small" style="margin-top:10px;color:var(--muted)">*Dočasné odkazy zaniknú po 48 hodinách. Trvalé odkazy získajú odznak uchovania.</div>
+        <div class="small" style="margin-top:10px;color:var(--muted)" data-i18n="tempNote">*Dočasné odkazy zaniknú po 48 hodinách. Trvalé odkazy získajú odznak uchovania.</div>
       </div>
     </section>
 
@@ -128,76 +122,67 @@
       <main>
         <div class="panel">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <h3 id="listTitle">Najnovšie odkazy</h3>
+            <h3 id="listTitle" data-i18n="listTitle">Najnovšie odkazy</h3>
             <div class="small">Zobrazené <span id="listCount">0</span></div>
           </div>
 
           <div style="margin-top:12px;display:flex;gap:8px">
-            <input id="search" type="text" placeholder="Hľadať..." aria-label="Hľadať odkazy" />
+            <input id="search" type="text" placeholder="" aria-label="Hľadať odkazy" data-i18n-placeholder="searchPlaceholder" />
             <select id="sort">
-              <option value="paid">Trvalé najprv</option>
-              <option value="new">Najnovšie</option>
-              <option value="likes">Najviac uznávané</option>
+              <option value="paid" data-i18n="optPaid">Trvalé najprv</option>
+              <option value="new" data-i18n="optNew">Najnovšie</option>
+              <option value="likes" data-i18n="optLikes">Najviac uznávané</option>
             </select>
           </div>
 
           <div id="list" class="list" style="margin-top:14px">
-            <div class="small">Zatiaľ žiadne odkazy — buď ten prvý.</div>
+            <div class="small" data-i18n="noResults">Zatiaľ žiadne odkazy — buď ten prvý.</div>
           </div>
         </div>
 
         <div class="panel" style="margin-top:14px">
-          <h3>FAQ</h3>
+          <h3 data-i18n="faqTitle">FAQ</h3>
           <div class="small" style="margin-top:8px">
-            <strong>Je to bezpečné?</strong>
-            <div>Áno — v tejto demo verzii je platba simulovaná. Pri nasadení nahraj reálny PayPal Client ID do hlavičky.</div>
-            <div style="margin-top:8px"><strong>Prečo 1 €?</strong> Nízka vstupná cena pomáha zabezpečiť dôstojné uloženie a údržbu obsahu.</div>
+            <strong data-i18n="faqSafeTitle">Je to bezpečné?</strong>
+            <div data-i18n="faqSafeBody">Áno — v demo verzii je platba simulovaná. Pri nasadení nahraj reálny PayPal Client ID.</div>
+            <div style="margin-top:8px"><strong data-i18n="faqPriceTitle">Prečo 1 €?</strong> <span data-i18n="faqPriceBody">Nízka vstupná cena pomáha zabezpečiť dôstojné uloženie a údržbu obsahu.</span></div>
           </div>
         </div>
       </main>
 
       <aside>
         <div class="panel">
-          <h3>Štatistiky</h3>
-          <div class="small" style="margin-top:8px">Celkovo uložené: <strong id="statTotal">0</strong></div>
-          <div class="small">Trvalé: <strong id="statPaid">0</strong></div>
-          <div class="small">Dočasné: <strong id="statTemp">0</strong></div>
-          <div class="small">Príjmy: <strong id="statRevenue">0 €</strong></div>
-          <div style="margin-top:12px"><button type="button" class="secondary" id="exportBtn">Exportovať (demo)</button></div>
+          <h3 data-i18n="statsTitle">Štatistiky</h3>
+          <div class="small" style="margin-top:8px" data-i18n="statTotalLabel">Celkovo uložené: <strong id="statTotal">0</strong></div>
+          <div class="small" data-i18n="statPaidLabel">Trvalé: <strong id="statPaid">0</strong></div>
+          <div class="small" data-i18n="statTempLabel">Dočasné: <strong id="statTemp">0</strong></div>
+          <div class="small" data-i18n="statRevenueLabel">Príjmy: <strong id="statRevenue">0 €</strong></div>
+          <div style="margin-top:12px"><button type="button" class="secondary" id="exportBtn" data-i18n="exportBtn">Exportovať (demo)</button></div>
         </div>
 
         <div class="panel" style="margin-top:14px">
-          <h3>Top</h3>
+          <h3 data-i18n="topTitle">Top</h3>
           <div id="topList" class="small" style="margin-top:8px">—</div>
         </div>
       </aside>
     </div>
 
-    <footer>© <span id="year"></span> Archív Dedičstva — Premium v12</footer>
+    <footer><span id="year"></span> <span data-i18n="footer">Archív Dedičstva — Premium v12</span></footer>
   </div>
 
   <div class="sticky" role="region" aria-label="Rýchla akcia">
-    <div class="small">Chráň svoj odkaz</div>
-    <button type="button" class="primary" id="stickyPay">Zachovať — 1 €</button>
+    <div class="small" data-i18n="stickyText">Chráň svoj odkaz</div>
+    <button type="button" class="primary" id="stickyPay" data-i18n="payBtnSticky">Zachovať — 1 €</button>
   </div>
 
-  <!--
-    SIMULATED PAYMENT: No external PayPal SDK is loaded in this demo file.
-    When you're ready to enable real PayPal:
-    1) Get a PayPal Client ID (Sandbox or Live) from developer.paypal.com
-    2) Add this script tag (replace YOUR_CLIENT_ID and CURRENCY if needed):
-       <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=EUR"></script>
-    3) Remove the simulated payment code below and initialise real PayPal Buttons.
-  -->
-
-  <!-- Simulated payment modal -->
+  <!-- simulated payment modal -->
   <div id="simModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="card" role="document">
-      <h3 id="simTitle">Simulovaná platba</h3>
-      <p id="simBody">Stlač „Potvrdiť“ pre simuláciu úspešnej platby €1.00 (sandbox).</p>
+      <h3 id="simTitle" data-i18n="simTitle">Simulovaná platba</h3>
+      <p id="simBody" data-i18n="simBody">Stlač „Potvrdiť“ pre simuláciu úspešnej platby €1.00 (sandbox).</p>
       <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-        <button type="button" class="secondary" id="simCancel">Zrušiť</button>
-        <button type="button" class="primary" id="simConfirm">Potvrdiť</button>
+        <button type="button" class="secondary" id="simCancel" data-i18n="simCancel">Zrušiť</button>
+        <button type="button" class="primary" id="simConfirm" data-i18n="simConfirm">Potvrdiť</button>
       </div>
     </div>
   </div>
@@ -217,38 +202,108 @@
     /* --- I18N --- */
     const I18N = {
       sk: {
+        metaTitle: 'Archív Dedičstva — Zanechaj odkaz navždy',
+        metaDesc: 'Zanechaj krátky odkaz pre budúce generácie — navždy za 1 € alebo skúsiť zdarma 48h.',
+        brandTitle: 'Archív Dedičstva',
+        brandSub: 'Kapsula Času — Zanechaj odkaz, ktorý prežije',
+        eyebrow: 'PREDAJNÉ',
         heroTitle: 'Čas pominie. Odkaz zostane.',
-        heroSub: 'Zanechaj krátku myšlienku, spomienku alebo odkaz, ktorý prežije — navždy za 1 € alebo zdarma 48h.',
+        heroSub: 'Zanechaj krátku myšlienku, spomienku alebo odkaz, ktorý si zachováš navždy — alebo vyskúšaj zadarmo na 48 hodín.',
         cta: 'Zanechať odkaz',
         more: 'Viac informácií',
+        viewsLabel: 'čítaní',
+        countriesLabel: 'krajín',
+        savedLabel: 'odkazov',
         formTitle: 'Zanechaj odkaz',
-        placeholder: 'Napíš niečo, čo by si chcel, aby budúce generácie vedeli...',
+        labelName: 'Meno / prezývka (nepovinné)',
         freeBtn: 'Skúsiť zdarma (48h)',
-        dailyFree: (n)=>`Zostáva ${n} bezplatných uložení`,
+        payBtn: 'Zachovať — 1 €',
+        payBtnSticky: 'Zachovať — 1 €',
+        tempNote: '*Dočasné odkazy zaniknú po 48 hodinách. Trvalé odkazy získajú odznak uchovania.',
+        dailyInfo: (n) => `Zostáva ${n} bezplatných uložení`,
         noResults: 'Zatiaľ žiadne odkazy — buď ten prvý.',
+        listTitle: 'Najnovšie odkazy',
+        searchPlaceholder: 'Hľadať...',
+        optPaid: 'Trvalé najprv',
+        optNew: 'Najnovšie',
+        optLikes: 'Najviac uznávané',
+        faqTitle: 'FAQ',
+        faqSafeTitle: 'Je to bezpečné?',
+        faqSafeBody: 'Áno — v demo verzii je platba simulovaná. Pri nasadení nahraj reálny PayPal Client ID.',
+        faqPriceTitle: 'Prečo 1 €?',
+        faqPriceBody: 'Nízka vstupná cena pomáha zabezpečiť dôstojné uloženie a údržbu obsahu.',
+        statsTitle: 'Štatistiky',
+        statTotalLabel: 'Celkovo uložené:',
+        statPaidLabel: 'Trvalé:',
+        statTempLabel: 'Dočasné:',
+        statRevenueLabel: 'Príjmy:',
+        exportBtn: 'Exportovať (demo)',
+        topTitle: 'Top',
+        footer: 'Archív Dedičstva — Premium v12',
+        stickyText: 'Chráň svoj odkaz',
+        simTitle: 'Simulovaná platba',
+        simBody: 'Stlač „Potvrdiť“ pre simuláciu úspešnej platby €1.00 (sandbox).',
+        simCancel: 'Zrušiť',
+        simConfirm: 'Potvrdiť',
         alertEmpty: 'Odkaz nesmie byť prázdny.',
         alertLong: 'Maximálne 300 znakov.',
         thanksPaid: 'Ďakujeme — tvoj odkaz je uložený navždy.',
         thanksTemp: 'Odkaz uložený dočasne (48h).',
         confirmContinue: 'Pokračovať?',
-        confirmLimitReached: 'Dnešný limit je vyčerpaný. Uložiť ako dočasné?'
+        confirmLimitReached: 'Dnešný limit je vyčerpaný. Uložiť ako dočasné?',
+        searchPlaceholderLabel: 'Hľadať...'
       },
       en: {
+        metaTitle: 'Heritage Archive — Leave a message forever',
+        metaDesc: 'Leave a short thought, memory or message that will survive — forever for €1 or free 48h trial.',
+        brandTitle: 'Heritage Archive',
+        brandSub: 'Time Capsule — Leave a message that endures',
+        eyebrow: 'AVAILABLE',
         heroTitle: 'Time will pass. The message remains.',
         heroSub: 'Leave a short thought, memory or message that will survive — forever for €1 or free 48h trial.',
         cta: 'Leave a message',
         more: 'More info',
+        viewsLabel: 'views',
+        countriesLabel: 'countries',
+        savedLabel: 'messages',
         formTitle: 'Leave a message',
-        placeholder: 'Write something you wish future generations to know...',
+        labelName: 'Name / nickname (optional)',
         freeBtn: 'Try free (48h)',
-        dailyFree: (n)=>`${n} free saves remaining`,
+        payBtn: 'Preserve — €1',
+        payBtnSticky: 'Preserve — €1',
+        tempNote: '*Temporary messages expire after 48 hours. Permanent messages get a preservation badge.',
+        dailyInfo: (n) => `${n} free saves remaining`,
         noResults: 'No messages yet — be the first.',
+        listTitle: 'Latest messages',
+        searchPlaceholder: 'Search...',
+        optPaid: 'Permanent first',
+        optNew: 'Newest',
+        optLikes: 'Most liked',
+        faqTitle: 'FAQ',
+        faqSafeTitle: 'Is it safe?',
+        faqSafeBody: 'Yes — payment is simulated in this demo. For production add a real PayPal Client ID.',
+        faqPriceTitle: 'Why €1?',
+        faqPriceBody: 'A low entry price helps ensure dignified storage and maintenance of content.',
+        statsTitle: 'Statistics',
+        statTotalLabel: 'Total stored:',
+        statPaidLabel: 'Permanent:',
+        statTempLabel: 'Temporary:',
+        statRevenueLabel: 'Revenue:',
+        exportBtn: 'Export (demo)',
+        topTitle: 'Top',
+        footer: 'Heritage Archive — Premium v12',
+        stickyText: 'Protect your message',
+        simTitle: 'Simulated payment',
+        simBody: 'Click confirm to simulate a successful $1.00 payment (sandbox).',
+        simCancel: 'Cancel',
+        simConfirm: 'Confirm',
         alertEmpty: 'Message cannot be empty.',
         alertLong: 'Max 300 characters.',
         thanksPaid: 'Thanks — your message is saved forever.',
         thanksTemp: 'Message saved temporarily (48h).',
         confirmContinue: 'Continue?',
-        confirmLimitReached: "Today's free limit exhausted. Save as temporary?"
+        confirmLimitReached: 'Today\'s free limit exhausted. Save as temporary?',
+        searchPlaceholderLabel: 'Search...'
       }
     };
 
@@ -305,32 +360,66 @@
     function saveLikes(){ localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(likes))) }
     function formatDate(ts){ return new Date(ts).toLocaleString(LANG==='sk' ? 'sk-SK' : 'en-GB', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) }
 
-    /* --- Render / i18n --- */
+    /* --- i18n apply --- */
     function applyLang(l){
       LANG = l;
       localStorage.setItem('archiv_lang', LANG);
-      el('heroTitle').textContent = I18N[LANG].heroTitle;
-      el('heroSub').textContent = I18N[LANG].heroSub;
-      el('ctaPrimary').textContent = I18N[LANG].cta;
-      el('ctaSecondary').textContent = I18N[LANG].more;
-      el('formTitle').textContent = I18N[LANG].formTitle;
-      el('freeBtn').textContent = I18N[LANG].freeBtn;
-      el('message').placeholder = I18N[LANG].placeholder;
+
+      // Replace all elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(elm=>{
+        const key = elm.getAttribute('data-i18n');
+        const v = I18N[LANG][key];
+        if(typeof v === 'function'){
+          // special functions like dailyInfo are set later dynamically
+          return;
+        }
+        if(v !== undefined) elm.textContent = v;
+      });
+
+      // placeholders stored in data-i18n-placeholder or direct elements
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(elm=>{
+        const key = elm.getAttribute('data-i18n-placeholder');
+        const v = I18N[LANG][key] || I18N[LANG].searchPlaceholder || '';
+        elm.setAttribute('placeholder', v);
+      });
+      // specific placeholder keys
+      const msgPlaceholder = I18N[LANG].placeholder || I18N[LANG].searchPlaceholder || '';
+      if(el('message')) el('message').placeholder = I18N[LANG].placeholder || '';
+      if(el('author')) el('author').placeholder = '';
+
+      // update meta title & description (if present)
+      const titleEl = document.querySelector('title');
+      if(titleEl && I18N[LANG].metaTitle) titleEl.textContent = I18N[LANG].metaTitle;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if(metaDesc && I18N[LANG].metaDesc) metaDesc.setAttribute('content', I18N[LANG].metaDesc);
+
+      // set dynamic daily info
+      const d = remainingFree();
+      const dailyText = (typeof I18N[LANG].dailyInfo === 'function') ? I18N[LANG].dailyInfo(d) : I18N[LANG].dailyInfo;
+      if(el('dailyInfo')) el('dailyInfo').textContent = dailyText;
+
+      // update lang buttons state
       document.querySelectorAll('.lang-btn').forEach(b=>{
-        const is = b.dataset.lang===LANG;
+        const is = b.dataset.lang === LANG;
         b.classList.toggle('active', is);
         b.setAttribute('aria-pressed', String(is));
       });
+
+      // finally re-render entries (to update labels inside list items)
       render();
     }
 
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
+    function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s }
+
+    /* --- Actions and render --- */
     function render(){
       const listEl = el('list');
-      const q = el('search').value.trim().toLowerCase();
+      const q = (el('search') && el('search').value || '').trim().toLowerCase();
       let list = entries.slice();
       list.forEach((e,i)=>e.rank=i+1);
       if(q) list = list.filter(e => (e.text + ' ' + (e.author||'')).toLowerCase().includes(q));
-      const sort = el('sort').value;
+      const sort = el('sort') ? el('sort').value : 'paid';
       if(sort==='paid') list.sort((a,b)=> (b.paid?1:0)-(a.paid?1:0) || b.ts - a.ts);
       else if(sort==='new') list.sort((a,b)=> b.ts - a.ts);
       else if(sort==='likes') list.sort((a,b)=> (b.likes||0) - (a.likes||0));
@@ -343,7 +432,7 @@
           const item = document.createElement('div'); item.className='item';
           item.innerHTML = `
             <div style="display:flex;gap:12px;align-items:flex-start">
-              <div class="avatar" aria-hidden="true">${(e.author||'--').slice(0,2).toUpperCase()}</div>
+              <div class="avatar" aria-hidden="true">${escapeHtml((e.author||'--').slice(0,2).toUpperCase())}</div>
               <div style="flex:1">
                 <div style="display:flex;align-items:center;gap:8px">
                   <div style="font-weight:700">${escapeHtml(e.author|| (LANG==='sk' ? 'Neznámy' : 'Anonymous'))}</div>
@@ -352,7 +441,7 @@
                 </div>
                 <div style="margin-top:8px">${escapeHtml(e.text)}</div>
                 <div style="margin-top:8px;font-size:13px;color:var(--muted)">
-                  ❤ ${e.likes||0} • Čítaní: ${e.views||0}
+                  ❤ ${e.likes||0} • ${I18N[LANG].viewsLabel || 'views'}: ${e.views||0}
                 </div>
               </div>
             </div>
@@ -369,13 +458,15 @@
       }
 
       // stats
-      el('listCount').textContent = list.length;
-      el('totalSaved').textContent = entries.length;
-      el('statTotal').textContent = entries.length;
-      el('statPaid').textContent = entries.filter(e=>e.paid).length;
-      el('statTemp').textContent = entries.filter(e=>!e.paid).length;
-      el('statRevenue').textContent = (entries.filter(e=>e.paid).length * parseFloat(PRICE)).toFixed(2) + ' €';
-      el('totalViews').textContent = entries.reduce((s,e)=>s+(e.views||0),0);
+      if(el('listCount')) el('listCount').textContent = list.length;
+      if(el('totalSaved')) el('totalSaved').textContent = entries.length;
+      if(el('statTotal')) el('statTotal').textContent = entries.length;
+      if(el('statPaid')) el('statPaid').textContent = entries.filter(e=>e.paid).length;
+      if(el('statTemp')) el('statTemp').textContent = entries.filter(e=>!e.paid).length;
+      if(el('statRevenue')) el('statRevenue').textContent = (entries.filter(e=>e.paid).length * parseFloat(PRICE)).toFixed(2) + ' €';
+      if(el('totalViews')) el('totalViews').textContent = entries.reduce((s,e)=>s+(e.views||0),0);
+
+      // top list
       el('topList').innerHTML = '';
       const top = entries.slice().sort((a,b)=> (b.likes||0) - (a.likes||0)).slice(0,5);
       if(top.length===0) el('topList').textContent = '—';
@@ -385,13 +476,12 @@
         el('topList').appendChild(d);
       });
 
-      el('dailyInfo').textContent = I18N[LANG].dailyFree(remainingFree());
+      // update daily info text
+      if(el('dailyInfo') && typeof I18N[LANG].dailyInfo === 'function'){
+        el('dailyInfo').textContent = I18N[LANG].dailyInfo(remainingFree());
+      }
     }
 
-    function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])) }
-    function truncate(s,n){ return s.length>n ? s.slice(0,n-1)+'…' : s }
-
-    /* --- Actions --- */
     function addEntry({paid=false} = {}){
       const text = el('message').value.trim();
       const author = el('author').value.trim() || null;
@@ -409,7 +499,7 @@
       if(!el('message').value.trim()) return alert(I18N[LANG].alertEmpty);
       const rem = remainingFree();
       if(rem > 0){
-        if(confirm(`${I18N[LANG].dailyFree(rem)} ${I18N[LANG].confirmContinue}`)){
+        if(confirm(`${I18N[LANG].dailyInfo(rem)} ${I18N[LANG].confirmContinue}`)){
           useFree();
           addEntry({paid:false});
         }
@@ -418,9 +508,8 @@
       }
     }
 
-    /* --- Simulated payment flow --- */
+    /* --- Simulated payment --- */
     function openSimPayment(){
-      // show modal
       const modal = el('simModal');
       modal.classList.add('show');
       modal.setAttribute('aria-hidden','false');
@@ -430,9 +519,7 @@
       modal.classList.remove('show');
       modal.setAttribute('aria-hidden','true');
     }
-
     function confirmSimPayment(){
-      // simulate capture success and add paid entry
       closeSimPayment();
       addEntry({paid:true});
     }
@@ -440,28 +527,26 @@
     /* --- Init --- */
     function init(){
       // wire DOM
-      el('year').textContent = new Date().getFullYear();
-      el('charCount').textContent = '0/300';
-      el('message').addEventListener('input', ()=> el('charCount').textContent = el('message').value.length + '/300');
-      el('freeBtn').addEventListener('click', handleFree);
-      el('ctaPrimary').addEventListener('click', ()=> { el('message').focus(); window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'})});
-      el('payBtn').addEventListener('click', ()=> {
-        if(!el('message').value.trim()){
-          return alert(I18N[LANG].alertEmpty);
-        }
+      if(el('year')) el('year').textContent = new Date().getFullYear();
+      if(el('charCount')) el('charCount').textContent = '0/300';
+      if(el('message')) el('message').addEventListener('input', ()=> el('charCount').textContent = el('message').value.length + '/300');
+      if(el('freeBtn')) el('freeBtn').addEventListener('click', handleFree);
+      if(el('ctaPrimary')) el('ctaPrimary').addEventListener('click', ()=> { el('message').focus(); window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'})});
+      if(el('payBtn')) el('payBtn').addEventListener('click', ()=> {
+        if(!el('message').value.trim()) return alert(I18N[LANG].alertEmpty);
         openSimPayment();
       });
 
-      // sticky pay scroll to form and open simulated pay modal
-      el('stickyPay').addEventListener('click', ()=> {
+      // sticky pay
+      if(el('stickyPay')) el('stickyPay').addEventListener('click', ()=> {
         window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'});
         setTimeout(()=> openSimPayment(), 400);
       });
 
-      el('simCancel').addEventListener('click', closeSimPayment);
-      el('simConfirm').addEventListener('click', confirmSimPayment);
+      if(el('simCancel')) el('simCancel').addEventListener('click', closeSimPayment);
+      if(el('simConfirm')) el('simConfirm').addEventListener('click', confirmSimPayment);
 
-      el('exportBtn').addEventListener('click', ()=> {
+      if(el('exportBtn')) el('exportBtn').addEventListener('click', ()=> {
         try{
           const data = JSON.stringify(entries, null, 2);
           const blob = new Blob([data], {type:'application/json'});
@@ -476,27 +561,25 @@
         }catch(e){ console.error('Export failed', e) }
       });
 
-      el('search').addEventListener('input', render);
-      el('sort').addEventListener('change', render);
+      if(el('search')) el('search').addEventListener('input', render);
+      if(el('sort')) el('sort').addEventListener('change', render);
 
-      document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click', (e)=>{
-        applyLang(e.currentTarget.dataset.lang);
-      }));
+      document.querySelectorAll('.lang-btn').forEach(b=>{
+        b.addEventListener('click', (e)=>{
+          applyLang(e.currentTarget.dataset.lang);
+        });
+      });
 
       load(); loadDaily(); loadLikes();
       applyLang(LANG);
       render();
 
-      // simulate social-proof on first load
+      // seed demo numbers once
       if(!localStorage.getItem('archiv_v12_demo_seeded')){
-        el('countries').textContent = 14 + Math.floor(Math.random()*30);
+        if(el('countries')) el('countries').textContent = 14 + Math.floor(Math.random()*30);
         localStorage.setItem('archiv_v12_demo_seeded','1');
       }
     }
-
-    /* --- Small helpers --- */
-    function loadLikes(){ try{ const raw = localStorage.getItem(LIKES_KEY); likes = raw ? new Set(JSON.parse(raw)) : new Set(); }catch(e){ likes = new Set(); } }
-    function formatDate(ts){ return new Date(ts).toLocaleString(LANG==='sk' ? 'sk-SK' : 'en-GB', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) }
 
     // bootstrap
     document.addEventListener('DOMContentLoaded', init);
