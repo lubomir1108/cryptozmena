@@ -56,6 +56,16 @@
     .small{font-size:13px;color:var(--muted)}
     .sticky{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:10px 14px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);display:flex;gap:12px;align-items:center;z-index:1200}
     button:focus, input:focus, textarea:focus{outline:3px solid rgba(200,155,46,0.12);outline-offset:2px}
+
+    /* simple modal for simulated payment */
+    .modal {
+      position: fixed; inset: 0; display: none; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.6); z-index: 2000;
+    }
+    .modal .card {
+      width: 360px; max-width: calc(100% - 32px); background: var(--panel); padding: 18px; border-radius: 12px; border:1px solid rgba(255,255,255,0.03);
+    }
+    .modal.show { display:flex; }
   </style>
 </head>
 <body>
@@ -104,9 +114,10 @@
         <div class="meta-row">
           <div class="pill" id="dailyInfo">Zostáva 3 bezplatné uloženia</div>
           <div style="display:flex;gap:8px">
-            <!-- PayPal container will render here -->
-            <div id="paypal-button-container"></div>
+            <!-- Simulated Pay button -->
+            <div id="sim-pay-container" aria-hidden="true"></div>
             <button type="button" class="secondary" id="freeBtn">Skúsiť zdarma (48h)</button>
+            <button type="button" class="primary" id="payBtn" style="padding:10px 12px;font-weight:700">Zachovať — 1 €</button>
           </div>
         </div>
         <div class="small" style="margin-top:10px;color:var(--muted)">*Dočasné odkazy zaniknú po 48 hodinách. Trvalé odkazy získajú odznak uchovania.</div>
@@ -139,7 +150,7 @@
           <h3>FAQ</h3>
           <div class="small" style="margin-top:8px">
             <strong>Je to bezpečné?</strong>
-            <div>Áno — v demo verzii je platba simulovaná. Pri nasadení nahraj reálny PayPal Client ID.</div>
+            <div>Áno — v tejto demo verzii je platba simulovaná. Pri nasadení nahraj reálny PayPal Client ID do hlavičky.</div>
             <div style="margin-top:8px"><strong>Prečo 1 €?</strong> Nízka vstupná cena pomáha zabezpečiť dôstojné uloženie a údržbu obsahu.</div>
           </div>
         </div>
@@ -170,20 +181,38 @@
     <button type="button" class="primary" id="stickyPay">Zachovať — 1 €</button>
   </div>
 
-  <!-- PayPal SDK: replace YOUR_PAYPAL_CLIENT_ID with your real client id BEFORE go-live -->
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=EUR" async></script>
+  <!--
+    SIMULATED PAYMENT: No external PayPal SDK is loaded in this demo file.
+    When you're ready to enable real PayPal:
+    1) Get a PayPal Client ID (Sandbox or Live) from developer.paypal.com
+    2) Add this script tag (replace YOUR_CLIENT_ID and CURRENCY if needed):
+       <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=EUR"></script>
+    3) Remove the simulated payment code below and initialise real PayPal Buttons.
+  -->
+
+  <!-- Simulated payment modal -->
+  <div id="simModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="card" role="document">
+      <h3 id="simTitle">Simulovaná platba</h3>
+      <p id="simBody">Stlač „Potvrdiť“ pre simuláciu úspešnej platby €1.00 (sandbox).</p>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+        <button type="button" class="secondary" id="simCancel">Zrušiť</button>
+        <button type="button" class="primary" id="simConfirm">Potvrdiť</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     /* --- CONFIG --- */
     const STORAGE_KEY = 'archiv_v12_entries';
     const DAILY_KEY = 'archiv_v12_daily';
     const LIKES_KEY = 'archiv_v12_likes';
-    const VIEWED_SESSION_KEY = 'archiv_v12_viewed_ids'; // sessionStorage key
+    const VIEWED_SESSION_KEY = 'archiv_v12_viewed_ids';
     const TEMP_MS = 48*60*60*1000;
     const DAILY_LIMIT = 3;
     const PRICE = '1.00';
     const CURRENCY = 'EUR';
-    let LANG = 'sk';
+    let LANG = localStorage.getItem('archiv_lang') || 'sk';
 
     /* --- I18N --- */
     const I18N = {
@@ -228,7 +257,7 @@
     let daily = {count:0, date:Date.now()};
     let likes = new Set();
 
-    /* --- Session-only viewed ids (fix for previous bug) --- */
+    /* --- Session-only viewed ids --- */
     function loadSessionViewed(){
       try{
         const raw = sessionStorage.getItem(VIEWED_SESSION_KEY);
@@ -262,7 +291,6 @@
       try{
         const raw = localStorage.getItem(DAILY_KEY);
         daily = raw ? JSON.parse(raw) : {count:0,date:now()};
-        // keep daily reset by calendar day (safer UX than sliding 24h)
         const dSaved = new Date(daily.date);
         const dNow = new Date();
         if(dSaved.getFullYear() !== dNow.getFullYear() || dSaved.getMonth() !== dNow.getMonth() || dSaved.getDate() !== dNow.getDate()){
@@ -277,10 +305,10 @@
     function saveLikes(){ localStorage.setItem(LIKES_KEY, JSON.stringify(Array.from(likes))) }
     function formatDate(ts){ return new Date(ts).toLocaleString(LANG==='sk' ? 'sk-SK' : 'en-GB', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) }
 
-    /* --- Render --- */
+    /* --- Render / i18n --- */
     function applyLang(l){
       LANG = l;
-      // update texts
+      localStorage.setItem('archiv_lang', LANG);
       el('heroTitle').textContent = I18N[LANG].heroTitle;
       el('heroSub').textContent = I18N[LANG].heroSub;
       el('ctaPrimary').textContent = I18N[LANG].cta;
@@ -288,7 +316,6 @@
       el('formTitle').textContent = I18N[LANG].formTitle;
       el('freeBtn').textContent = I18N[LANG].freeBtn;
       el('message').placeholder = I18N[LANG].placeholder;
-      // lang UI
       document.querySelectorAll('.lang-btn').forEach(b=>{
         const is = b.dataset.lang===LANG;
         b.classList.toggle('active', is);
@@ -332,12 +359,10 @@
           `;
           listEl.appendChild(item);
 
-          // increment views once per session (option A - chosen)
+          // Option A: count views once per session
           if(!viewedIds.has(e.id)){
             e.views = (e.views||0) + 1;
-            markViewed(e.id); // store id in sessionStorage only
-            // persist updated views count to localStorage
-            // NOTE: we do NOT add any ephemeral flag to the entry object
+            markViewed(e.id);
             save();
           }
         });
@@ -393,51 +418,23 @@
       }
     }
 
-    /* --- PayPal integration (robust retry) --- */
-    function setupPayPalButtons(){
-      let attempts = 0;
-      const maxAttempts = 20;
-      const tryInit = () => {
-        attempts++;
-        if(window.paypal && typeof window.paypal.Buttons === 'function'){
-          try{
-            window.paypal.Buttons({
-              style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'pay' },
-              createOrder: function(data, actions){
-                return actions.order.create({
-                  purchase_units: [{ amount: { value: PRICE, currency_code: CURRENCY } }]
-                });
-              },
-              onApprove: function(data, actions){
-                return actions.order.capture().then(function(details){
-                  addEntry({paid:true});
-                });
-              },
-              onError: function(err){
-                console.error('PayPal error', err);
-                alert('PayPal error. Skúste prosím znova.');
-              }
-            }).render('#paypal-button-container');
-          }catch(e){
-            console.error('PayPal init error', e);
-          }
-        } else if(attempts < maxAttempts){
-          setTimeout(tryInit, 300);
-        } else {
-          console.warn('PayPal SDK not available after multiple attempts. Check client-id or network.');
-          // Optionally show a small message in UI
-          const p = document.createElement('div');
-          p.className = 'small';
-          p.style.marginTop = '6px';
-          p.textContent = 'PayPal tlačidlo nie je dostupné (demo).';
-          const container = el('paypal-button-container');
-          if(container && !container.querySelector('.pay-failed')) {
-            p.classList.add('pay-failed');
-            container.appendChild(p);
-          }
-        }
-      };
-      tryInit();
+    /* --- Simulated payment flow --- */
+    function openSimPayment(){
+      // show modal
+      const modal = el('simModal');
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden','false');
+    }
+    function closeSimPayment(){
+      const modal = el('simModal');
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden','true');
+    }
+
+    function confirmSimPayment(){
+      // simulate capture success and add paid entry
+      closeSimPayment();
+      addEntry({paid:true});
     }
 
     /* --- Init --- */
@@ -448,16 +445,21 @@
       el('message').addEventListener('input', ()=> el('charCount').textContent = el('message').value.length + '/300');
       el('freeBtn').addEventListener('click', handleFree);
       el('ctaPrimary').addEventListener('click', ()=> { el('message').focus(); window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'})});
-
-      // single stickyPay handler (fixed duplicate listener bug)
-      el('stickyPay').addEventListener('click', ()=> {
-        const paypalEl = el('paypal-button-container');
-        if(paypalEl && paypalEl.offsetTop) {
-          window.scrollTo({top: paypalEl.offsetTop - 80, behavior:'smooth'});
-        } else {
-          window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'});
+      el('payBtn').addEventListener('click', ()=> {
+        if(!el('message').value.trim()){
+          return alert(I18N[LANG].alertEmpty);
         }
+        openSimPayment();
       });
+
+      // sticky pay scroll to form and open simulated pay modal
+      el('stickyPay').addEventListener('click', ()=> {
+        window.scrollTo({top: el('formTitle').offsetTop - 40, behavior:'smooth'});
+        setTimeout(()=> openSimPayment(), 400);
+      });
+
+      el('simCancel').addEventListener('click', closeSimPayment);
+      el('simConfirm').addEventListener('click', confirmSimPayment);
 
       el('exportBtn').addEventListener('click', ()=> {
         try{
@@ -467,7 +469,6 @@
           const a = document.createElement('a'); a.href = url; a.download = 'archiv_entries.json';
           document.body.appendChild(a);
           a.click();
-          // revoke with small delay to ensure the download has started
           setTimeout(()=> {
             URL.revokeObjectURL(url);
             if(a.parentNode) a.parentNode.removeChild(a);
@@ -485,16 +486,19 @@
       load(); loadDaily(); loadLikes();
       applyLang(LANG);
       render();
-      setupPayPalButtons();
 
-      // simulate some social-proof numbers if none
+      // simulate social-proof on first load
       if(!localStorage.getItem('archiv_v12_demo_seeded')){
         el('countries').textContent = 14 + Math.floor(Math.random()*30);
         localStorage.setItem('archiv_v12_demo_seeded','1');
       }
     }
 
-    // bootstrap after DOM
+    /* --- Small helpers --- */
+    function loadLikes(){ try{ const raw = localStorage.getItem(LIKES_KEY); likes = raw ? new Set(JSON.parse(raw)) : new Set(); }catch(e){ likes = new Set(); } }
+    function formatDate(ts){ return new Date(ts).toLocaleString(LANG==='sk' ? 'sk-SK' : 'en-GB', {year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) }
+
+    // bootstrap
     document.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
